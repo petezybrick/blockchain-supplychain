@@ -1,0 +1,177 @@
+[
+	{
+		"supplier_type": "brewers_rice",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Brewers Rice",
+				"category": "farm",
+				"subCategory": "rice"
+			},
+			{
+				"desc": "Grade A Brewers Rice Seeds",
+				"category": "supplier",
+				"subCategory": "seed"
+			},
+			{
+				"desc": "10-20-10 Fertilizer",
+				"category": "supplier",
+				"subCategory": "fertilizer"
+			},
+			{
+				"desc": "Grade A Brewers Rice",
+				"category": "distributor",
+				"subCategory": "rice"
+			}
+		]
+	},
+	{
+		"supplier_type": "chicken_meal",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Chicken Meal",
+				"category": "farm",
+				"subCategory": "chicken"
+			},
+			{
+				"desc": "Baby Chicks",
+				"category": "supplier",
+				"subCategory": "chicks"
+			},
+			{
+				"desc": "Grade A Chicken Feed",
+				"category": "supplier",
+				"subCategory": "chicken_feed"
+			},
+			{
+				"desc": "Grade A Chicken Meal",
+				"category": "distributor",
+				"subCategory": "chicken"
+			}
+		]
+	},
+	{
+		"supplier_type": "wheat",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Wheat",
+				"category": "farm",
+				"subCategory": "wheat"
+			},
+			{
+				"desc": "Grade A Wheat Seed",
+				"category": "supplier",
+				"subCategory": "seed"
+			},
+			{
+				"desc": "1-2-3 Fertilizer",
+				"category": "supplier",
+				"subCategory": "fertilizer"
+			},
+			{
+				"desc": "Grade A Wheat",
+				"category": "distributor",
+				"subCategory": "wheat"
+			}
+		]
+	},
+	{
+		"supplier_type": "corn_gluten",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Corn",
+				"category": "farm",
+				"subCategory": "corn"
+			},
+			{
+				"desc": "Grade A Corn Seed",
+				"category": "supplier",
+				"subCategory": "seed"
+			},
+			{
+				"desc": "4-5-6 Fertilizer",
+				"category": "supplier",
+				"subCategory": "fertilizer"
+			},
+			{
+				"desc": "Grade A Corn",
+				"category": "distributor",
+				"subCategory": "corn"
+			}
+		]
+	},
+	{
+		"supplier_type": "oat_groats",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Oats",
+				"category": "farm",
+				"subCategory": "oat"
+			},
+			{
+				"desc": "Grade A Oat Seed",
+				"category": "supplier",
+				"subCategory": "seed"
+			},
+			{
+				"desc": "7-8-9 Fertilizer",
+				"category": "supplier",
+				"subCategory": "fertilizer"
+			},
+			{
+				"desc": "Grade A Oats",
+				"category": "distributor",
+				"subCategory": "oat"
+			}
+		]
+	},
+	{
+		"supplier_type": "beet_pulp",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Beets",
+				"category": "farm",
+				"subCategory": "beet"
+			},
+			{
+				"desc": "Grade A Beet Seed",
+				"category": "supplier",
+				"subCategory": "seed"
+			},
+			{
+				"desc": "10-11-12 Fertilizer",
+				"category": "supplier",
+				"subCategory": "fertilizer"
+			},
+			{
+				"desc": "Grade A Beets",
+				"category": "distributor",
+				"subCategory": "beet"
+			}
+		]
+	},
+	{
+		"supplier_type": "fish_oil",
+		"desc_cat_subcat_items": [
+			{
+				"desc": "Fish Oil",
+				"category": "farm",
+				"subCategory": "fish"
+			},
+			{
+				"desc": "Grade A Fish Fry",
+				"category": "supplier",
+				"subCategory": "fish_fry"
+			},
+			{
+				"desc": "Organic Fish Feed",
+				"category": "supplier",
+				"subCategory": "fish_feed"
+			},
+			{
+				"desc": "Grade A Fish Oil",
+				"category": "distributor",
+				"subCategory": "fish_oil"
+			}
+		]
+	}
+]

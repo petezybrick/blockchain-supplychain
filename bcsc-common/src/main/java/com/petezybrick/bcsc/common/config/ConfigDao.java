@@ -37,7 +37,7 @@ public class ConfigDao extends CassandraBaseDao {
 	private static final Logger logger = LogManager.getLogger(ConfigDao.class);
 	
 	/** The Constant TABLE_NAME. */
-	private static final String TABLE_NAME = "supply_blockchain_config";
+	private static final String TABLE_NAME = "bcsc_config";
 	
 	/** The Constant CREATE_TABLE. */
 	private static final String CREATE_TABLE = 

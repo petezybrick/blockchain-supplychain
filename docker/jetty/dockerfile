@@ -1,0 +1,16 @@
+FROM ubuntu-java-python-nano:14.04.5
+MAINTAINER Pete Zybrick <pzybrick@gmail.com>
+
+RUN apt-get update \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*    
+
+ENV JETTY_VERSION	9.4.9.v20180320
+ENV JETTY_HOME		/usr/local/jetty
+ENV JETTY_BASE		/usr/local/jetty
+add jetty-distribution-${JETTY_VERSION}.tar.gz /usr/local
+RUN ln -s /usr/local/jetty-distribution-${JETTY_VERSION} $JETTY_HOME 
+
+EXPOSE 8080
+
+CMD ["java","-jar","$JETTY_HOME/start.jar","--module=http jetty.http.port=8080"]
