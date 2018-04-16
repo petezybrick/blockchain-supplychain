@@ -17,7 +17,7 @@
  * @version 1.0.0, 2017-09
  * 
  */
-package com.pzybrick.bcsc.common.config;
+package com.petezybrick.bcsc.common.config;
 
 import java.util.List;
 

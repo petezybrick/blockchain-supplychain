@@ -1,9 +1,9 @@
-package com.pzybrick.bcsc.common.core;
+package com.petezybrick.bcsc.common.core;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.pzybrick.bcsc.common.utils.BlockchainUtils;
+import com.petezybrick.bcsc.common.utils.BlockchainUtils;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonNaming(SnakeCaseStrategy.class)

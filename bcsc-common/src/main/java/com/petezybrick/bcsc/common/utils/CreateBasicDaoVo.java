@@ -17,7 +17,7 @@
  * @version 1.0.0, 2017-09
  * 
  */
-package com.pzybrick.bcsc.common.utils;
+package com.petezybrick.bcsc.common.utils;
 
 import java.io.File;
 import java.sql.Connection;

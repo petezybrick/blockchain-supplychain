@@ -17,7 +17,7 @@
  * @version 1.0.0, 2017-09
  * 
  */
-package com.pzybrick.bcsc.common.config;
+package com.petezybrick.bcsc.common.config;
 
 import java.io.Serializable;
 
@@ -28,7 +28,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.pzybrick.bcsc.common.utils.BlockchainUtils;
+import com.petezybrick.bcsc.common.utils.BlockchainUtils;
 
 
 /**

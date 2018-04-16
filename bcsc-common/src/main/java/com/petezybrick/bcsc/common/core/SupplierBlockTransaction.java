@@ -1,9 +1,9 @@
-package com.pzybrick.bcsc.common.core;
+package com.petezybrick.bcsc.common.core;
 
 import java.security.PrivateKey;
 import java.security.PublicKey;
 
-import com.pzybrick.bcsc.common.utils.BlockchainUtils;
+import com.petezybrick.bcsc.common.utils.BlockchainUtils;
 
 public class SupplierBlockTransaction {
 	private String supplierBlockTransactionUuid;
