@@ -4,6 +4,8 @@
 	<groupId>com.petezybrick</groupId>
 	<artifactId>blockchain-supplychain</artifactId>
 	<version>1.0.0</version>
+	<packaging>pom</packaging>
+	
 
 	<name>blockchain-supplychain</name>
 	<url>http://maven.apache.org</url>
