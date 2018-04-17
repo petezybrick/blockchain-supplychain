@@ -1,12 +1,12 @@
 version: '2'
 
 services:
-  suppy-blockchain-jetty:
+  bcsc-jetty:
     image: jetty:9.4.9
     working_dir: /usr/local/jetty/
     command: java -jar start.jar --module=http jetty.http.port=8080
-    hostname: suppy-blockchain-jetty
-    container_name: suppy-blockchain-jetty
+    hostname: bcsc-jetty
+    container_name: bcsc-jetty
     mem_limit: 4g
     memswap_limit: 4g
     expose:
