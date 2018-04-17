@@ -181,9 +181,10 @@ private_key
 /maven/nbactions.xml
 **/*.versionsBackup
 
-# iote2e
+# blockchain-supplychain
 **/*.pyc
 **/*.jar
+**/*.war
 **/*.tgz
 **/*.tar.gz
 
