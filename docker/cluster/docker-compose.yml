@@ -95,6 +95,12 @@ services:
     container_name: bcsc-jetty
     mem_limit: 4g
     memswap_limit: 4g
+    depends_on:
+      - bcsc-cassandra2
+    environment:
+      CONTACT_POINT: bcsc-cassandra2
+      ENV: dev
+      KEYSPACE_NAME: bcsc
     expose:
       - 8080
     ports:

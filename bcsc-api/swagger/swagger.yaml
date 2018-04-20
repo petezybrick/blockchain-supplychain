@@ -1,0 +1,188 @@
+swagger: "2.0"
+info:
+  description: "Pet Nutrition"
+  version: 1.0.0
+  title: Swagger PetNutrition YAML
+  termsOfService: "http://github/petezybrick/terms/$TODO"
+  contact:
+    email: "pzybrick@gmail.com"
+  license:
+    name: Apache 2.0
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+basePath: /v2
+tags:
+  - name: petNutrition
+    description: Your pets nutrition
+    externalDocs:
+      description: Find out more
+      url: "http://github/petezybrick/$TODO"
+schemes:
+  - http
+paths:
+  /canine/nutrition/findAllManLots:
+    get:
+      tags:
+        - lot
+        - manufacturerLot
+      summary: Finds Manufacturer Lot Numbers by Optional Date Range and Limit
+      description: Finds Manufacturer Lot Numbers by Optional Date Range and Limit
+      operationId: findManLots
+      consumes:
+        - application/xml
+        - application/json
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: fromDate
+          in: query
+          description: Start date of range, inclusive
+          required: false
+          type: string
+        - name: toDate
+          in: query
+          description: End date of range, inclusive
+          required: false
+          type: string
+        - name: range
+          in: query
+          description: Maximum number of returned values
+          required: false
+          type: integer
+          format: int32
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              type: string
+        "400":
+          description: Invalid status value
+      security:
+        - petnutrition_auth:
+            - "write:pets"
+            - "read:pets"
+  /canine/nutrition/findLotIngredsByManLotNumber:
+    get:
+      tags:
+        - lot
+        - manufacturerLot
+      summary: Finds Lot Ingredients Blockchains by Manufacturer Lot Number
+      description: Finds Lot Ingredients Blockchains by Manufacturer Lot Number
+      operationId: findLotIngreds
+      consumes:
+        - application/xml
+        - application/json
+        - multipart/form-data
+        - application/x-www-form-urlencoded
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: lotNumber
+          in: query
+          description: Manufacturer Lot Number
+          required: true
+          type: string
+      responses:
+        "200":
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/LotTreeItem"
+
+        "400":
+          description: Invalid status value
+      security:
+        - petnutrition_auth:
+            - "write:pets"
+            - "read:pets"
+securityDefinitions:
+  petnutrition_auth:
+    type: oauth2
+    authorizationUrl: "http://petstore.swagger.io/api/oauth/dialog"
+    flow: implicit
+    scopes:
+      "write:pets": modify pets in your account
+      "read:pets": read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  LotTreeItem:
+    properties:
+      manufacturerLotNumber:
+        type: string
+        example: LOT-20180102
+      manufacturerLotFilledDate:
+        type: string
+        example: 2018-01-02T03:04:05Z
+      lotIngredientItems:
+        type: array
+        items:
+          $ref: '#/definitions/LotIngredientItem'
+  LotIngredientItem:
+    properties:
+      ingredientSequence:
+        type: integer
+        format: int32
+        example: 12
+      ingredientName:
+        type: string
+        example: Brown Rice
+      lotSupplierBlockItems:
+        type: array
+        items:
+          $ref: '#/definitions/LotSupplierBlockItem'
+  LotSupplierBlockItem:
+    properties:
+      blockSequence:
+        type: integer
+        format: int32
+        example: 0
+      hash:
+        type: string
+        example: $TODOxx
+      previousHash:
+        type: string
+        example: $TODO
+      supplierLotNumber:
+        type: string
+        example: $TODO
+      supplierCategory:
+        type: string
+        example: $TODO
+      supplierSubCategory:
+        type: string
+        example: $TODO
+      supplierName:
+        type: string
+        example: $TODO
+      dunsNumber:
+        type: string
+        example: $TODO
+      country:
+        type: string
+        example: $TODO
+      stateProvince:
+        type: string
+        example: $TODO
+  ApiResponse:
+    properties:
+      code:
+        type: integer
+        format: int32
+      type:
+        type: string
+      message:
+        type: string
+    xml:
+      name: "##default"
+externalDocs:
+  description: Find out more about PetNutrition
+  url: "http://$TODO"

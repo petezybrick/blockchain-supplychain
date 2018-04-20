@@ -22,6 +22,7 @@ public class LotCanineDao {
 	private static String sqlDeleteByPk = "DELETE FROM lot_canine WHERE lot_canine_uuid=?";
 	private static String sqlInsert = "INSERT INTO lot_canine (lot_canine_uuid,manufacturer_lot_number,lot_filled_date,update_ts) VALUES (?,?,?,?)";
 	private static String sqlFindByPk = "SELECT lot_canine_uuid,manufacturer_lot_number,lot_filled_date,insert_ts,update_ts FROM lot_canine WHERE lot_canine_uuid=?";
+	private static String sqlFindAllLotNumbers = "SELECT manufacturer_lot_number FROM lot_canine ORDER BY manufacturer_lot_number";
 	private static String sqlFindByLotNumber = "SELECT lot_canine_uuid,manufacturer_lot_number,lot_filled_date,insert_ts,update_ts FROM lot_canine WHERE manufacturer_lot_number=?";
 	private static String sqlFindLotTree = 
 		"select " + 
@@ -227,6 +228,25 @@ public class LotCanineDao {
 			ResultSet rs = pstmt.executeQuery();
 			if( rs.next() ) return new LotCanineVo(rs);
 			else return null;
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw e;
+		} finally {
+		}
+	}
+	
+	
+	public static List<String> sqlFindAllLotNumbers( ) throws Exception {
+		try ( Connection con = PooledDataSource.getInstance().getConnection();
+				PreparedStatement pstmt = con.prepareStatement(sqlFindAllLotNumbers);
+			){
+			con.setAutoCommit(true);
+			List<String> list = new ArrayList<String>();
+			ResultSet rs = pstmt.executeQuery();
+			while( rs.next() ) {
+				list.add(rs.getString(1));
+			}
+			return list;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw e;

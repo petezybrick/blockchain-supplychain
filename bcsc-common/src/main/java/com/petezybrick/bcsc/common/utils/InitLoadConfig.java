@@ -47,7 +47,7 @@ public class InitLoadConfig {
 				.setJdbcInsertBlockSize(1000)
 				.setJdbcLogin("supplier")
 				.setJdbcPassword("Password*8")
-				.setJdbcUrl("jdbc:mysql://localhost:3307/db_supplier")
+				.setJdbcUrl("jdbc:mysql://bcsc-mysql:3306/db_supplier")
 				.setSupplyBlockchainConfigJsonKey("dev");
         String rawJson = BlockchainUtils.objectMapper.writeValueAsString(supplyBlockchainConfig);
 

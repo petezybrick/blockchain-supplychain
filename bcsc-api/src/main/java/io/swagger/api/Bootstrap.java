@@ -1,24 +1,30 @@
 package io.swagger.api;
 
-import io.swagger.jaxrs.config.SwaggerContextService;
-import io.swagger.models.*;
+import java.security.Security;
 
-import io.swagger.models.auth.*;
-
-import javax.servlet.http.HttpServlet;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+
+import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
+import com.petezybrick.bcsc.service.database.PooledDataSource;
+
+import io.swagger.jaxrs.config.SwaggerContextService;
+import io.swagger.models.Contact;
+import io.swagger.models.Info;
+import io.swagger.models.License;
+import io.swagger.models.Swagger;
 
 public class Bootstrap extends HttpServlet {
   @Override
   public void init(ServletConfig config) throws ServletException {
     Info info = new Info()
       .title("Swagger Server")
-      .description("This is a sample server Petstore server.  You can find out more about     Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/).      For this sample, you can use the api key `special-key` to test the authorization     filters.")
-      .termsOfService("http://swagger.io/terms/")
+      .description("Pet Nutrition")
+      .termsOfService("http://github/petezybrick/terms/$TODO")
       .contact(new Contact()
-        .email("apiteam@swagger.io"))
+        .email("pzybrick@gmail.com"))
       .license(new License()
         .name("Apache 2.0")
         .url("http://www.apache.org/licenses/LICENSE-2.0.html"));
@@ -27,5 +33,15 @@ public class Bootstrap extends HttpServlet {
     Swagger swagger = new Swagger().info(info);
 
     new SwaggerContextService().withServletConfig(config).updateSwagger(swagger);
+    
+    try {
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		SupplyBlockchainConfig supplyBlockchainConfig = 
+				SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),System.getenv("KEYSPACE_NAME") );
+		PooledDataSource.getInstance(supplyBlockchainConfig);
+    } catch(Exception e ) {
+    	throw new ServletException(e);
+    }
+
   }
 }

@@ -54,21 +54,7 @@ public class TestLotCanine extends TestBase {
 		Assert.assertNotNull(lotTreeItem);
 	}
 	
-	public static void dumpLotTreeItemToConsole( LotTreeItem lotTreeItem ) throws Exception {
-		System.out.println( "Manufacturer Lot Number: " + lotTreeItem.getManufacturerLotNumber() + 
-				", Manufacturer Filled Date: " + lotTreeItem.getManufacturerLotFilledDate());
-		for( LotIngredientItem lotIngredientItem :  lotTreeItem.getLotIngredientItems()) {
-			System.out.println("\t" + lotIngredientItem.getIngredientName());
-			for(LotSupplierBlockItem lotSupplierBlockItem : lotIngredientItem.getLotSupplierBlockItems() ) {
-				System.out.println("\t\t" + lotSupplierBlockItem.getSupplierName() );
-				System.out.println("\t\t\tOrigin Country: " + lotSupplierBlockItem.getCountry() + ", State/Province: " + lotSupplierBlockItem.getStateProvince());
-				System.out.println("\t\t\tDUNS Number: " + lotSupplierBlockItem.getDunsNumber());
-				System.out.println("\t\t\tBlockChain PrevHash: " + lotSupplierBlockItem.getPreviousHash() + ", Hash: " + lotSupplierBlockItem.getHash());
-				System.out.println("\t\t\tCategory: " + lotSupplierBlockItem.getSupplierCategory() + ", SubCategory: " + lotSupplierBlockItem.getSupplierSubCategory());
-				System.out.println("\t\t\tSupplier Lot Number: " + lotSupplierBlockItem.getSupplierLotNumber() );
-			}
-		}
-	}
+
 	
 	
 }
