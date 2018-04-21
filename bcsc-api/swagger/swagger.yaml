@@ -65,14 +65,15 @@ paths:
         - petnutrition_auth:
             - "write:pets"
             - "read:pets"
-  /canine/nutrition/findLotIngredsByManLotNumber:
+  
+  /canine/nutrition/findLotTree:
     get:
       tags:
         - lot
         - manufacturerLot
       summary: Finds Lot Ingredients Blockchains by Manufacturer Lot Number
       description: Finds Lot Ingredients Blockchains by Manufacturer Lot Number
-      operationId: findLotIngreds
+      operationId: findLotTree
       consumes:
         - application/xml
         - application/json
@@ -91,10 +92,7 @@ paths:
         "200":
           description: successful operation
           schema:
-            type: array
-            items:
-              $ref: "#/definitions/LotTreeItem"
-
+            $ref: "#/definitions/LotTreeItem"
         "400":
           description: Invalid status value
       security:

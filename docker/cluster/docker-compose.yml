@@ -6,8 +6,8 @@ services:
     command: mysqld_safe
     hostname: bcsc-mysql
     container_name: bcsc-mysql
-    mem_limit: 8g
-    memswap_limit: 8g
+    mem_limit: 2g
+    memswap_limit: 2g
     expose:
       - 3306
     ports:
@@ -20,8 +20,8 @@ services:
     command: cassandra -f -R -Dcassandra.config=file:///conf/cassandra.yaml
     hostname: bcsc-cassandra1
     container_name: bcsc-cassandra1
-    mem_limit: 8g
-    memswap_limit: 8g
+    mem_limit: 2g
+    memswap_limit: 2g
     expose:
       - 7000
       - 7001
@@ -38,8 +38,8 @@ services:
     command: cassandra -f -R -Dcassandra.config=file:///conf/cassandra.yaml
     hostname: bcsc-cassandra2
     container_name: bcsc-cassandra2
-    mem_limit: 8g
-    memswap_limit: 8g
+    mem_limit: 2g
+    memswap_limit: 2g
     expose:
       - 7000
       - 7001
@@ -56,8 +56,8 @@ services:
     command: cassandra -f -R -Dcassandra.config=file:///conf/cassandra.yaml
     hostname: bcsc-cassandra3
     container_name: bcsc-cassandra3
-    mem_limit: 8g
-    memswap_limit: 8g
+    mem_limit: 2g
+    memswap_limit: 2g
     expose:
       - 7000
       - 7001
@@ -74,8 +74,8 @@ services:
     command: cassandra -f -R -Dcassandra.config=file:///conf/cassandra.yaml
     hostname: bcsc-cassandra4
     container_name: bcsc-cassandra4
-    mem_limit: 8g
-    memswap_limit: 8g
+    mem_limit: 2g
+    memswap_limit: 2g
     expose:
       - 7000
       - 7001
@@ -93,13 +93,13 @@ services:
     command: java -jar start.jar --module=http jetty.http.port=8080
     hostname: bcsc-jetty
     container_name: bcsc-jetty
-    mem_limit: 4g
-    memswap_limit: 4g
+    mem_limit: 2g
+    memswap_limit: 2g
     depends_on:
       - bcsc-cassandra2
     environment:
       CONTACT_POINT: bcsc-cassandra2
-      ENV: dev
+      ENV: dev_docker
       KEYSPACE_NAME: bcsc
     expose:
       - 8080

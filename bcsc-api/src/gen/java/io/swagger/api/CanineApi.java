@@ -29,7 +29,7 @@ import javax.validation.constraints.*;
 
 
 @io.swagger.annotations.Api(description = "the canine API")
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2018-04-20T00:28:28.441Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaJerseyServerCodegen", date = "2018-04-21T14:06:47.951Z")
 public class CanineApi  {
    private final CanineApiService delegate;
 
@@ -55,23 +55,23 @@ public class CanineApi  {
    }
 
     @GET
-    @Path("/nutrition/findLotIngredsByManLotNumber")
+    @Path("/nutrition/findLotTree")
     @Consumes({ "application/xml", "application/json", "multipart/form-data", "application/x-www-form-urlencoded" })
     @Produces({ "application/xml", "application/json" })
-    @io.swagger.annotations.ApiOperation(value = "Finds Lot Ingredients Blockchains by Manufacturer Lot Number", notes = "Finds Lot Ingredients Blockchains by Manufacturer Lot Number", response = LotTreeItem.class, responseContainer = "List", authorizations = {
+    @io.swagger.annotations.ApiOperation(value = "Finds Lot Ingredients Blockchains by Manufacturer Lot Number", notes = "Finds Lot Ingredients Blockchains by Manufacturer Lot Number", response = LotTreeItem.class, authorizations = {
         @io.swagger.annotations.Authorization(value = "petnutrition_auth", scopes = {
             @io.swagger.annotations.AuthorizationScope(scope = "write:pets", description = "modify pets in your account"),
             @io.swagger.annotations.AuthorizationScope(scope = "read:pets", description = "read your pets")
         })
     }, tags={ "lot","manufacturerLot", })
     @io.swagger.annotations.ApiResponses(value = { 
-        @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = LotTreeItem.class, responseContainer = "List"),
+        @io.swagger.annotations.ApiResponse(code = 200, message = "successful operation", response = LotTreeItem.class),
         
         @io.swagger.annotations.ApiResponse(code = 400, message = "Invalid status value", response = Void.class) })
-    public Response findLotIngreds(@ApiParam(value = "Manufacturer Lot Number",required=true) @QueryParam("lotNumber") String lotNumber
+    public Response findLotTree(@ApiParam(value = "Manufacturer Lot Number",required=true) @QueryParam("lotNumber") String lotNumber
 ,@Context SecurityContext securityContext)
     throws NotFoundException {
-        return delegate.findLotIngreds(lotNumber,securityContext);
+        return delegate.findLotTree(lotNumber,securityContext);
     }
     @GET
     @Path("/nutrition/findAllManLots")

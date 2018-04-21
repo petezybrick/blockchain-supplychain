@@ -11,9 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
-import com.petezybrick.bcsc.service.item.LotIngredientItem;
-import com.petezybrick.bcsc.service.item.LotSupplierBlockItem;
-import com.petezybrick.bcsc.service.item.LotTreeItem;
 
 
 public class LotCanineDao {
@@ -236,7 +233,7 @@ public class LotCanineDao {
 	}
 	
 	
-	public static List<String> sqlFindAllLotNumbers( ) throws Exception {
+	public static List<String> findAllLotNumbers( ) throws Exception {
 		try ( Connection con = PooledDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindAllLotNumbers);
 			){
@@ -255,7 +252,7 @@ public class LotCanineDao {
 	}
 	
 	
-	public static LotTreeItem findLotTree( String manufacturerLotNumber ) throws Exception {
+	public static LotTreeVo findLotTree( String manufacturerLotNumber ) throws Exception {
 		try ( Connection con = PooledDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindLotTree);
 			){
@@ -271,27 +268,27 @@ public class LotCanineDao {
 		}
 	}
 	
-	public static LotTreeItem buildLotTree( ResultSet rs ) throws Exception {
+	public static LotTreeVo buildLotTree( ResultSet rs ) throws Exception {
 		int prevIngredientSequence = -1;
-		LotTreeItem lotTreeItem = null;
-		List<LotIngredientItem> lotIngredientItems = null;
-		LotIngredientItem lotIngredientItem = null;
+		LotTreeVo lotTreeItem = null;
+		List<LotIngredientVo> lotIngredientItems = null;
+		LotIngredientVo lotIngredientItem = null;
 		while( rs.next() ) {
 			if( lotTreeItem == null ) {
-				lotTreeItem = new LotTreeItem().setManufacturerLotNumber(rs.getString("manufacturer_lot_number"))
+				lotTreeItem = new LotTreeVo().setManufacturerLotNumber(rs.getString("manufacturer_lot_number"))
 						.setManufacturerLotFilledDate(rs.getTimestamp("manufacturer_lot_filled_date"));
-				lotIngredientItems = new ArrayList<LotIngredientItem>();
+				lotIngredientItems = new ArrayList<LotIngredientVo>();
 				lotTreeItem.setLotIngredientItems(lotIngredientItems);
 			}
 			Integer ingredientSequence = rs.getInt("ingredient_sequence");
 			if( ingredientSequence != prevIngredientSequence ) {
-				lotIngredientItem = new LotIngredientItem()
+				lotIngredientItem = new LotIngredientVo()
 						.setIngredientName(rs.getString("ingredient_name"))
 						.setIngredientSequence(ingredientSequence);
 				lotIngredientItems.add(lotIngredientItem);
 				prevIngredientSequence = ingredientSequence;
 			}
-			LotSupplierBlockItem lotSupplierBlockItem = new LotSupplierBlockItem()
+			LotSupplierBlockVo lotSupplierBlockItem = new LotSupplierBlockVo()
 					.setBlockSequence(rs.getInt("block_sequence"))
 					.setCountry(rs.getString("country"))
 					.setDunsNumber(rs.getString("duns_number"))

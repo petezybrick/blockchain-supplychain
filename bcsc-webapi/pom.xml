@@ -55,6 +55,11 @@
 			<artifactId>bcsc-api</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.petezybrick</groupId>
+			<artifactId>bcsc-apiclient</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
 
 	</dependencies>

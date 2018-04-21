@@ -1,6 +1,6 @@
-package com.petezybrick.bcsc.service.item;
+package com.petezybrick.bcsc.service.database;
 
-public class LotSupplierBlockItem {
+public class LotSupplierBlockVo {
 	private Integer blockSequence;
 	private String hash;
 	private String previousHash;
@@ -37,35 +37,35 @@ public class LotSupplierBlockItem {
 	public String getDunsNumber() {
 		return dunsNumber;
 	}
-	public LotSupplierBlockItem setBlockSequence(Integer blockSequence) {
+	public LotSupplierBlockVo setBlockSequence(Integer blockSequence) {
 		this.blockSequence = blockSequence;
 		return this;
 	}
-	public LotSupplierBlockItem setHash(String hash) {
+	public LotSupplierBlockVo setHash(String hash) {
 		this.hash = hash;
 		return this;
 	}
-	public LotSupplierBlockItem setPreviousHash(String previousHash) {
+	public LotSupplierBlockVo setPreviousHash(String previousHash) {
 		this.previousHash = previousHash;
 		return this;
 	}
-	public LotSupplierBlockItem setSupplierLotNumber(String supplierLotNumber) {
+	public LotSupplierBlockVo setSupplierLotNumber(String supplierLotNumber) {
 		this.supplierLotNumber = supplierLotNumber;
 		return this;
 	}
-	public LotSupplierBlockItem setSupplierCategory(String supplierCategory) {
+	public LotSupplierBlockVo setSupplierCategory(String supplierCategory) {
 		this.supplierCategory = supplierCategory;
 		return this;
 	}
-	public LotSupplierBlockItem setSupplierSubCategory(String supplierSubCategory) {
+	public LotSupplierBlockVo setSupplierSubCategory(String supplierSubCategory) {
 		this.supplierSubCategory = supplierSubCategory;
 		return this;
 	}
-	public LotSupplierBlockItem setSupplierName(String supplierName) {
+	public LotSupplierBlockVo setSupplierName(String supplierName) {
 		this.supplierName = supplierName;
 		return this;
 	}
-	public LotSupplierBlockItem setDunsNumber(String dunsNumber) {
+	public LotSupplierBlockVo setDunsNumber(String dunsNumber) {
 		this.dunsNumber = dunsNumber;
 		return this;
 	}
@@ -81,11 +81,11 @@ public class LotSupplierBlockItem {
 	public String getStateProvince() {
 		return stateProvince;
 	}
-	public LotSupplierBlockItem setCountry(String country) {
+	public LotSupplierBlockVo setCountry(String country) {
 		this.country = country;
 		return this;
 	}
-	public LotSupplierBlockItem setStateProvince(String stateProvince) {
+	public LotSupplierBlockVo setStateProvince(String stateProvince) {
 		this.stateProvince = stateProvince;
 		return this;
 	}

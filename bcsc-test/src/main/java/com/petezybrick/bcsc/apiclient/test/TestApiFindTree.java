@@ -1,25 +1,19 @@
 package com.petezybrick.bcsc.apiclient.test;
 
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.petezybrick.bcsc.service.database.LotCanineDao;
-import com.petezybrick.bcsc.service.database.LotCanineVo;
-import com.petezybrick.bcsc.service.database.LotIngredientVo;
-import com.petezybrick.bcsc.service.database.LotSupplierBlockVo;
-import com.petezybrick.bcsc.service.database.LotTreeVo;
 import com.petezybrick.bcsc.test.base.TestBase;
 
 import io.swagger.client.ApiClient;
 import io.swagger.client.api.LotApi;
 import io.swagger.client.auth.OAuth;
+import io.swagger.client.model.LotTreeItem;
 
-public class TestApiFindManLots extends TestBase {
+public class TestApiFindTree extends TestBase {
 	public static final String existsLotNumber = "20180108-1";
 
 	@BeforeClass
@@ -47,13 +41,13 @@ public class TestApiFindManLots extends TestBase {
 	    petnutrition_auth.setAccessToken("special-key");
 	
 	    LotApi apiInstance = new LotApi(apiClient);
-    	List<String> lotNumbers = apiInstance.findManLots("2018-04-01", "2018-04-15", 123);
-    	System.out.println("Lot Numbers: " + lotNumbers);
-		Assert.assertNotNull(lotNumbers);
-		Assert.assertEquals(3, lotNumbers.size() );
-		Assert.assertEquals(lotNumbers.get(0), "1111" );
-		Assert.assertEquals(lotNumbers.get(1), "2222" );
-		Assert.assertEquals(lotNumbers.get(2), "3333" );
+    	LotTreeItem lotTreeItem = apiInstance.findLotTree(existsLotNumber);
+    	System.out.println("lotTreeItem: " + lotTreeItem);
+		Assert.assertNotNull(lotTreeItem);
+//		Assert.assertEquals(3, lotNumbers.size() );
+//		Assert.assertEquals(lotNumbers.get(0), "1111" );
+//		Assert.assertEquals(lotNumbers.get(1), "2222" );
+//		Assert.assertEquals(lotNumbers.get(2), "3333" );
 
 	}
 

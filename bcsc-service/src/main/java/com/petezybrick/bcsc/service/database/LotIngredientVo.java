@@ -1,17 +1,17 @@
-package com.petezybrick.bcsc.service.item;
+package com.petezybrick.bcsc.service.database;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LotIngredientItem {
+public class LotIngredientVo {
 	private Integer ingredientSequence;
 	private String ingredientName;
-	private List<LotSupplierBlockItem> lotSupplierBlockItems;
+	private List<LotSupplierBlockVo> lotSupplierBlockItems;
 	
 	
-	public LotIngredientItem() {
+	public LotIngredientVo() {
 		super();
-		this.lotSupplierBlockItems = new ArrayList<LotSupplierBlockItem>();
+		this.lotSupplierBlockItems = new ArrayList<LotSupplierBlockVo>();
 	}
 	
 	public Integer getIngredientSequence() {
@@ -20,18 +20,18 @@ public class LotIngredientItem {
 	public String getIngredientName() {
 		return ingredientName;
 	}
-	public List<LotSupplierBlockItem> getLotSupplierBlockItems() {
+	public List<LotSupplierBlockVo> getLotSupplierBlockItems() {
 		return lotSupplierBlockItems;
 	}
-	public LotIngredientItem setIngredientSequence(Integer ingredientSequence) {
+	public LotIngredientVo setIngredientSequence(Integer ingredientSequence) {
 		this.ingredientSequence = ingredientSequence;
 		return this;
 	}
-	public LotIngredientItem setIngredientName(String ingredientName) {
+	public LotIngredientVo setIngredientName(String ingredientName) {
 		this.ingredientName = ingredientName;
 		return this;
 	}
-	public LotIngredientItem setLotSupplierBlockItems(List<LotSupplierBlockItem> lotSupplierBlockItems) {
+	public LotIngredientVo setLotSupplierBlockItems(List<LotSupplierBlockVo> lotSupplierBlockItems) {
 		this.lotSupplierBlockItems = lotSupplierBlockItems;
 		return this;
 	}

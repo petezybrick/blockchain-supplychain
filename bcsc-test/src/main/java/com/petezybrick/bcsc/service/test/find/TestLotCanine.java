@@ -8,9 +8,9 @@ import org.junit.Test;
 
 import com.petezybrick.bcsc.service.database.LotCanineDao;
 import com.petezybrick.bcsc.service.database.LotCanineVo;
-import com.petezybrick.bcsc.service.item.LotIngredientItem;
-import com.petezybrick.bcsc.service.item.LotSupplierBlockItem;
-import com.petezybrick.bcsc.service.item.LotTreeItem;
+import com.petezybrick.bcsc.service.database.LotIngredientVo;
+import com.petezybrick.bcsc.service.database.LotSupplierBlockVo;
+import com.petezybrick.bcsc.service.database.LotTreeVo;
 import com.petezybrick.bcsc.test.base.TestBase;
 
 public class TestLotCanine extends TestBase {
@@ -49,7 +49,7 @@ public class TestLotCanine extends TestBase {
 
 	@Test
 	public void testFoundBuildLotTree() throws Exception {
-		LotTreeItem lotTreeItem = LotCanineDao.findLotTree(existsLotNumber);
+		LotTreeVo lotTreeItem = LotCanineDao.findLotTree(existsLotNumber);
 		dumpLotTreeItemToConsole( lotTreeItem );
 		Assert.assertNotNull(lotTreeItem);
 	}

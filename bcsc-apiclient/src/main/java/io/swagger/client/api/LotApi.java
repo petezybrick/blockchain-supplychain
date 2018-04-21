@@ -55,18 +55,18 @@ public class LotApi {
     }
 
     /**
-     * Build call for findLotIngreds
+     * Build call for findLotTree
      * @param lotNumber Manufacturer Lot Number (required)
      * @param progressListener Progress listener
      * @param progressRequestListener Progress request listener
      * @return Call to execute
      * @throws ApiException If fail to serialize the request body object
      */
-    public com.squareup.okhttp.Call findLotIngredsCall(String lotNumber, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    public com.squareup.okhttp.Call findLotTreeCall(String lotNumber, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         Object localVarPostBody = null;
 
         // create path and map variables
-        String localVarPath = "/canine/nutrition/findLotIngredsByManLotNumber";
+        String localVarPath = "/canine/nutrition/findLotTree";
 
         List<Pair> localVarQueryParams = new ArrayList<Pair>();
         List<Pair> localVarCollectionQueryParams = new ArrayList<Pair>();
@@ -106,15 +106,15 @@ public class LotApi {
     }
 
     @SuppressWarnings("rawtypes")
-    private com.squareup.okhttp.Call findLotIngredsValidateBeforeCall(String lotNumber, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
+    private com.squareup.okhttp.Call findLotTreeValidateBeforeCall(String lotNumber, final ProgressResponseBody.ProgressListener progressListener, final ProgressRequestBody.ProgressRequestListener progressRequestListener) throws ApiException {
         
         // verify the required parameter 'lotNumber' is set
         if (lotNumber == null) {
-            throw new ApiException("Missing the required parameter 'lotNumber' when calling findLotIngreds(Async)");
+            throw new ApiException("Missing the required parameter 'lotNumber' when calling findLotTree(Async)");
         }
         
 
-        com.squareup.okhttp.Call call = findLotIngredsCall(lotNumber, progressListener, progressRequestListener);
+        com.squareup.okhttp.Call call = findLotTreeCall(lotNumber, progressListener, progressRequestListener);
         return call;
 
     }
@@ -123,11 +123,11 @@ public class LotApi {
      * Finds Lot Ingredients Blockchains by Manufacturer Lot Number
      * Finds Lot Ingredients Blockchains by Manufacturer Lot Number
      * @param lotNumber Manufacturer Lot Number (required)
-     * @return List&lt;LotTreeItem&gt;
+     * @return LotTreeItem
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public List<LotTreeItem> findLotIngreds(String lotNumber) throws ApiException {
-        ApiResponse<List<LotTreeItem>> resp = findLotIngredsWithHttpInfo(lotNumber);
+    public LotTreeItem findLotTree(String lotNumber) throws ApiException {
+        ApiResponse<LotTreeItem> resp = findLotTreeWithHttpInfo(lotNumber);
         return resp.getData();
     }
 
@@ -135,12 +135,12 @@ public class LotApi {
      * Finds Lot Ingredients Blockchains by Manufacturer Lot Number
      * Finds Lot Ingredients Blockchains by Manufacturer Lot Number
      * @param lotNumber Manufacturer Lot Number (required)
-     * @return ApiResponse&lt;List&lt;LotTreeItem&gt;&gt;
+     * @return ApiResponse&lt;LotTreeItem&gt;
      * @throws ApiException If fail to call the API, e.g. server error or cannot deserialize the response body
      */
-    public ApiResponse<List<LotTreeItem>> findLotIngredsWithHttpInfo(String lotNumber) throws ApiException {
-        com.squareup.okhttp.Call call = findLotIngredsValidateBeforeCall(lotNumber, null, null);
-        Type localVarReturnType = new TypeToken<List<LotTreeItem>>(){}.getType();
+    public ApiResponse<LotTreeItem> findLotTreeWithHttpInfo(String lotNumber) throws ApiException {
+        com.squareup.okhttp.Call call = findLotTreeValidateBeforeCall(lotNumber, null, null);
+        Type localVarReturnType = new TypeToken<LotTreeItem>(){}.getType();
         return apiClient.execute(call, localVarReturnType);
     }
 
@@ -152,7 +152,7 @@ public class LotApi {
      * @return The request call
      * @throws ApiException If fail to process the API call, e.g. serializing the request body object
      */
-    public com.squareup.okhttp.Call findLotIngredsAsync(String lotNumber, final ApiCallback<List<LotTreeItem>> callback) throws ApiException {
+    public com.squareup.okhttp.Call findLotTreeAsync(String lotNumber, final ApiCallback<LotTreeItem> callback) throws ApiException {
 
         ProgressResponseBody.ProgressListener progressListener = null;
         ProgressRequestBody.ProgressRequestListener progressRequestListener = null;
@@ -173,8 +173,8 @@ public class LotApi {
             };
         }
 
-        com.squareup.okhttp.Call call = findLotIngredsValidateBeforeCall(lotNumber, progressListener, progressRequestListener);
-        Type localVarReturnType = new TypeToken<List<LotTreeItem>>(){}.getType();
+        com.squareup.okhttp.Call call = findLotTreeValidateBeforeCall(lotNumber, progressListener, progressRequestListener);
+        Type localVarReturnType = new TypeToken<LotTreeItem>(){}.getType();
         apiClient.executeAsync(call, localVarReturnType, callback);
         return call;
     }

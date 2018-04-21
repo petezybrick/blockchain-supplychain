@@ -26,7 +26,7 @@ import java.io.IOException;
 /**
  * LotSupplierBlockItem
  */
-@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-04-20T00:28:41.743Z")
+@javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaClientCodegen", date = "2018-04-21T14:06:51.656Z")
 public class LotSupplierBlockItem {
   @SerializedName("blockSequence")
   private Integer blockSequence = null;

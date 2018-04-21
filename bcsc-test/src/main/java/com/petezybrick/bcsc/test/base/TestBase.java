@@ -8,10 +8,10 @@ import org.junit.BeforeClass;
 
 import com.petezybrick.bcsc.common.config.CassandraBaseDao;
 import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
+import com.petezybrick.bcsc.service.database.LotIngredientVo;
+import com.petezybrick.bcsc.service.database.LotSupplierBlockVo;
+import com.petezybrick.bcsc.service.database.LotTreeVo;
 import com.petezybrick.bcsc.service.database.PooledDataSource;
-import com.petezybrick.bcsc.service.item.LotIngredientItem;
-import com.petezybrick.bcsc.service.item.LotSupplierBlockItem;
-import com.petezybrick.bcsc.service.item.LotTreeItem;
 
 public class TestBase {
 
@@ -32,12 +32,12 @@ public class TestBase {
 		CassandraBaseDao.disconnect();
 	}
 
-	public static void dumpLotTreeItemToConsole( LotTreeItem lotTreeItem ) throws Exception {
+	public static void dumpLotTreeItemToConsole( LotTreeVo lotTreeItem ) throws Exception {
 		System.out.println( "Manufacturer Lot Number: " + lotTreeItem.getManufacturerLotNumber() + 
 				", Manufacturer Filled Date: " + lotTreeItem.getManufacturerLotFilledDate());
-		for( LotIngredientItem lotIngredientItem :  lotTreeItem.getLotIngredientItems()) {
+		for( LotIngredientVo lotIngredientItem :  lotTreeItem.getLotIngredientItems()) {
 			System.out.println("\t" + lotIngredientItem.getIngredientName());
-			for(LotSupplierBlockItem lotSupplierBlockItem : lotIngredientItem.getLotSupplierBlockItems() ) {
+			for(LotSupplierBlockVo lotSupplierBlockItem : lotIngredientItem.getLotSupplierBlockItems() ) {
 				System.out.println("\t\t" + lotSupplierBlockItem.getSupplierName() );
 				System.out.println("\t\t\tOrigin Country: " + lotSupplierBlockItem.getCountry() + ", State/Province: " + lotSupplierBlockItem.getStateProvince());
 				System.out.println("\t\t\tDUNS Number: " + lotSupplierBlockItem.getDunsNumber());

@@ -4,13 +4,13 @@ All URIs are relative to *http://localhost/v2*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**findLotIngreds**](LotApi.md#findLotIngreds) | **GET** /canine/nutrition/findLotIngredsByManLotNumber | Finds Lot Ingredients Blockchains by Manufacturer Lot Number
+[**findLotTree**](LotApi.md#findLotTree) | **GET** /canine/nutrition/findLotTree | Finds Lot Ingredients Blockchains by Manufacturer Lot Number
 [**findManLots**](LotApi.md#findManLots) | **GET** /canine/nutrition/findAllManLots | Finds Manufacturer Lot Numbers by Optional Date Range and Limit
 
 
-<a name="findLotIngreds"></a>
-# **findLotIngreds**
-> List&lt;LotTreeItem&gt; findLotIngreds(lotNumber)
+<a name="findLotTree"></a>
+# **findLotTree**
+> LotTreeItem findLotTree(lotNumber)
 
 Finds Lot Ingredients Blockchains by Manufacturer Lot Number
 
@@ -34,10 +34,10 @@ petnutrition_auth.setAccessToken("YOUR ACCESS TOKEN");
 LotApi apiInstance = new LotApi();
 String lotNumber = "lotNumber_example"; // String | Manufacturer Lot Number
 try {
-    List<LotTreeItem> result = apiInstance.findLotIngreds(lotNumber);
+    LotTreeItem result = apiInstance.findLotTree(lotNumber);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling LotApi#findLotIngreds");
+    System.err.println("Exception when calling LotApi#findLotTree");
     e.printStackTrace();
 }
 ```
@@ -50,7 +50,7 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-[**List&lt;LotTreeItem&gt;**](LotTreeItem.md)
+[**LotTreeItem**](LotTreeItem.md)
 
 ### Authorization
 
