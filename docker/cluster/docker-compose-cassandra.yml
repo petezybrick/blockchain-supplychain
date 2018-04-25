@@ -1,20 +1,6 @@
 version: '2'
 
 services:
-  bcsc-mysql:
-    image: mysql:5.6
-    command: mysqld_safe
-    hostname: bcsc-mysql
-    container_name: bcsc-mysql
-    mem_limit: 2g
-    memswap_limit: 2g
-    expose:
-      - 3306
-    ports:
-      - 3307:3306
-    volumes:
-      - ../blockchain-shared:/tmp/blockchain-shared
-      
   bcsc-cassandra1:
     image: cassandra:3.9
     command: cassandra -f -R -Dcassandra.config=file:///conf/cassandra.yaml
@@ -86,25 +72,4 @@ services:
     volumes:
       - ../conf:/conf
       - ../blockchain-shared:/tmp/blockchain-shared
-
-  bcsc-jetty:
-    image: jetty:9.4.9
-    working_dir: /usr/local/jetty/
-    command: java -jar start.jar --module=http jetty.http.port=8080
-    hostname: bcsc-jetty
-    container_name: bcsc-jetty
-    mem_limit: 2g
-    memswap_limit: 2g
-    depends_on:
-      - bcsc-cassandra2
-    environment:
-      CONTACT_POINT: bcsc-cassandra2
-      ENV: dev_docker
-      KEYSPACE_NAME: bcsc
-    expose:
-      - 8080
-    ports:
-      - 8092:8080
-    volumes:
-      - ../jetty/webapps:/usr/local/jetty/webapps
  

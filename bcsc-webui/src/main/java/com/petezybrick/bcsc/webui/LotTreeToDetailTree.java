@@ -1,4 +1,4 @@
-package com.petezybrick.bcsc.web.html;
+package com.petezybrick.bcsc.webui;
 
 import io.swagger.client.model.LotIngredientItem;
 import io.swagger.client.model.LotSupplierBlockItem;
