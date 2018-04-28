@@ -1,0 +1,133 @@
+version: '2'
+
+services:
+    
+  bcsc-hive-mysql:
+    image: mysql:5.6
+    command: mysqld_safe
+    hostname: bcsc-hive-mysql
+    container_name: bcsc-hive-mysql
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 3306
+    ports:
+      - 3308:3306
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+  
+  bcsc-hive-namenode:
+    image: hadoop-presto:2.9.0
+    command: startNameNodeHiveServer.sh
+    hostname: bcsc-hive-namenode
+    container_name: bcsc-hive-namenode
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 50070
+      - 9083
+      - 10000
+      - 10002
+    ports:
+      - 50070:50070
+      - 9083:9083
+      - 10000:10000
+      - 10002:10002
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/conf-hive:/usr/local/hive/conf
+      - ../blockchain-shared/presto-hive/etc-hadoop:/usr/local/hadoop/etc/hadoop
+    depends_on:
+      - bcsc-hive-mysql
+
+      
+  bcsc-hive-secondarynamenode:
+    image: hadoop-presto:2.9.0
+    command: hdfs secondarynamenode
+    hostname: bcsc-hive-secondarynamenode
+    container_name: bcsc-hive-secondarynamenode
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 50090
+    ports:
+      - 50090:50090
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/conf-hive:/usr/local/hive/conf
+      - ../blockchain-shared/presto-hive/etc-hadoop:/usr/local/hadoop/etc/hadoop
+    depends_on:
+      - bcsc-hive-namenode      
+
+  bcsc-hive-datanode1:
+    image: hadoop-presto:2.9.0
+    command: hdfs datanode
+    hostname: bcsc-hive-datanode1
+    container_name: bcsc-hive-datanode1
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 50075
+    ports:
+      - 50075:50075
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/conf-hive:/usr/local/hive/conf
+      - ../blockchain-shared/presto-hive/etc-hadoop:/usr/local/hadoop/etc/hadoop
+    depends_on:
+      - bcsc-hive-secondarynamenode
+ 
+  bcsc-hive-datanode2:
+    image: hadoop-presto:2.9.0
+    command: hdfs datanode
+    hostname: bcsc-hive-datanode2
+    container_name: bcsc-hive-datanode2
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 50076
+    ports:
+      - 50076:50076
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/conf-hive:/usr/local/hive/conf
+      - ../blockchain-shared/presto-hive/etc-hadoop:/usr/local/hadoop/etc/hadoop
+    depends_on:
+      - bcsc-hive-secondarynamenode      
+
+
+  bcsc-presto-coordinator:
+    image: presto:0.194
+    command: python2.7 /usr/local/presto/bin/launcher.py run
+# tail -F -n0 /etc/hosts
+    hostname: bcsc-presto-coordinator
+    container_name: bcsc-presto-coordinator
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 8080
+    ports:
+      - 8090:8080
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/etc/coordinator:/usr/local/presto/etc
+    depends_on:
+      - bcsc-hive-secondarynamenode      
+  
+  bcsc-presto-worker1:
+    image: presto:0.194
+    command: python2.7 /usr/local/presto/bin/launcher.py run
+    hostname: bcsc-presto-worker1
+    container_name: bcsc-presto-worker1
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 8080
+    ports:
+      - 8091:8080
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/etc/worker1:/usr/local/presto/etc
+    depends_on:
+      - bcsc-presto-coordinator     
+ 

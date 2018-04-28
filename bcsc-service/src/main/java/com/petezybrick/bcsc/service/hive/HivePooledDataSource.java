@@ -17,7 +17,7 @@
  * @version 1.0.0, 2017-09
  * 
  */
-package com.petezybrick.bcsc.service.database;
+package com.petezybrick.bcsc.service.hive;
 
 import java.sql.Connection;
 
@@ -32,13 +32,13 @@ import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 /**
  * The Class PooledDataSource.
  */
-public class PooledDataSource {
+public class HivePooledDataSource {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(PooledDataSource.class);
+	private static final Logger logger = LogManager.getLogger(HivePooledDataSource.class);
 	
 	/** The pooled data source. */
-	private static PooledDataSource pooledDataSource;
+	private static HivePooledDataSource pooledDataSource;
 	
 	/** The bds. */
 	private BasicDataSource bds;
@@ -50,17 +50,15 @@ public class PooledDataSource {
 	 * @param masterConfig the master config
 	 * @throws Exception the exception
 	 */
-	private PooledDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
+	private HivePooledDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
 		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLogin(), masterConfig.getJdbcDriverClassName(), masterConfig.getJdbcUrl());
 		bds = new BasicDataSource();
-//		bds.setDriverClassName(masterConfig.getJdbcDriverClassName());
-//		bds.setUrl(masterConfig.getJdbcUrl());
-//		bds.setUsername(masterConfig.getJdbcLogin());
-//		bds.setPassword(masterConfig.getJdbcPassword());		
 		bds.setDriverClassName(masterConfig.getJdbcDriverClassName());
 		bds.setUrl(masterConfig.getJdbcUrl());
 		bds.setUsername(masterConfig.getJdbcLogin());
 		bds.setPassword(masterConfig.getJdbcPassword());
+		// Optimize for bulk inserts
+		bds.setDefaultAutoCommit(false);
 	}
 		
 		
@@ -71,15 +69,15 @@ public class PooledDataSource {
 	 * @return single instance of PooledDataSource
 	 * @throws Exception the exception
 	 */
-	public static PooledDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
+	public static HivePooledDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
 		if(pooledDataSource != null ) return pooledDataSource;
 		else {
-			pooledDataSource = new PooledDataSource(masterConfig);
+			pooledDataSource = new HivePooledDataSource(masterConfig);
 			return pooledDataSource;
 		}
 	}
 	
-	public static PooledDataSource getInstance( ) throws Exception {
+	public static HivePooledDataSource getInstance( ) throws Exception {
 		if(pooledDataSource != null ) return pooledDataSource;
 		else throw new Exception("SupplyBlockchainConfig not initialized");
 	}
