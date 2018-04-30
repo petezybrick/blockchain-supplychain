@@ -26,6 +26,11 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>5.1.41</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.orc</groupId>
+			<artifactId>orc-mapreduce</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 	</dependencies>
 
 </project>
