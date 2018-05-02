@@ -21,18 +21,19 @@ public class OrcReaderUsingVectorizedRowBatch {
 	public static void main(String [ ] args) throws java.io.IOException
 	{
 		Configuration conf = new Configuration();
-		Reader reader = OrcFile.createReader(new Path("/tmp/my-file.orc"),
+		Reader reader = OrcFile.createReader(new Path("/tmp/person.orc"),
 				OrcFile.readerOptions(conf));
 
 		RecordReader rows = reader.rows();
 		VectorizedRowBatch batch = reader.getSchema().createRowBatch();
 
+		LongColumnVector vPersonId = (LongColumnVector) batch.cols[0];
+		BytesColumnVector vLastName = (BytesColumnVector) batch.cols[1];
+		BytesColumnVector vFirstName = (BytesColumnVector) batch.cols[2];
+		BytesColumnVector vGender = (BytesColumnVector) batch.cols[3];
+		TimestampColumnVector vBirthDate = (TimestampColumnVector) batch.cols[4];
+
 		while (rows.nextBatch(batch)) {
-			LongColumnVector vPersonId = (LongColumnVector) batch.cols[0];
-			BytesColumnVector vLastName = (BytesColumnVector) batch.cols[1];
-			BytesColumnVector vFirstName = (BytesColumnVector) batch.cols[2];
-			BytesColumnVector vGender = (BytesColumnVector) batch.cols[3];
-			TimestampColumnVector vBirthDate = (TimestampColumnVector) batch.cols[4];
 
 			for(int r=0; r < batch.size; r++) {
 				int personId = (int) vPersonId.vector[r];

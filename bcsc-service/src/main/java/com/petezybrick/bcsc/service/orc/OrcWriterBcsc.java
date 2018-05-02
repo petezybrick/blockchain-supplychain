@@ -1,6 +1,7 @@
 package com.petezybrick.bcsc.service.orc;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,7 +33,7 @@ public class OrcWriterBcsc {
 
 	// TODO: how to handle dates/times
 	
-	public static void main(String [ ] args) throws java.io.IOException
+	public static void main(String [ ] args) throws Exception
 	{
 		// Initialize Test Data
 		List<String> persons = Arrays.asList( 
@@ -41,30 +42,24 @@ public class OrcWriterBcsc {
 				"3|Charles|Charlene|F|1955-03-04",
 				"4|Dempsey|David|M|1970-04-05"
 				);
-
-		// define the header once, which must correspond to the order of columns in the schema
-		List<String> hdr = Arrays.asList("person_id", "last_name", "first_name", "gender", "birth_date");
-		List<List<Object>> personRowCols = new ArrayList<List<Object>>();
+		
+		List<PersonOrcVo> personOrcVos = new ArrayList<PersonOrcVo>();
 		for( String person : persons ) {
-			List<Object> personCols = new ArrayList<Object>();
-			personRowCols.add(personCols);
 			String[] tokens = person.split("[|]");
-			personCols.add( Integer.parseInt(tokens[0]));
-			personCols.add( tokens[1]);
-			personCols.add( tokens[2]);
-			personCols.add( tokens[3]);
-			personCols.add( new Timestamp(System.currentTimeMillis() ));	// TODO: handle Dates
-		}
+			PersonOrcVo personOrcVo = new PersonOrcVo()
+					.setPersonId(Integer.parseInt(tokens[0]))
+					.setLastName(tokens[1])
+					.setFirstName(tokens[2])
+					.setGender(tokens[3])
+					.setBirthDate(new Timestamp(System.currentTimeMillis() ));	// TODO: handle Dates
+			personOrcVos.add( personOrcVo );
+		}		
+		List<List<Object>> personRowCols = PersonOrcDao.createRowsCols(personOrcVos);
 
-		
-		
 		Configuration conf = new Configuration();
-		TypeDescription schema = OrcSchemaMgr.mapOrcSchemas.get("person");
-		
-		new File("/tmp/person.orc").delete();
-		Writer writer = OrcFile.createWriter(new Path("/tmp/person.orc"),
-				OrcFile.writerOptions(conf)
-						.setSchema(schema));
+		String schemaName = "person";
+		String schemaVersion  = "1.0";
+		TypeDescription schema = OrcSchemaMgr.mapOrcSchemas.get( schemaName + "|" + schemaVersion );
 		
 		List<ColumnVector> colVectors = new ArrayList<ColumnVector>();
 		VectorizedRowBatch batch = schema.createRowBatch();
@@ -72,42 +67,47 @@ public class OrcWriterBcsc {
 			colVectors.add( batch.cols[i]);
 		}
 		
-		for( int row=0 ; row<personRowCols.size() ; row++ ) {
-			List<Object> personCols = personRowCols.get(row);
+		new File("/tmp/person.orc").delete();
+		Writer writer = OrcFile.createWriter(new Path("/tmp/person.orc"),
+				OrcFile.writerOptions(conf)
+						.setSchema(schema));
+		writer.addUserMetadata(OrcSchemaMgr.METADATA_SCHEMA_NAME_KEY, ByteBuffer.wrap( schemaName.getBytes() ));		
+		writer.addUserMetadata(OrcSchemaMgr.METADATA_SCHEMA_VERSION_KEY, ByteBuffer.wrap( schemaVersion.getBytes() ));		
+
+		for( List<Object> personCols : personRowCols ) {
+			int row = batch.size++;
 			System.out.println("++++++++++++++++++++++");
 			for( int col=0 ; col<schema.getFieldNames().size() ; col++ ) {
 				Object colValue = personCols.get(col).toString();
 				String fieldName = schema.getFieldNames().get(col);
 				String category = schema.getChildren().get(col).getCategory().getName();
-				if( schema.getChildren().get(col).getCategory() == Category.STRING ) {
-					colValue = String.valueOf(personCols.get(col));
-				}
 				System.out.println( fieldName + " " + colValue + " " + category);
 				ColumnVector cv = colVectors.get(col);
 				// TODO: set here based on data type and row
+				if( schema.getChildren().get(col).getCategory() == Category.STRING ) {
+					String value = (String)personCols.get(col);
+					BytesColumnVector bcv = (BytesColumnVector)cv;
+					bcv.setVal(row, value.getBytes());
+				} else if( schema.getChildren().get(col).getCategory() == Category.INT ) {
+					Integer value = (Integer)personCols.get(col);
+					LongColumnVector lcv = (LongColumnVector)cv;
+					lcv.vector[row] = value;
+				} else if( schema.getChildren().get(col).getCategory() == Category.TIMESTAMP ) {
+					Timestamp value = (Timestamp)personCols.get(col);
+					TimestampColumnVector tcv = (TimestampColumnVector)cv;
+					tcv.set(row, value);
+				}
+			}
+			if (batch.size == batch.getMaxSize()) {
+				writer.addRowBatch(batch);
+				batch.reset();
 			}
 		}
 		
-		
-//		for( String person : persons ) {
-//			int row = batch.size++;
-//			String[] tokens = person.split("[|]");
-//			vPersonId.vector[row] = Integer.parseInt(tokens[0]);
-//			vLastName.setVal(row, tokens[1].getBytes());
-//			vFirstName.setVal(row, tokens[2].getBytes());
-//			vGender.setVal(row, tokens[3].getBytes());
-//			Timestamp ts = new Timestamp(System.currentTimeMillis());
-//			vBirthDate.set(row, ts);
-//			if (batch.size == batch.getMaxSize()) {
-//				writer.addRowBatch(batch);
-//				batch.reset();
-//			}
-//		}
-//
-//		if (batch.size != 0) {
-//			writer.addRowBatch(batch);
-//			batch.reset();
-//		}
+		if (batch.size != 0) {
+			writer.addRowBatch(batch);
+			batch.reset();
+		}
 		writer.close();
 	}
 }
