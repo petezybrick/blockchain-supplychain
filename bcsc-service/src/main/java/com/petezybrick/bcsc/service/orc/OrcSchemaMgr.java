@@ -19,4 +19,18 @@ public class OrcSchemaMgr {
 				.addField("birth_date", TypeDescription.createTimestamp()));
 	}
 
+	public static void validateSchema( String schemaName, String schemaVersion, TypeDescription schemaIn ) 
+			throws SchemaFieldMismatchException {
+		TypeDescription schemaBase = mapOrcSchemas.get(schemaName + "|" + schemaVersion);
+		if( schemaBase == null ) throw new SchemaFieldMismatchException("Schema not found: name " + schemaName + ", version " + schemaVersion );
+		StringBuilder sbErrors = new StringBuilder();
+		if(	schemaBase.getChildren().size() != schemaIn.getChildren().size() ) {
+			sbErrors.append("Count mismatch, schemaIn has ").append(schemaIn.getChildren().size() )
+				.append(" fields, schemaBase has ").append(schemaBase.getChildren().size() )
+				.append(" fields.");
+			throw new SchemaFieldMismatchException(sbErrors.toString());
+		}
+		// TODO: compare the categories and field attributes, must be exactly the same		
+		if( sbErrors.length() > 0 ) throw new SchemaFieldMismatchException(sbErrors.toString());
+	}
 }
