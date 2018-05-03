@@ -16,7 +16,9 @@ public class OrcSchemaMgr {
 				.addField("last_name", TypeDescription.createString())
 				.addField("first_name", TypeDescription.createString())
 				.addField("gender", TypeDescription.createString())
-				.addField("birth_date", TypeDescription.createTimestamp()));
+				.addField("birth_date", TypeDescription.createDate())
+				.addField("created_at", TypeDescription.createTimestamp())
+		);
 	}
 
 	public static void validateSchema( String schemaName, String schemaVersion, TypeDescription schemaIn ) 

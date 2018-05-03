@@ -3,6 +3,7 @@ package com.petezybrick.bcsc.service.orc;
 import java.io.File;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
@@ -17,8 +19,8 @@ import org.apache.orc.OrcFile;
 import org.apache.orc.Reader;
 import org.apache.orc.RecordReader;
 import org.apache.orc.TypeDescription;
-import org.apache.orc.Writer;
 import org.apache.orc.TypeDescription.Category;
+import org.apache.orc.Writer;
 
 public class OrcCommon {
 
@@ -99,14 +101,24 @@ public class OrcCommon {
 		switch (category) {
 		case BYTE:
 		case BINARY:
+			BytesColumnVector bcb = (BytesColumnVector) colVectors.get(colOffset);
+			colValues.add( ByteBuffer.wrap( bcb.vector[rowOffset] ) );
 			break;
 		case BOOLEAN:
+			LongColumnVector lcvb = (LongColumnVector) colVectors.get(colOffset);
+			colValues.add( new Boolean( lcvb.vector[rowOffset] == 1 ? true : false ) );
 			break;
 		case DATE:
+			LongColumnVector lcvDate = (LongColumnVector)colVectors.get(colOffset);
+			colValues.add( LocalDate.ofEpochDay( lcvDate.vector[rowOffset] ) );		
 			break;
 		case DOUBLE:
+			DoubleColumnVector dcvd = (DoubleColumnVector) colVectors.get(colOffset);
+			colValues.add((Double) dcvd.vector[rowOffset]);
 			break;
 		case FLOAT:
+			DoubleColumnVector dcvf= (DoubleColumnVector) colVectors.get(colOffset);
+			colValues.add( new Float( dcvf.vector[rowOffset] ) );
 			break;
 		case INT:
 		case SHORT:
@@ -119,13 +131,13 @@ public class OrcCommon {
 			break;
 		case TIMESTAMP:
 			TimestampColumnVector tcv = (TimestampColumnVector) colVectors.get(colOffset);
-			colValues.add(tcv.getTimestampAsLong(rowOffset));
+			colValues.add( new Timestamp(tcv.getTime(rowOffset)) );
 			break;
 		case STRING:
 		case CHAR:
 		case VARCHAR:
-			BytesColumnVector bcv = (BytesColumnVector) colVectors.get(colOffset);
-			colValues.add(new String(bcv.vector[rowOffset], bcv.start[rowOffset], bcv.length[rowOffset]));
+			BytesColumnVector bcvs = (BytesColumnVector) colVectors.get(colOffset);
+			colValues.add(new String(bcvs.vector[rowOffset], bcvs.start[rowOffset], bcvs.length[rowOffset]));
 			break;
 		case DECIMAL: {
 			break;
@@ -147,14 +159,25 @@ public class OrcCommon {
 		switch (category) {
 		case BYTE:
 		case BINARY:
+			BytesColumnVector bcvb = (BytesColumnVector)colVector;
+			bcvb.setVal(rowOffset, ((ByteBuffer)colValues.get(colOffset)).array());
 			break;
 		case BOOLEAN:
+			LongColumnVector lcvb = (LongColumnVector)colVector;
+			lcvb.vector[rowOffset] = ( (Boolean)colValues.get(colOffset) ? 1 : 0);
 			break;
 		case DATE:
+			LocalDate lclDate = (LocalDate)colValues.get(colOffset);
+			LongColumnVector lcvd = (LongColumnVector)colVector;
+			lcvd.vector[rowOffset] = lclDate.toEpochDay();
 			break;
 		case DOUBLE:
+			DoubleColumnVector dcvd = (DoubleColumnVector)colVector;
+			dcvd.vector[rowOffset] = (float)colValues.get(colOffset);
 			break;
 		case FLOAT:
+			DoubleColumnVector dcvf = (DoubleColumnVector)colVector;
+			dcvf.vector[rowOffset] = (double)colValues.get(colOffset);
 			break;
 		case INT:
 		case SHORT:
@@ -172,8 +195,8 @@ public class OrcCommon {
 		case STRING:
 		case CHAR:
 		case VARCHAR:
-			BytesColumnVector bcv = (BytesColumnVector)colVector;
-			bcv.setVal(rowOffset, ((String)colValues.get(colOffset)).getBytes());
+			BytesColumnVector bcvs = (BytesColumnVector)colVector;
+			bcvs.setVal(rowOffset, ((String)colValues.get(colOffset)).getBytes());
 			break;
 		case DECIMAL: {
 			break;

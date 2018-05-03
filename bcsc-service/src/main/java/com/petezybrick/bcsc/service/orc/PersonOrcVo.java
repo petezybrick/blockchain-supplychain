@@ -1,6 +1,8 @@
 package com.petezybrick.bcsc.service.orc;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +11,8 @@ public class PersonOrcVo extends BaseOrcVo{
 	private String lastName;
 	private String firstName;
 	private String gender;
-	private Timestamp birthDate;
+	private LocalDate birthDate;
+	private Timestamp createdAt;
 	
 	
 	@Override
@@ -20,7 +23,9 @@ public class PersonOrcVo extends BaseOrcVo{
 			.setLastName( (String)objs.get(1) )
 			.setFirstName( (String)objs.get(2) )
 			.setGender( (String)objs.get(3) )
-			.setBirthDate( new Timestamp( (long)objs.get(4)) );
+			.setBirthDate( (LocalDate)objs.get(4) ) 
+			.setCreatedAt( (Timestamp)objs.get(5) ) 
+			;
 		} else throw new Exception("Invalid schema version " + schemaVersion );
 	}
 
@@ -33,6 +38,7 @@ public class PersonOrcVo extends BaseOrcVo{
 		objs.add(firstName);
 		objs.add(gender);
 		objs.add(birthDate);
+		objs.add(createdAt);
 		return objs;
 	}
 	
@@ -42,7 +48,8 @@ public class PersonOrcVo extends BaseOrcVo{
 		this.lastName = (String)objs.get(1);
 		this.firstName = (String)objs.get(2);
 		this.gender = (String)objs.get(3);
-		this.birthDate = (Timestamp)objs.get(4);
+		this.birthDate = (LocalDate)objs.get(4);
+		this.createdAt = (Timestamp)objs.get(5);
 	}
 	
 	
@@ -58,7 +65,7 @@ public class PersonOrcVo extends BaseOrcVo{
 	public String getGender() {
 		return gender;
 	}
-	public Timestamp getBirthDate() {
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
 	public PersonOrcVo setPersonId(Integer personId) {
@@ -77,7 +84,7 @@ public class PersonOrcVo extends BaseOrcVo{
 		this.gender = gender;
 		return this;
 	}
-	public PersonOrcVo setBirthDate(Timestamp birthDate) {
+	public PersonOrcVo setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 		return this;
 	}
@@ -85,8 +92,20 @@ public class PersonOrcVo extends BaseOrcVo{
 
 	@Override
 	public String toString() {
+		final SimpleDateFormat fmtr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZ");
 		return "PersonOrcVo [personId=" + personId + ", lastName=" + lastName + ", firstName=" + firstName + ", gender=" + gender + ", birthDate=" + birthDate
-				+ "]";
+				+ ", createdAt=" + fmtr.format(createdAt) + "]";
+	}
+
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+
+	public PersonOrcVo setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
+		return this;
 	}
 
 }
