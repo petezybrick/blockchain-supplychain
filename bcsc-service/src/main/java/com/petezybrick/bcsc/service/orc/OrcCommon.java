@@ -1,6 +1,7 @@
 package com.petezybrick.bcsc.service.orc;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -9,12 +10,16 @@ import java.util.List;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.hive.common.type.FastHiveDecimal;
+import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.ColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.DecimalColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
+import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
 import org.apache.orc.OrcFile;
 import org.apache.orc.Reader;
 import org.apache.orc.RecordReader;
@@ -99,10 +104,9 @@ public class OrcCommon {
 	private static void addColumnVectorByCategory(Category category, List<Object> colValues, List<ColumnVector> colVectors,
 			int rowOffset, int colOffset) throws Exception {
 		switch (category) {
-		case BYTE:
 		case BINARY:
 			BytesColumnVector bcb = (BytesColumnVector) colVectors.get(colOffset);
-			colValues.add( ByteBuffer.wrap( bcb.vector[rowOffset] ) );
+			colValues.add( ByteBuffer.wrap( bcb.vector[rowOffset],bcb.start[rowOffset], bcb.length[rowOffset] ) );
 			break;
 		case BOOLEAN:
 			LongColumnVector lcvb = (LongColumnVector) colVectors.get(colOffset);
@@ -140,9 +144,13 @@ public class OrcCommon {
 			colValues.add(new String(bcvs.vector[rowOffset], bcvs.start[rowOffset], bcvs.length[rowOffset]));
 			break;
 		case DECIMAL: {
+			DecimalColumnVector dcv = (DecimalColumnVector) colVectors.get(colOffset);
+			HiveDecimalWritable wdw = dcv.vector[rowOffset];
+			colValues.add(  wdw.getHiveDecimal().bigDecimalValue() );		
 			break;
 		}
 		// Not supported for this application
+		case BYTE:
 		case LIST:
 		case MAP:
 		case UNION:
@@ -157,7 +165,6 @@ public class OrcCommon {
 	private static void writeColumnVectorByCategory(Category category, List<Object> colValues, ColumnVector colVector,
 			int rowOffset, int colOffset) throws Exception {
 		switch (category) {
-		case BYTE:
 		case BINARY:
 			BytesColumnVector bcvb = (BytesColumnVector)colVector;
 			bcvb.setVal(rowOffset, ((ByteBuffer)colValues.get(colOffset)).array());
@@ -173,11 +180,11 @@ public class OrcCommon {
 			break;
 		case DOUBLE:
 			DoubleColumnVector dcvd = (DoubleColumnVector)colVector;
-			dcvd.vector[rowOffset] = (float)colValues.get(colOffset);
+			dcvd.vector[rowOffset] = (Double)colValues.get(colOffset);
 			break;
 		case FLOAT:
 			DoubleColumnVector dcvf = (DoubleColumnVector)colVector;
-			dcvf.vector[rowOffset] = (double)colValues.get(colOffset);
+			dcvf.vector[rowOffset] = (Float)colValues.get(colOffset);
 			break;
 		case INT:
 		case SHORT:
@@ -199,9 +206,13 @@ public class OrcCommon {
 			bcvs.setVal(rowOffset, ((String)colValues.get(colOffset)).getBytes());
 			break;
 		case DECIMAL: {
+			DecimalColumnVector dcv = (DecimalColumnVector)colVector;
+			HiveDecimal hd = HiveDecimal.create( (BigDecimal)colValues.get(colOffset) );
+			dcv.vector[ rowOffset ] = new HiveDecimalWritable(hd);
 			break;
 		}
 		// Not supported for this application
+		case BYTE:
 		case LIST:
 		case MAP:
 		case UNION:

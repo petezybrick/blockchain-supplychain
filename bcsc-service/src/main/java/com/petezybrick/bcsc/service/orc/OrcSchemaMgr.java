@@ -1,8 +1,15 @@
 package com.petezybrick.bcsc.service.orc;
 
+import java.nio.ByteBuffer;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
+import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.orc.TypeDescription;
 
 public class OrcSchemaMgr {
@@ -17,7 +24,12 @@ public class OrcSchemaMgr {
 				.addField("first_name", TypeDescription.createString())
 				.addField("gender", TypeDescription.createString())
 				.addField("birth_date", TypeDescription.createDate())
-				.addField("created_at", TypeDescription.createTimestamp())
+				.addField("created_at", TypeDescription.createTimestamp())				
+				.addField("person_byte", TypeDescription.createBinary())
+				.addField("person_boolean", TypeDescription.createBoolean())
+				.addField("person_double", TypeDescription.createDouble())
+				.addField("person_float", TypeDescription.createFloat())
+				.addField("person_decimal", TypeDescription.createDecimal())
 		);
 	}
 
