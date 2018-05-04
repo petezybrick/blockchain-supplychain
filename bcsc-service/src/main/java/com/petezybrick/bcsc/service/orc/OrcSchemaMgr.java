@@ -1,36 +1,93 @@
 package com.petezybrick.bcsc.service.orc;
 
-import java.nio.ByteBuffer;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
-import org.apache.hadoop.hive.ql.exec.vector.DoubleColumnVector;
-import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
-import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.orc.TypeDescription;
 
 public class OrcSchemaMgr {
 	public static final String METADATA_SCHEMA_NAME_KEY = "schema_name";
 	public static final String METADATA_SCHEMA_VERSION_KEY = "schema_version";
-	public static final Map<String,TypeDescription>mapOrcSchemas = new HashMap<String,TypeDescription>();
+	public static final Map<String,TypeDescription> mapOrcSchemas = new HashMap<String,TypeDescription>();
 	
 	static {
-		mapOrcSchemas.put("person|1.0", TypeDescription.createStruct()
-				.addField("person_id", TypeDescription.createInt())
-				.addField("last_name", TypeDescription.createString())
-				.addField("first_name", TypeDescription.createString())
-				.addField("gender", TypeDescription.createString())
-				.addField("birth_date", TypeDescription.createDate())
-				.addField("created_at", TypeDescription.createTimestamp())				
-				.addField("person_byte", TypeDescription.createBinary())
-				.addField("person_boolean", TypeDescription.createBoolean())
-				.addField("person_double", TypeDescription.createDouble())
-				.addField("person_float", TypeDescription.createFloat())
-				.addField("person_decimal", TypeDescription.createDecimal())
-		);
+		mapOrcSchemas.put("supplier|1.0", TypeDescription.createStruct()
+			     .addField("supplier_uuid", TypeDescription.createString())
+			     .addField("duns_number", TypeDescription.createString())
+			     .addField("supplier_name", TypeDescription.createString())
+			     .addField("supplier_category", TypeDescription.createString())
+			     .addField("supplier_sub_category", TypeDescription.createString())
+			     .addField("state_province", TypeDescription.createString())
+			     .addField("country", TypeDescription.createString())
+			     .addField("encoded_public_key", TypeDescription.createString())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+			mapOrcSchemas.put("supplier_blockchain|1.0", TypeDescription.createStruct()
+			     .addField("supplier_blockchain_uuid", TypeDescription.createString())
+			     .addField("supplier_type", TypeDescription.createString())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+			mapOrcSchemas.put("supplier_block|1.0", TypeDescription.createStruct()
+			     .addField("supplier_block_uuid", TypeDescription.createString())
+			     .addField("supplier_blockchain_uuid", TypeDescription.createString())
+			     .addField("hash", TypeDescription.createString())
+			     .addField("previous_hash", TypeDescription.createString())
+			     .addField("block_timestamp", TypeDescription.createTimestamp())
+			     .addField("block_sequence", TypeDescription.createInt())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+			mapOrcSchemas.put("supplier_block_transaction|1.0", TypeDescription.createStruct()
+			     .addField("supplier_block_transaction_uuid", TypeDescription.createString())
+			     .addField("supplier_block_uuid", TypeDescription.createString())
+			     .addField("transaction_id", TypeDescription.createString())
+			     .addField("encoded_public_key_from", TypeDescription.createString())
+			     .addField("encoded_public_key_to", TypeDescription.createString())
+			     .addField("signature", TypeDescription.createBinary())
+			     .addField("transaction_sequence", TypeDescription.createInt())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+			mapOrcSchemas.put("supplier_transaction|1.0", TypeDescription.createStruct()
+			     .addField("supplier_transaction_uuid", TypeDescription.createString())
+			     .addField("supplier_block_transaction_uuid", TypeDescription.createString())
+			     .addField("supplier_uuid", TypeDescription.createString())
+			     .addField("supplier_lot_number", TypeDescription.createString())
+			     .addField("item_number", TypeDescription.createString())
+			     .addField("description", TypeDescription.createString())
+			     .addField("qty", TypeDescription.createInt())
+			     .addField("units", TypeDescription.createString())
+			     .addField("shipped_date_iso8601", TypeDescription.createTimestamp())
+			     .addField("rcvd_date_iso8601", TypeDescription.createTimestamp())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+			mapOrcSchemas.put("lot_canine|1.0", TypeDescription.createStruct()
+			     .addField("lot_canine_uuid", TypeDescription.createString())
+			     .addField("manufacturer_lot_number", TypeDescription.createString())
+			     .addField("lot_filled_date", TypeDescription.createTimestamp())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+			mapOrcSchemas.put("map_lot_canine_supplier_blockchain|1.0", TypeDescription.createStruct()
+			     .addField("map_lot_canine_supplier_blockchain_uuid", TypeDescription.createString())
+			     .addField("lot_canine_uuid", TypeDescription.createString())
+			     .addField("supplier_blockchain_uuid", TypeDescription.createString())
+			     .addField("ingredient_sequence", TypeDescription.createInt())
+			     .addField("ingredient_name", TypeDescription.createString())
+			     .addField("insert_ts", TypeDescription.createTimestamp())
+			     .addField("update_ts", TypeDescription.createTimestamp())
+			     );
+
+		
 	}
 
 	public static void validateSchema( String schemaName, String schemaVersion, TypeDescription schemaIn ) 
