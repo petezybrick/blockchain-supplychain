@@ -20,23 +20,25 @@
 package com.petezybrick.bcsc.service.utils;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.Types;
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.orc.TypeDescription;
+import org.apache.orc.TypeDescription.Category;
 
+import com.petezybrick.bcsc.service.orc.BaseOrcVo;
+import com.petezybrick.bcsc.service.orc.OrcCommon;
+import com.petezybrick.bcsc.service.orc.OrcSchemaMgr;
 
 
 /**
@@ -45,30 +47,9 @@ import org.apache.logging.log4j.Logger;
 public class CreateHiveDaoVo {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(CreateHiveDaoVo.class);	
-	
-	/** The ds. */
-	private BasicDataSource ds;
-	
-	/** The table names. */
-	private List<String> tableNames;
-	
-	/** The target folder. */
+	private static final Logger logger = LogManager.getLogger(CreateHiveDaoVo.class);
 	private String targetFolder;
-	
-	/** The package name. */
 	private String packageName;
-	
-	/** The jdbc driver class name. */
-	private String jdbcDriverClassName; // "oracle.jdbc.driver.OracleDriver" "com.mysql.jdbc.Driver";
-	
-//	"jdbcDriverClassName": "com.mysql.jdbc.Driver",
-//	"jdbcInsertBlockSize": "1000",
-//	"jdbcLogin": "",
-//	"jdbcPassword": "Password*8",
-//	"jdbcUrl": "jdbc:mysql://iote2e-mysql-master:3306/db_iote2e_batch",
-	// "blood_glucose|blood_pressure" "/tmp" "com.pzybrick.iote2e.stream.persist" "iote2e_batch" "Password*8" "jdbc:mysql://localhost:3307/db_iote2e_batch"  "com.mysql.jdbc.Driver"
-	
 	
 	/**
  * The main method.
@@ -77,22 +58,7 @@ public class CreateHiveDaoVo {
  */
 public static void main(String[] args) {
 		try {
-			List<String> tableNames = Arrays.asList(args[0].split("[|]"));
-			String targetFolder = args[1];
-			String packageName = args[2];
-	        String jdbcLogin = args[3];
-	        String jdbcPassword = args[4];
-	        String jdbcUrl = args[5];
-	        String jdbcDriverClassName = args[6];
-	        BasicDataSource ds = new BasicDataSource();
-			ds.setDriverClassName(jdbcDriverClassName);
-			ds.setUsername(jdbcLogin);
-			ds.setPassword(jdbcPassword);
-			ds.setUrl(jdbcUrl);
-			ds.setDefaultAutoCommit(true);
-			
-			CreateHiveDaoVo generateVos = new CreateHiveDaoVo().setDs(ds).setTableNames(tableNames)
-					.setPackageName(packageName).setTargetFolder(targetFolder).setJdbcDriverClassName(jdbcDriverClassName);
+			CreateHiveDaoVo generateVos = new CreateHiveDaoVo( args[0], args[1] );
 			generateVos.process();
 
 		} catch (Exception e) {
@@ -100,6 +66,13 @@ public static void main(String[] args) {
 		}
 	}
 
+
+	public CreateHiveDaoVo( String targetFolder, String packageName ) throws Exception {
+		this.targetFolder = targetFolder;
+		this.packageName = packageName;
+	}
+
+	
 	/**
 	 * Process.
 	 *
@@ -107,39 +80,29 @@ public static void main(String[] args) {
 	 */
 	public void process() throws Exception {
 		Map<String, List<ColumnItem>> columnItemsByTableName = new HashMap<String, List<ColumnItem>>();
-		Connection conn = null;
+		Set<String> tableNameVersions = OrcSchemaMgr.mapOrcSchemas.keySet();
 		try {
-			conn = ds.getConnection();
-			DatabaseMetaData databaseMetaData = conn.getMetaData();
 			// get the column info for each table
-			for (String tableName : tableNames) {
-				System.out.println("processing " + tableName);
-				ResultSet rsPK = databaseMetaData.getPrimaryKeys(null, null, tableName );
-				Set<String> pkNames = new HashSet<String>();
-				while( rsPK.next() ) {
-					pkNames.add( rsPK.getString("COLUMN_NAME"));
-				}
+			for (String tableNameVersion : tableNameVersions) {
+				System.out.println("processing " + tableNameVersion );
 				
 				List<ColumnItem> columnItems = new ArrayList<ColumnItem>();
-				columnItemsByTableName.put(tableName, columnItems);
-				ResultSet resultSet = databaseMetaData.getColumns(null, null, tableName, null);
+				columnItemsByTableName.put(tableNameVersion, columnItems);
+				TypeDescription schema = OrcSchemaMgr.mapOrcSchemas.get(tableNameVersion);
 
-				while (resultSet.next()) {
-					String columnName = resultSet.getString("COLUMN_NAME");
-					int dataType = resultSet.getInt("DATA_TYPE");
-					long columnSize = resultSet.getLong("COLUMN_SIZE");
-					int decimalDigits = resultSet.getInt("DECIMAL_DIGITS");
+				for( int i=0 ; i<schema.getFieldNames().size() ; i++ ) {
+					String columnName = schema.getFieldNames().get(i);
+					Category category = schema.getChildren().get(i).getCategory();
+					int decimalDigits = 0;	// TODO
 					
-					JdbcTypeItem jdbcTypeItem = findJdbcTypes( dataType, columnSize, decimalDigits );
+					HiveTypeItem hiveTypeItem = findHiveType( category, decimalDigits );
 					ColumnItem columnItem = new ColumnItem()
 							.setName(columnName)
-							.setType(dataType)
-							.setSize(columnSize)
 							.setDecimalDigits(decimalDigits)
-							.setJavaType(jdbcTypeItem.getDataType())
-							.setJdbcGet(jdbcTypeItem.getGetter())
-							.setJdbcSet(jdbcTypeItem.getSetter())
-							.setPk( pkNames.contains(columnName));
+							.setJavaType(hiveTypeItem.getDataType())
+							.setJdbcGet(hiveTypeItem.getGetter())
+							.setJdbcSet(hiveTypeItem.getSetter())
+							;
 					columnItems.add(columnItem);
 				}
 			}
@@ -147,20 +110,20 @@ public static void main(String[] args) {
 		} catch (Exception e) {
 			throw e;
 		} finally {
-			if (conn != null) {
-				try {
-					conn.close();
-				} catch (Exception e) {
-				}
-			}
+
 		}
 
 		// create VO
 		for( Map.Entry<String, List<ColumnItem>> entry : columnItemsByTableName.entrySet() ) {
 			List<String> voClassRows = new ArrayList<String>();
-			String className = tableNameToClass(entry.getKey()) + "Vo";
+			String[] tokens = entry.getKey().split("[|]");
+			String tableName = tokens[0]; 
+			String tableVersion = tokens[1]; 
+
+			String className = tableNameToClass(tableName) + "Vo";
 			voClassRows.add("package " + packageName + ";\n");
 			voClassRows.add("");
+			voClassRows.add("import java.nio.ByteBuffer;");
 			voClassRows.add("import java.sql.ResultSet;");
 			voClassRows.add("import java.sql.SQLException;");
 			voClassRows.add("import java.sql.Timestamp;");
@@ -168,7 +131,7 @@ public static void main(String[] args) {
 			voClassRows.add("import org.apache.logging.log4j.Logger;");
 			voClassRows.add("");
 			voClassRows.add("");
-			voClassRows.add("public class " + className + " {");
+			voClassRows.add("public class " + className + " extends BaseOrcVo {");
 			voClassRows.add("\tprivate static final Logger logger = LogManager.getLogger(" + className + ".class);");
 			for( ColumnItem columnItem : entry.getValue() ) {
 				String javaName = columnNameToAttribute( columnItem.getName() );
@@ -183,6 +146,43 @@ public static void main(String[] args) {
 				voClassRows.add("\t\tthis." + javaName + " = rs." + columnItem.getJdbcGet() + columnItem.getName() + "\");" );
 			}
 			voClassRows.add("\t}" );
+
+			///////////////////////////////////////////////////
+			voClassRows.add("\t@Override");
+			voClassRows.add("\tpublic PersonOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {");
+			voClassRows.add("\t\tif( \"1.0\".equals(schemaVersion ) ) {");
+			voClassRows.add("\t\t\treturn new PersonOrcVo()");
+			voClassRows.add("\t\t\t\t.setPersonId((Integer)objs.get(0))");
+			voClassRows.add("\t\t\t\t.setLastName( (String)objs.get(1) )");
+			voClassRows.add("\t\t\t\t.setFirstName( (String)objs.get(2) )");
+			voClassRows.add("\t\t\t\t;");
+			voClassRows.add("\t\t} else throw new Exception(\"Invalid schema version \"" + tableVersion + ");" );
+			voClassRows.add("\t}");
+
+			
+//			// TODO: some automated way to ensure the same order as the schema
+//			public List<Object> toObjectList() throws Exception {
+//				List<Object> objs = new ArrayList<Object>();
+//				objs.add(personId);
+//				objs.add(lastName);
+//				objs.add(firstName);
+//				return objs;
+//			}
+//			
+//			
+//			public void fromObjectList( List<Object> objs ) throws Exception {
+//				this.personId = (Integer)objs.get(0);
+//				this.lastName = (String)objs.get(1);
+//				this.firstName = (String)objs.get(2);
+//				this.gender = (String)objs.get(3);
+//			}			
+//			
+			
+			
+			
+			
+			//////////////////////////////////////////////////////
+			
 			
 			// Getters
 			voClassRows.add("\n" );
@@ -229,51 +229,30 @@ public static void main(String[] args) {
 		// create DAO
 		for( Map.Entry<String, List<ColumnItem>> entry : columnItemsByTableName.entrySet() ) {
 			List<String> daoClassRows = new ArrayList<String>();
-			String className = tableNameToClass(entry.getKey()) + "Dao";
+			String[] tokens = entry.getKey().split("[|]");
+			String tableName = tokens[0]; 
+			String tableVersion = tokens[1]; 
+			String className = tableNameToClass(tableName) + "Dao";
 			daoClassRows.add("package " + packageName + ";");
 			daoClassRows.add("");
 			daoClassRows.add("import java.sql.ResultSet;");
-			daoClassRows.add("import java.sql.SQLException;");
 			daoClassRows.add("import java.sql.Connection;");
-			daoClassRows.add("import java.sql.Timestamp;");
 			daoClassRows.add("import java.sql.PreparedStatement;");
+			daoClassRows.add("import java.util.List;");
 			daoClassRows.add("import org.apache.logging.log4j.LogManager;");
-			daoClassRows.add("import org.apache.logging.log4j.Logger;");
-			daoClassRows.add("import com.pzybrick.learnblockchain.supplychain.SupplyBlockchainConfig;");		
+			daoClassRows.add("import org.apache.logging.log4j.Logger;");	
+			daoClassRows.add("import com.petezybrick.bcsc.service.database.PooledDataSource;");
+			daoClassRows.add("import com.petezybrick.bcsc.service.orc.OrcCommon;" );
 
 			daoClassRows.add("");
 			daoClassRows.add("");
 			daoClassRows.add("public class " + className + " {");
 			daoClassRows.add("\tprivate static final Logger logger = LogManager.getLogger(" + className + ".class);");
-			
-			StringBuilder sbDelete = new StringBuilder().append("\tprivate static String sqlDeleteByPk = \"DELETE FROM ").append(entry.getKey()).append(" WHERE ");
-			int numPks = 0;
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( columnItem.isPk() ) {
-					numPks++;
-					if( numPks > 1 ) sbDelete.append(" AND ");
-					sbDelete.append(columnItem.getName()).append("=?");
-				}
-			}
-			sbDelete.append("\";");
-			daoClassRows.add(sbDelete.toString());
-			
-			StringBuilder sbInsert = new StringBuilder().append("\tprivate static String sqlInsert = \"INSERT INTO ").append(entry.getKey()).append(" (");
-			StringBuilder sbQmarks = new StringBuilder();
-			boolean isFirst = true;
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( "insert_ts".equalsIgnoreCase(columnItem.getName())) continue;
-				if( !isFirst ) {
-					sbInsert.append(",");
-					sbQmarks.append(",");
-				} else isFirst = false;
-				sbInsert.append(columnItem.getName());
-				sbQmarks.append("?");
-			}
-			sbInsert.append(") VALUES (").append(sbQmarks).append(")\";");
-			daoClassRows.add(sbInsert.toString());
-			
-			StringBuilder sbFind = new StringBuilder().append("\tprivate static String sqlFindByPk = \"SELECT ");
+			daoClassRows.add("\tprivate static final String schemaName = \"" + tableName + "\";" );
+			daoClassRows.add("\tprivate static final String schemaVersion = \"" + tableVersion + "\";" );
+
+			boolean isFirst = false;
+			StringBuilder sbFind = new StringBuilder().append("\tprivate static String sqlFindTemplate = \"SELECT ");
 			isFirst = true;
 			for( ColumnItem columnItem : entry.getValue() ) {
 				if( !isFirst ) {
@@ -281,213 +260,34 @@ public static void main(String[] args) {
 				} else isFirst = false;
 				sbFind.append(columnItem.getName());
 			}
-			sbFind.append(" FROM ").append(entry.getKey()).append(" WHERE ");
-			numPks = 0;
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( columnItem.isPk() ) {
-					numPks++;
-					if( numPks > 1 ) sbDelete.append(" AND ");
-					sbFind.append(columnItem.getName()).append("=?");
-				}
-			}
+			sbFind.append(" FROM ").append(tableName).append(" WHERE <Criteria Here>");
 			sbFind.append("\";");			
 			daoClassRows.add(sbFind.toString());
 			daoClassRows.add("");
 			
-			String voName = tableNameToClass(entry.getKey()) + "Vo";
+			String voName = tableNameToClass(tableName) + "Vo";
 			String instanceName = voName.substring(0,1).toLowerCase() + voName.substring(1);
 			
-			daoClassRows.add("\tpublic static void insertBatchMode( Connection con, " + voName + " " + instanceName + " ) throws Exception {");
-			daoClassRows.add("\t\tPreparedStatement pstmt = null;");
-			daoClassRows.add("\t\ttry {");
-			daoClassRows.add("\t\t\tpstmt = con.prepareStatement(sqlInsert);");
-			daoClassRows.add("\t\t\tint offset = 1;");
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( "insert_ts".equalsIgnoreCase(columnItem.getName())) continue;
-				String javaName = columnNameToAttribute( columnItem.getName() );
-				String getter = "get" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "()";
-				daoClassRows.add("\t\t\tpstmt." + columnItem.getJdbcSet() + " offset++, " + instanceName + "." + getter + " );");
-			}
-			daoClassRows.add("\t\t\tpstmt.execute();");
-			daoClassRows.add("\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\tlogger.error(e.getMessage(), e);");
-			daoClassRows.add("\t\t\tthrow e;");
-			daoClassRows.add("\t\t} finally {");
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (pstmt != null)");
-			daoClassRows.add("\t\t\t\tpstmt.close();");
-			daoClassRows.add("\t\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(e);");
-			daoClassRows.add("\t\t\t}");
-			daoClassRows.add("\t\t}");
-			daoClassRows.add("\t}");
-			
 			daoClassRows.add("");
-			
-			
-			daoClassRows.add("\tpublic static void insert( SupplyBlockchainConfig supplyBlockchainConfig, " + voName + " " + instanceName + " ) throws Exception {");
-			daoClassRows.add("\t\tConnection con = null;");
-			daoClassRows.add("\t\tPreparedStatement pstmt = null;");
-			daoClassRows.add("\t\ttry {");
-			daoClassRows.add("\t\t\tcon = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();");
-			daoClassRows.add("\t\t\tcon.setAutoCommit(false);");
-			daoClassRows.add("\t\t\tpstmt = con.prepareStatement(sqlInsert);");
-			
-			daoClassRows.add("\t\t\tint offset = 1;");
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( "insert_ts".equalsIgnoreCase(columnItem.getName())) continue;
-				String javaName = columnNameToAttribute( columnItem.getName() );
-				String getter = "get" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "()";
-				daoClassRows.add("\t\t\tpstmt." + columnItem.getJdbcSet() + " offset++, " + instanceName + "." + getter + " );");
-			}
-			daoClassRows.add("\t\t\tpstmt.execute();");
-			daoClassRows.add("\t\t\tcon.commit();");
-			daoClassRows.add("\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\tlogger.error(e.getMessage(), e);");
-			
-			daoClassRows.add("\t\t\tif( con != null ) {");
-			daoClassRows.add("\t\t\t\ttry {");
-			daoClassRows.add("\t\t\t\t\tcon.rollback();");
-			daoClassRows.add("\t\t\t\t} catch(Exception erb ) {");
-			daoClassRows.add("\t\t\t\t\tlogger.warn(e.getMessage(), e);");
-			daoClassRows.add("\t\t\t\t}");
-			daoClassRows.add("\t\t\t}");
-			
-			daoClassRows.add("\t\t\tthrow e;");
-			daoClassRows.add("\t\t} finally {");
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (pstmt != null)");
-			daoClassRows.add("\t\t\t\t\tpstmt.close();");
-			daoClassRows.add("\t\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(e);");
-			daoClassRows.add("\t\t\t}");
-			
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (con != null)");
-			daoClassRows.add("\t\t\t\t\tcon.close();");
-			daoClassRows.add("\t\t\t} catch (Exception exCon) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(exCon.getMessage());");
-			daoClassRows.add("\t\t\t}");
-			
-			daoClassRows.add("\t\t}");
-			daoClassRows.add("\t}");
-			
-			daoClassRows.add("");		
-			
-			
-			daoClassRows.add("\tpublic static void deleteByPk( SupplyBlockchainConfig supplyBlockchainConfig, " + voName + " " + instanceName + " ) throws Exception {");
-			daoClassRows.add("\t\tConnection con = null;");
-			daoClassRows.add("\t\tPreparedStatement pstmt = null;");
-			daoClassRows.add("\t\ttry {");
-			daoClassRows.add("\t\t\tcon = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();");
-			daoClassRows.add("\t\t\tcon.setAutoCommit(true);");
-			daoClassRows.add("\t\t\tpstmt = con.prepareStatement(sqlDeleteByPk);");
-			
-			daoClassRows.add("\t\t\tint offset = 1;");
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( columnItem.isPk() ) {
-					String javaName = columnNameToAttribute( columnItem.getName() );
-					String getter = "get" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "()";
-					daoClassRows.add("\t\t\tpstmt." + columnItem.getJdbcSet() + " offset++, " + instanceName + "." + getter + " );");
-				}
-			}
-			daoClassRows.add("\t\t\tpstmt.execute();");
-			daoClassRows.add("\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\tlogger.error(e.getMessage(), e);");
-			
-			daoClassRows.add("\t\t\tif( con != null ) {");
-			daoClassRows.add("\t\t\t\ttry {");
-			daoClassRows.add("\t\t\t\t\tcon.rollback();");
-			daoClassRows.add("\t\t\t\t} catch(Exception erb ) {");
-			daoClassRows.add("\t\t\t\t\tlogger.warn(e.getMessage(), e);");
-			daoClassRows.add("\t\t\t\t}");
-			daoClassRows.add("\t\t\t}");
-			
-			daoClassRows.add("\t\t\tthrow e;");
-			daoClassRows.add("\t\t} finally {");
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (pstmt != null)");
-			daoClassRows.add("\t\t\t\t\tpstmt.close();");
-			daoClassRows.add("\t\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(e);");
-			daoClassRows.add("\t\t\t}");
-			
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (con != null)");
-			daoClassRows.add("\t\t\t\t\tcon.close();");
-			daoClassRows.add("\t\t\t} catch (Exception exCon) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(exCon.getMessage());");
-			daoClassRows.add("\t\t\t}");
-			daoClassRows.add("\t\t}");
-			daoClassRows.add("\t}");			
-			
 			daoClassRows.add("");
-			daoClassRows.add("\tpublic static void deleteBatchMode( Connection con, " + voName + " " + instanceName + " ) throws Exception {");
-			daoClassRows.add("\t\tPreparedStatement pstmt = null;");
-			daoClassRows.add("\t\ttry {");
-			daoClassRows.add("\t\t\tpstmt = con.prepareStatement(sqlDeleteByPk);");
+			daoClassRows.add("\tpublic static void writeOrc( String pathNameExt, List<List<Object>> rowsCols ) throws Exception {" );
+			daoClassRows.add("\t\tOrcCommon.write( pathNameExt, schemaName, schemaVersion, rowsCols );" );
+			daoClassRows.add("\t}" );
 			
+			daoClassRows.add("\tpublic static " + voName + " findByTemplate( " + voName + " " + instanceName + " ) throws Exception {");
+			daoClassRows.add("\t\ttry( Connection con = PooledDataSource.getInstance().getConnection();" );
+			daoClassRows.add("\t\t     PreparedStatement pstmt = con.prepareStatement(sqlFindTemplate); ) {" );
+			daoClassRows.add("\t\t\tcon.setAutoCommit(true);");		
 			daoClassRows.add("\t\t\tint offset = 1;");
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( columnItem.isPk() ) {
-					String javaName = columnNameToAttribute( columnItem.getName() );
-					String getter = "get" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "()";
-					daoClassRows.add("\t\t\tpstmt." + columnItem.getJdbcSet() + " offset++, " + instanceName + "." + getter + " );");
-				}
-			}
-			daoClassRows.add("\t\t\tpstmt.execute();");
-			daoClassRows.add("\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\tlogger.error(e.getMessage(), e);");
-			daoClassRows.add("\t\t\tthrow e;");
-			daoClassRows.add("\t\t} finally {");
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (pstmt != null)");
-			daoClassRows.add("\t\t\t\t\tpstmt.close();");
-			daoClassRows.add("\t\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(e);");
-			daoClassRows.add("\t\t\t}");
-			
-			daoClassRows.add("\t\t}");
-			daoClassRows.add("\t}");
-			daoClassRows.add("");
-			
-			
-			daoClassRows.add("\tpublic static " + voName + " findByPk( SupplyBlockchainConfig supplyBlockchainConfig, " + voName + " " + instanceName + " ) throws Exception {");
-			daoClassRows.add("\t\tConnection con = null;");
-			daoClassRows.add("\t\tPreparedStatement pstmt = null;");
-			daoClassRows.add("\t\ttry {");
-			daoClassRows.add("\t\t\tcon = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();");
-			daoClassRows.add("\t\t\tcon.setAutoCommit(true);");
-			daoClassRows.add("\t\t\tpstmt = con.prepareStatement(sqlFindByPk);");
-			
-			daoClassRows.add("\t\t\tint offset = 1;");
-			for( ColumnItem columnItem : entry.getValue() ) {
-				if( columnItem.isPk() ) {
-					String javaName = columnNameToAttribute( columnItem.getName() );
-					String getter = "get" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "()";
-					daoClassRows.add("\t\t\tpstmt." + columnItem.getJdbcSet() + " offset++, " + instanceName + "." + getter + " );");
-				}
-			}
+			daoClassRows.add("\t\t\t// pstmt.setString(offset++, " + instanceName + ".getAttribute( );");
 			daoClassRows.add("\t\t\tResultSet rs = pstmt.executeQuery();");
 			daoClassRows.add("\t\t\tif( rs.next() ) return new " + voName + "(rs);");
 			daoClassRows.add("\t\t\telse return null;");
-			
 			daoClassRows.add("\t\t} catch (Exception e) {");
 			daoClassRows.add("\t\t\tlogger.error(e.getMessage(), e);");
-			
 			daoClassRows.add("\t\t\tthrow e;");
-			daoClassRows.add("\t\t} finally {");
-			daoClassRows.add("\t\t\ttry {");
-			daoClassRows.add("\t\t\t\tif (pstmt != null)");
-			daoClassRows.add("\t\t\t\t\tpstmt.close();");
-			daoClassRows.add("\t\t\t} catch (Exception e) {");
-			daoClassRows.add("\t\t\t\tlogger.warn(e);");
-			daoClassRows.add("\t\t\t}");
-			
 			daoClassRows.add("\t\t}");
 			daoClassRows.add("\t}");		
-			
-				
 			daoClassRows.add("}" );
 			File output = new File(this.targetFolder + className + ".java");
 			output.delete();
@@ -558,23 +358,42 @@ public static void main(String[] args) {
 	 * @param decimalDigits the decimal digits
 	 * @return the jdbc type item
 	 */
-	public static JdbcTypeItem findJdbcTypes( int sqlType, long columnSize, int decimalDigits ) {
-		if( Types.CHAR == sqlType || Types.VARCHAR == sqlType ) {
-			return new JdbcTypeItem().setDataType("String").setGetter("getString(\"").setSetter("setString(");
-		} else if( Types.VARBINARY == sqlType || Types.BINARY == sqlType ) {
-			return new JdbcTypeItem().setDataType("byte[]").setGetter("getBytes(\"").setSetter("setBytes(");
-		} else if( Types.TIMESTAMP == sqlType  ) {
-			return new JdbcTypeItem().setDataType("Timestamp").setGetter("getTimestamp(\"").setSetter("setTimestamp(");
-		} else if( Types.DATE == sqlType  ) {
-			return new JdbcTypeItem().setDataType("Date").setGetter("getDate(\"").setSetter("setDate(");
-		}  else if( Types.DECIMAL == sqlType || Types.INTEGER == sqlType ) {
-			if( decimalDigits == 0 ) {
-				return new JdbcTypeItem().setDataType("int").setGetter("getInt(\"").setSetter("setInt(");
-			} else {
-				return new JdbcTypeItem().setDataType("float").setGetter("getFloat(\"").setSetter("setFloat(");
-			}
-		} else {
-			return new JdbcTypeItem().setDataType("UNKNOWN").setGetter("getUNKNOWN(\"").setSetter("setUNKNOWN(");
+	public static HiveTypeItem findHiveType( Category category, int decimalDigits ) throws Exception {
+		switch (category) {
+		case BINARY:
+			return new HiveTypeItem().setDataType("ByteBuffer").setGetter("getBytes(\"").setSetter("setBytes(");
+		case BOOLEAN:
+			return new HiveTypeItem().setDataType("Boolean").setGetter("getBoolean(\"").setSetter("setBoolean(");
+		case DATE:
+			return new HiveTypeItem().setDataType("Date").setGetter("getDate(\"").setSetter("setDate(");
+		case DOUBLE:
+			return new HiveTypeItem().setDataType("Double").setGetter("getDouble(\"").setSetter("setDouble(");
+		case FLOAT:
+			return new HiveTypeItem().setDataType("Float").setGetter("getFloat(\"").setSetter("setFloat(");
+		case INT:
+			return new HiveTypeItem().setDataType("Integer").setGetter("getInt(\"").setSetter("setInteger(");
+		case SHORT:
+			return new HiveTypeItem().setDataType("Integer").setGetter("getInt(\"").setSetter("setInteger(");
+		case LONG:
+			return new HiveTypeItem().setDataType("Long").setGetter("getLong(\"").setSetter("setLong(");
+		case TIMESTAMP:
+			return new HiveTypeItem().setDataType("Timestamp").setGetter("getTimestamp(\"").setSetter("setTimestamp(");
+		case STRING:
+		case CHAR:
+		case VARCHAR:
+			return new HiveTypeItem().setDataType("String").setGetter("getString(\"").setSetter("setString(");
+		case DECIMAL: {
+			return new HiveTypeItem().setDataType("BigDecimal").setGetter("getBigDecimal(\"").setSetter("setBigDecimal(");
+		}
+		// Not supported for this application
+		case BYTE:
+		case LIST:
+		case MAP:
+		case UNION:
+		case STRUCT:
+			throw new Exception("Unsupported category for this application: " + category);
+		default:
+			throw new IllegalArgumentException("Unknown type " + category);
 		}
 	}
 	
@@ -582,7 +401,7 @@ public static void main(String[] args) {
 	/**
 	 * The Class JdbcTypeItem.
 	 */
-	public static class JdbcTypeItem {
+	public static class HiveTypeItem {
 		
 		/** The data type. */
 		private String dataType;
@@ -626,7 +445,7 @@ public static void main(String[] args) {
 		 * @param dataType the data type
 		 * @return the jdbc type item
 		 */
-		public JdbcTypeItem setDataType(String dataType) {
+		public HiveTypeItem setDataType(String dataType) {
 			this.dataType = dataType;
 			return this;
 		}
@@ -637,7 +456,7 @@ public static void main(String[] args) {
 		 * @param getter the getter
 		 * @return the jdbc type item
 		 */
-		public JdbcTypeItem setGetter(String getter) {
+		public HiveTypeItem setGetter(String getter) {
 			this.getter = getter;
 			return this;
 		}
@@ -648,7 +467,7 @@ public static void main(String[] args) {
 		 * @param setter the setter
 		 * @return the jdbc type item
 		 */
-		public JdbcTypeItem setSetter(String setter) {
+		public HiveTypeItem setSetter(String setter) {
 			this.setter = setter;
 			return this;
 		}
@@ -853,110 +672,6 @@ public static void main(String[] args) {
 			return this;
 		}
 
-	}
-
-
-	/**
-	 * Gets the table names.
-	 *
-	 * @return the table names
-	 */
-	public List<String> getTableNames() {
-		return tableNames;
-	}
-
-	/**
-	 * Gets the target folder.
-	 *
-	 * @return the target folder
-	 */
-	public String getTargetFolder() {
-		return targetFolder;
-	}
-
-	/**
-	 * Gets the package name.
-	 *
-	 * @return the package name
-	 */
-	public String getPackageName() {
-		return packageName;
-	}
-
-	/**
-	 * Sets the table names.
-	 *
-	 * @param tableNames the table names
-	 * @return the creates the basic dao vo
-	 */
-	public CreateHiveDaoVo setTableNames(List<String> tableNames) {
-		this.tableNames = tableNames;
-		return this;
-	}
-
-	/**
-	 * Sets the target folder.
-	 *
-	 * @param targetFolder the target folder
-	 * @return the creates the basic dao vo
-	 */
-	public CreateHiveDaoVo setTargetFolder(String targetFolder) {
-		if( !targetFolder.endsWith("/")) targetFolder = targetFolder + "/";
-		this.targetFolder = targetFolder;
-		return this;
-	}
-
-	/**
-	 * Sets the package name.
-	 *
-	 * @param packageName the package name
-	 * @return the creates the basic dao vo
-	 */
-	public CreateHiveDaoVo setPackageName(String packageName) {
-		this.packageName = packageName;
-		return this;
-	}
-
-
-	/**
-	 * Gets the ds.
-	 *
-	 * @return the ds
-	 */
-	public BasicDataSource getDs() {
-		return ds;
-	}
-
-
-	/**
-	 * Sets the ds.
-	 *
-	 * @param ds the ds
-	 * @return the creates the basic dao vo
-	 */
-	public CreateHiveDaoVo setDs(BasicDataSource ds) {
-		this.ds = ds;
-		return this;
-	}
-
-	/**
-	 * Gets the jdbc driver class name.
-	 *
-	 * @return the jdbc driver class name
-	 */
-	public String getJdbcDriverClassName() {
-		return jdbcDriverClassName;
-	}
-
-	/**
-	 * Sets the jdbc driver class name.
-	 *
-	 * @param jdbcDriverClassName the jdbc driver class name
-	 * @return the creates the basic dao vo
-	 */
-	public CreateHiveDaoVo setJdbcDriverClassName(String jdbcDriverClassName) {
-		this.jdbcDriverClassName = jdbcDriverClassName;
-		return this;
 	}
 
 }

@@ -20,15 +20,15 @@ public class OrcSchemaMgr {
 			     .addField("state_province", TypeDescription.createString())
 			     .addField("country", TypeDescription.createString())
 			     .addField("encoded_public_key", TypeDescription.createString())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 			mapOrcSchemas.put("supplier_blockchain|1.0", TypeDescription.createStruct()
 			     .addField("supplier_blockchain_uuid", TypeDescription.createString())
 			     .addField("supplier_type", TypeDescription.createString())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 			mapOrcSchemas.put("supplier_block|1.0", TypeDescription.createStruct()
@@ -38,8 +38,8 @@ public class OrcSchemaMgr {
 			     .addField("previous_hash", TypeDescription.createString())
 			     .addField("block_timestamp", TypeDescription.createTimestamp())
 			     .addField("block_sequence", TypeDescription.createInt())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 			mapOrcSchemas.put("supplier_block_transaction|1.0", TypeDescription.createStruct()
@@ -50,8 +50,8 @@ public class OrcSchemaMgr {
 			     .addField("encoded_public_key_to", TypeDescription.createString())
 			     .addField("signature", TypeDescription.createBinary())
 			     .addField("transaction_sequence", TypeDescription.createInt())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 			mapOrcSchemas.put("supplier_transaction|1.0", TypeDescription.createStruct()
@@ -65,16 +65,16 @@ public class OrcSchemaMgr {
 			     .addField("units", TypeDescription.createString())
 			     .addField("shipped_date_iso8601", TypeDescription.createTimestamp())
 			     .addField("rcvd_date_iso8601", TypeDescription.createTimestamp())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 			mapOrcSchemas.put("lot_canine|1.0", TypeDescription.createStruct()
 			     .addField("lot_canine_uuid", TypeDescription.createString())
 			     .addField("manufacturer_lot_number", TypeDescription.createString())
 			     .addField("lot_filled_date", TypeDescription.createTimestamp())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 			mapOrcSchemas.put("map_lot_canine_supplier_blockchain|1.0", TypeDescription.createStruct()
@@ -83,8 +83,8 @@ public class OrcSchemaMgr {
 			     .addField("supplier_blockchain_uuid", TypeDescription.createString())
 			     .addField("ingredient_sequence", TypeDescription.createInt())
 			     .addField("ingredient_name", TypeDescription.createString())
-			     .addField("insert_ts", TypeDescription.createTimestamp())
-			     .addField("update_ts", TypeDescription.createTimestamp())
+
+
 			     );
 
 		
