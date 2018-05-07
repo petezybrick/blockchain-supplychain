@@ -20,10 +20,6 @@
 package com.petezybrick.bcsc.service.utils;
 
 import java.io.File;
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,8 +32,6 @@ import org.apache.logging.log4j.Logger;
 import org.apache.orc.TypeDescription;
 import org.apache.orc.TypeDescription.Category;
 
-import com.petezybrick.bcsc.service.orc.BaseOrcVo;
-import com.petezybrick.bcsc.service.orc.OrcCommon;
 import com.petezybrick.bcsc.service.orc.OrcSchemaMgr;
 
 
