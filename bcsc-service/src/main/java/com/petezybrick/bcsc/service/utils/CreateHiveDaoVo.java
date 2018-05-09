@@ -146,7 +146,6 @@ public static void main(String[] args) {
 			}
 			voClassRows.add("\t}" );
 
-			///////////////////////////////////////////////////
 			voClassRows.add("");
 			voClassRows.add("");
 			voClassRows.add("\t@Override");
