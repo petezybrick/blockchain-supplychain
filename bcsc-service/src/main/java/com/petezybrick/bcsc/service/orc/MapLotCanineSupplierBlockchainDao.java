@@ -1,4 +1,4 @@
-package com.petezybrick.bcsc.service.orcdev;
+package com.petezybrick.bcsc.service.orc;
 
 import java.sql.ResultSet;
 import java.sql.Connection;
@@ -10,25 +10,25 @@ import com.petezybrick.bcsc.service.database.PooledDataSource;
 import com.petezybrick.bcsc.service.orc.OrcCommon;
 
 
-public class SupplierBlockTransactionDao {
-	private static final Logger logger = LogManager.getLogger(SupplierBlockTransactionDao.class);
-	private static final String schemaName = "supplier_block_transaction";
+public class MapLotCanineSupplierBlockchainDao {
+	private static final Logger logger = LogManager.getLogger(MapLotCanineSupplierBlockchainDao.class);
+	private static final String schemaName = "map_lot_canine_supplier_blockchain";
 	private static final String schemaVersion = "1.0";
-	private static String sqlFindTemplate = "SELECT supplier_block_transaction_uuid,supplier_block_uuid,transaction_id,encoded_public_key_from,encoded_public_key_to,signature,transaction_sequence FROM supplier_block_transaction WHERE <Criteria Here>";
+	private static String sqlFindTemplate = "SELECT map_lot_canine_supplier_blockchain_uuid,lot_canine_uuid,supplier_blockchain_uuid,ingredient_sequence,ingredient_name FROM map_lot_canine_supplier_blockchain WHERE <Criteria Here>";
 
 
 
 	public static void writeOrc( String pathNameExt, List<List<Object>> rowsCols ) throws Exception {
 		OrcCommon.write( pathNameExt, schemaName, schemaVersion, rowsCols );
 	}
-	public static SupplierBlockTransactionVo findByTemplate( SupplierBlockTransactionVo supplierBlockTransactionVo ) throws Exception {
+	public static MapLotCanineSupplierBlockchainVo findByTemplate( MapLotCanineSupplierBlockchainVo mapLotCanineSupplierBlockchainVo ) throws Exception {
 		try( Connection con = PooledDataSource.getInstance().getConnection();
 		     PreparedStatement pstmt = con.prepareStatement(sqlFindTemplate); ) {
 			con.setAutoCommit(true);
 			int offset = 1;
-			// pstmt.setString(offset++, supplierBlockTransactionVo.getAttribute( );
+			// pstmt.setString(offset++, mapLotCanineSupplierBlockchainVo.getAttribute( );
 			ResultSet rs = pstmt.executeQuery();
-			if( rs.next() ) return new SupplierBlockTransactionVo(rs);
+			if( rs.next() ) return new MapLotCanineSupplierBlockchainVo(rs);
 			else return null;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

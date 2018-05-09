@@ -1,15 +1,17 @@
-package com.petezybrick.bcsc.service.orcdev;
+package com.petezybrick.bcsc.service.orc;
 
 
 import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class MapLotCanineSupplierBlockchainVo {
+public class MapLotCanineSupplierBlockchainVo extends BaseOrcVo {
 	private static final Logger logger = LogManager.getLogger(MapLotCanineSupplierBlockchainVo.class);
 	private String mapLotCanineSupplierBlockchainUuid;
 	private String lotCanineUuid;
@@ -28,6 +30,42 @@ public class MapLotCanineSupplierBlockchainVo {
 		this.supplierBlockchainUuid = rs.getString("supplier_blockchain_uuid");
 		this.ingredientSequence = rs.getInt("ingredient_sequence");
 		this.ingredientName = rs.getString("ingredient_name");
+	}
+
+
+	@Override
+	public MapLotCanineSupplierBlockchainVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+		if( "1.0".equals(schemaVersion ) ) {
+			return new MapLotCanineSupplierBlockchainVo()
+				.setMapLotCanineSupplierBlockchainUuid((String)objs.get(0))
+				.setLotCanineUuid((String)objs.get(1))
+				.setSupplierBlockchainUuid((String)objs.get(2))
+				.setIngredientSequence((Integer)objs.get(3))
+				.setIngredientName((String)objs.get(4))
+				;
+		} else throw new Exception("Invalid schema version 1.0");
+	}
+
+
+	@Override
+	public void fromObjectList( List<Object> objs ) throws Exception {
+		this.mapLotCanineSupplierBlockchainUuid = (String)objs.get(0);
+		this.lotCanineUuid = (String)objs.get(1);
+		this.supplierBlockchainUuid = (String)objs.get(2);
+		this.ingredientSequence = (Integer)objs.get(3);
+		this.ingredientName = (String)objs.get(4);
+	}
+
+
+	@Override
+	public List<Object> toObjectList() throws Exception {
+		List<Object> objs = new ArrayList<Object>();
+		objs.add(mapLotCanineSupplierBlockchainUuid);
+		objs.add(lotCanineUuid);
+		objs.add(supplierBlockchainUuid);
+		objs.add(ingredientSequence);
+		objs.add(ingredientName);
+		return objs;
 	}
 
 
@@ -69,11 +107,3 @@ public class MapLotCanineSupplierBlockchainVo {
 		return this;
 	}
 }
-
-// MapLotCanineSupplierBlockchainVo mapLotCanineSupplierBlockchainVo = new MapLotCanineSupplierBlockchainVo()
-//	 .setMapLotCanineSupplierBlockchainUuid("xxx")
-//	 .setLotCanineUuid("xxx")
-//	 .setSupplierBlockchainUuid("xxx")
-//	 .setIngredientSequence("xxx")
-//	 .setIngredientName("xxx")
-//	 ;

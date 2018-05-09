@@ -1,15 +1,17 @@
-package com.petezybrick.bcsc.service.orcdev;
+package com.petezybrick.bcsc.service.orc;
 
 
 import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class SupplierBlockVo {
+public class SupplierBlockVo extends BaseOrcVo {
 	private static final Logger logger = LogManager.getLogger(SupplierBlockVo.class);
 	private String supplierBlockUuid;
 	private String supplierBlockchainUuid;
@@ -30,6 +32,45 @@ public class SupplierBlockVo {
 		this.previousHash = rs.getString("previous_hash");
 		this.blockTimestamp = rs.getTimestamp("block_timestamp");
 		this.blockSequence = rs.getInt("block_sequence");
+	}
+
+
+	@Override
+	public SupplierBlockVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+		if( "1.0".equals(schemaVersion ) ) {
+			return new SupplierBlockVo()
+				.setSupplierBlockUuid((String)objs.get(0))
+				.setSupplierBlockchainUuid((String)objs.get(1))
+				.setHash((String)objs.get(2))
+				.setPreviousHash((String)objs.get(3))
+				.setBlockTimestamp((Timestamp)objs.get(4))
+				.setBlockSequence((Integer)objs.get(5))
+				;
+		} else throw new Exception("Invalid schema version 1.0");
+	}
+
+
+	@Override
+	public void fromObjectList( List<Object> objs ) throws Exception {
+		this.supplierBlockUuid = (String)objs.get(0);
+		this.supplierBlockchainUuid = (String)objs.get(1);
+		this.hash = (String)objs.get(2);
+		this.previousHash = (String)objs.get(3);
+		this.blockTimestamp = (Timestamp)objs.get(4);
+		this.blockSequence = (Integer)objs.get(5);
+	}
+
+
+	@Override
+	public List<Object> toObjectList() throws Exception {
+		List<Object> objs = new ArrayList<Object>();
+		objs.add(supplierBlockUuid);
+		objs.add(supplierBlockchainUuid);
+		objs.add(hash);
+		objs.add(previousHash);
+		objs.add(blockTimestamp);
+		objs.add(blockSequence);
+		return objs;
 	}
 
 
@@ -78,12 +119,3 @@ public class SupplierBlockVo {
 		return this;
 	}
 }
-
-// SupplierBlockVo supplierBlockVo = new SupplierBlockVo()
-//	 .setSupplierBlockUuid("xxx")
-//	 .setSupplierBlockchainUuid("xxx")
-//	 .setHash("xxx")
-//	 .setPreviousHash("xxx")
-//	 .setBlockTimestamp("xxx")
-//	 .setBlockSequence("xxx")
-//	 ;

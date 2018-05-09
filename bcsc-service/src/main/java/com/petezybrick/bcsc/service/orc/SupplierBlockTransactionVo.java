@@ -1,15 +1,17 @@
-package com.petezybrick.bcsc.service.orcdev;
+package com.petezybrick.bcsc.service.orc;
 
 
 import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 
-public class SupplierBlockTransactionVo {
+public class SupplierBlockTransactionVo extends BaseOrcVo {
 	private static final Logger logger = LogManager.getLogger(SupplierBlockTransactionVo.class);
 	private String supplierBlockTransactionUuid;
 	private String supplierBlockUuid;
@@ -32,6 +34,48 @@ public class SupplierBlockTransactionVo {
 		this.encodedPublicKeyTo = rs.getString("encoded_public_key_to");
 		this.signature = ByteBuffer.wrap( rs.getBytes("signature") );
 		this.transactionSequence = rs.getInt("transaction_sequence");
+	}
+
+
+	@Override
+	public SupplierBlockTransactionVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+		if( "1.0".equals(schemaVersion ) ) {
+			return new SupplierBlockTransactionVo()
+				.setSupplierBlockTransactionUuid((String)objs.get(0))
+				.setSupplierBlockUuid((String)objs.get(1))
+				.setTransactionId((String)objs.get(2))
+				.setEncodedPublicKeyFrom((String)objs.get(3))
+				.setEncodedPublicKeyTo((String)objs.get(4))
+				.setSignature((ByteBuffer)objs.get(5))
+				.setTransactionSequence((Integer)objs.get(6))
+				;
+		} else throw new Exception("Invalid schema version 1.0");
+	}
+
+
+	@Override
+	public void fromObjectList( List<Object> objs ) throws Exception {
+		this.supplierBlockTransactionUuid = (String)objs.get(0);
+		this.supplierBlockUuid = (String)objs.get(1);
+		this.transactionId = (String)objs.get(2);
+		this.encodedPublicKeyFrom = (String)objs.get(3);
+		this.encodedPublicKeyTo = (String)objs.get(4);
+		this.signature = (ByteBuffer)objs.get(5);
+		this.transactionSequence = (Integer)objs.get(6);
+	}
+
+
+	@Override
+	public List<Object> toObjectList() throws Exception {
+		List<Object> objs = new ArrayList<Object>();
+		objs.add(supplierBlockTransactionUuid);
+		objs.add(supplierBlockUuid);
+		objs.add(transactionId);
+		objs.add(encodedPublicKeyFrom);
+		objs.add(encodedPublicKeyTo);
+		objs.add(signature);
+		objs.add(transactionSequence);
+		return objs;
 	}
 
 
@@ -87,13 +131,3 @@ public class SupplierBlockTransactionVo {
 		return this;
 	}
 }
-
-// SupplierBlockTransactionVo supplierBlockTransactionVo = new SupplierBlockTransactionVo()
-//	 .setSupplierBlockTransactionUuid("xxx")
-//	 .setSupplierBlockUuid("xxx")
-//	 .setTransactionId("xxx")
-//	 .setEncodedPublicKeyFrom("xxx")
-//	 .setEncodedPublicKeyTo("xxx")
-//	 .setSignature("xxx")
-//	 .setTransactionSequence("xxx")
-//	 ;

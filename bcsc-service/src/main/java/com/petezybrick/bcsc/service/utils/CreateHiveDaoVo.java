@@ -121,6 +121,8 @@ public static void main(String[] args) {
 			voClassRows.add("import java.sql.ResultSet;");
 			voClassRows.add("import java.sql.SQLException;");
 			voClassRows.add("import java.sql.Timestamp;");
+			voClassRows.add("import java.util.ArrayList;");
+			voClassRows.add("import java.util.List;");
 			voClassRows.add("import org.apache.logging.log4j.LogManager;");
 			voClassRows.add("import org.apache.logging.log4j.Logger;");
 			voClassRows.add("");
@@ -137,22 +139,53 @@ public static void main(String[] args) {
 			voClassRows.add("\n\n\tpublic " + className + "(ResultSet rs) throws SQLException {" );
 			for( ColumnItem columnItem : entry.getValue() ) {
 				String javaName = columnNameToAttribute( columnItem.getName() );
-				voClassRows.add("\t\tthis." + javaName + " = rs." + columnItem.getJdbcGet() + columnItem.getName() + "\");" );
+				if( !"getBytes(\"".equals(columnItem.getJdbcGet()))
+					voClassRows.add("\t\tthis." + javaName + " = rs." + columnItem.getJdbcGet() + columnItem.getName() + "\");" );
+				else
+					voClassRows.add("\t\tthis." + javaName + " = ByteBuffer.wrap( rs." + columnItem.getJdbcGet() + columnItem.getName() + "\") );" );
 			}
 			voClassRows.add("\t}" );
 
 			///////////////////////////////////////////////////
+			voClassRows.add("");
+			voClassRows.add("");
 			voClassRows.add("\t@Override");
-			voClassRows.add("\tpublic PersonOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {");
+			voClassRows.add("\tpublic " + className + " createInstance(List<Object> objs, String schemaVersion ) throws Exception {");
 			voClassRows.add("\t\tif( \"1.0\".equals(schemaVersion ) ) {");
-			voClassRows.add("\t\t\treturn new PersonOrcVo()");
-			voClassRows.add("\t\t\t\t.setPersonId((Integer)objs.get(0))");
-			voClassRows.add("\t\t\t\t.setLastName( (String)objs.get(1) )");
-			voClassRows.add("\t\t\t\t.setFirstName( (String)objs.get(2) )");
+			voClassRows.add("\t\t\treturn new " + className + "()");
+			int cnt = 0;
+			for( ColumnItem columnItem : entry.getValue() ) {
+				String javaName = columnNameToAttribute( columnItem.getName() );
+				String setter = "set" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1);
+				voClassRows.add("\t\t\t\t." + setter + "((" + columnItem.getJavaType() + ")objs.get("+ cnt++ +"))");
+			}
 			voClassRows.add("\t\t\t\t;");
-			voClassRows.add("\t\t} else throw new Exception(\"Invalid schema version \"" + tableVersion + ");" );
+			voClassRows.add("\t\t} else throw new Exception(\"Invalid schema version " + tableVersion + "\");" );
 			voClassRows.add("\t}");
 
+			voClassRows.add("");
+			voClassRows.add("");
+			voClassRows.add("\t@Override");
+			voClassRows.add("\tpublic void fromObjectList( List<Object> objs ) throws Exception {");
+			cnt = 0;
+			for( ColumnItem columnItem : entry.getValue() ) {
+				String javaName = columnNameToAttribute( columnItem.getName() );
+				voClassRows.add("\t\tthis." + javaName + " = (" + columnItem.getJavaType() +")objs.get(" + cnt++ + ");");
+			}
+			voClassRows.add("\t}");
+
+			voClassRows.add("");
+			voClassRows.add("");
+			voClassRows.add("\t@Override");
+			voClassRows.add("\tpublic List<Object> toObjectList() throws Exception {");
+			voClassRows.add("\t\tList<Object> objs = new ArrayList<Object>();");
+			cnt = 0;
+			for( ColumnItem columnItem : entry.getValue() ) {
+				String javaName = columnNameToAttribute( columnItem.getName() );
+				voClassRows.add("\t\tobjs.add(" + javaName + ");");
+			}
+			voClassRows.add("\t\treturn objs;");
+			voClassRows.add("\t}");
 			
 //			// TODO: some automated way to ensure the same order as the schema
 //			public List<Object> toObjectList() throws Exception {
@@ -162,6 +195,8 @@ public static void main(String[] args) {
 //				objs.add(firstName);
 //				return objs;
 //			}
+//			
+//			
 //			
 //			
 //			public void fromObjectList( List<Object> objs ) throws Exception {
@@ -196,21 +231,8 @@ public static void main(String[] args) {
 				voClassRows.add("\t\tthis." + javaName + " = " + javaName  + ";");
 				voClassRows.add("\t\treturn this;");
 				voClassRows.add("\t}");
-			}
-				
+			}				
 			voClassRows.add( "}" );
-			
-			// Empty builder
-			voClassRows.add( "" );
-			String instanceName = className.substring(0,1).toLowerCase() + className.substring(1);
-			voClassRows.add( "// " + className + " " + instanceName + " = new " + className + "()");
-			for( ColumnItem columnItem : entry.getValue() ) {
-				String javaName = columnNameToAttribute( columnItem.getName() );
-				voClassRows.add( "//\t .set" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "(\"xxx\")" );
-			}
-			voClassRows.add( "//\t ;" );
-
-			
 			File output = new File(this.targetFolder + className + ".java");
 			output.delete();
 			FileUtils.writeLines(output, voClassRows);
