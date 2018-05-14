@@ -114,7 +114,7 @@ public static void main(String[] args) {
 			String tableName = tokens[0]; 
 			String tableVersion = tokens[1]; 
 
-			String className = tableNameToClass(tableName) + "Vo";
+			String className = tableNameToClass(tableName) + "OrcVo";
 			voClassRows.add("package " + packageName + ";\n");
 			voClassRows.add("");
 			voClassRows.add("import java.nio.ByteBuffer;");
@@ -125,6 +125,8 @@ public static void main(String[] args) {
 			voClassRows.add("import java.util.List;");
 			voClassRows.add("import org.apache.logging.log4j.LogManager;");
 			voClassRows.add("import org.apache.logging.log4j.Logger;");
+			voClassRows.add("import com.petezybrick.bcsc.service.database.*;");
+			
 			voClassRows.add("");
 			voClassRows.add("");
 			voClassRows.add("public class " + className + " extends BaseOrcVo {");
@@ -145,9 +147,18 @@ public static void main(String[] args) {
 					voClassRows.add("\t\tthis." + javaName + " = ByteBuffer.wrap( rs." + columnItem.getJdbcGet() + columnItem.getName() + "\") );" );
 			}
 			voClassRows.add("\t}" );
-
+			
+			String fromVoName = tableNameToClass(tableName) + "Vo";
+			voClassRows.add("\n\n\tpublic " + className + "(" + fromVoName + " fromVo) throws SQLException {" );
+			for( ColumnItem columnItem : entry.getValue() ) {
+				String javaName = columnNameToAttribute( columnItem.getName() );
+				String getter = "get" + javaName.substring(0, 1).toUpperCase() + javaName.substring(1) + "()";
+				voClassRows.add("\t\tthis." + javaName + " = fromVo." + getter + ";" );
+			}
+			voClassRows.add("\t}" );
 			voClassRows.add("");
 			voClassRows.add("");
+			
 			voClassRows.add("\t@Override");
 			voClassRows.add("\tpublic " + className + " createInstance(List<Object> objs, String schemaVersion ) throws Exception {");
 			voClassRows.add("\t\tif( \"1.0\".equals(schemaVersion ) ) {");
@@ -247,7 +258,7 @@ public static void main(String[] args) {
 			String[] tokens = entry.getKey().split("[|]");
 			String tableName = tokens[0]; 
 			String tableVersion = tokens[1]; 
-			String className = tableNameToClass(tableName) + "Dao";
+			String className = tableNameToClass(tableName) + "OrcDao";
 			daoClassRows.add("package " + packageName + ";");
 			daoClassRows.add("");
 			daoClassRows.add("import java.sql.ResultSet;");
@@ -280,7 +291,7 @@ public static void main(String[] args) {
 			daoClassRows.add(sbFind.toString());
 			daoClassRows.add("");
 			
-			String voName = tableNameToClass(tableName) + "Vo";
+			String voName = tableNameToClass(tableName) + "OrcVo";
 			String instanceName = voName.substring(0,1).toLowerCase() + voName.substring(1);
 			
 			daoClassRows.add("");
@@ -288,6 +299,8 @@ public static void main(String[] args) {
 			daoClassRows.add("\tpublic static void writeOrc( String pathNameExt, List<List<Object>> rowsCols ) throws Exception {" );
 			daoClassRows.add("\t\tOrcCommon.write( pathNameExt, schemaName, schemaVersion, rowsCols );" );
 			daoClassRows.add("\t}" );
+			daoClassRows.add("");
+			daoClassRows.add("");
 			
 			daoClassRows.add("\tpublic static " + voName + " findByTemplate( " + voName + " " + instanceName + " ) throws Exception {");
 			daoClassRows.add("\t\ttry( Connection con = PooledDataSource.getInstance().getConnection();" );

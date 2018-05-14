@@ -42,6 +42,20 @@ import com.petezybrick.bcsc.service.database.SupplierDao;
 import com.petezybrick.bcsc.service.database.SupplierTransactionDao;
 import com.petezybrick.bcsc.service.database.SupplierTransactionVo;
 import com.petezybrick.bcsc.service.database.SupplierVo;
+import com.petezybrick.bcsc.service.orc.LotCanineOrcDao;
+import com.petezybrick.bcsc.service.orc.LotCanineOrcVo;
+import com.petezybrick.bcsc.service.orc.MapLotCanineSupplierBlockchainOrcDao;
+import com.petezybrick.bcsc.service.orc.MapLotCanineSupplierBlockchainOrcVo;
+import com.petezybrick.bcsc.service.orc.SupplierBlockOrcDao;
+import com.petezybrick.bcsc.service.orc.SupplierBlockOrcVo;
+import com.petezybrick.bcsc.service.orc.SupplierBlockTransactionOrcDao;
+import com.petezybrick.bcsc.service.orc.SupplierBlockTransactionOrcVo;
+import com.petezybrick.bcsc.service.orc.SupplierBlockchainOrcDao;
+import com.petezybrick.bcsc.service.orc.SupplierBlockchainOrcVo;
+import com.petezybrick.bcsc.service.orc.SupplierOrcDao;
+import com.petezybrick.bcsc.service.orc.SupplierOrcVo;
+import com.petezybrick.bcsc.service.orc.SupplierTransactionOrcDao;
+import com.petezybrick.bcsc.service.orc.SupplierTransactionOrcVo;
 import com.petezybrick.bcsc.sim.run.SimBlockchainSequenceItem.DescCatSubcatItem;
 
 public class GenSimSuppliers {
@@ -136,7 +150,7 @@ public class GenSimSuppliers {
 				allSupplierBlockchainVos.addAll(supplierBlockchainVos);
 			}
 			
-			createSupplierBlockchainsTables(allSupplierBlockchainVos);
+			//createSupplierBlockchainsTables(allSupplierBlockchainVos);
 			
 			// a Lot of Canine Nutrition consists of Ingredients, each Ingredient comes from a chain of suppliers
 			// 		For each ingredient type, i.e. Brewers Rice, there are multiple suppliers, aka multiple blockchains
@@ -181,8 +195,65 @@ public class GenSimSuppliers {
 				}
 				simProdWeek = simProdWeek.plusWeeks(1);
 			}
+			
+			// ORC files
+			String path = System.getProperty("java.io.tmpdir");
+			if( !path.endsWith("/")) path = path + "/";
+			String pathNameExt = null;
+			List<List<Object>> rowsColsSupplier = new ArrayList<List<Object>>();
+			for( SupplierVo supplierVo : supplierVos ) rowsColsSupplier.add( new SupplierOrcVo(supplierVo).toObjectList());
+			pathNameExt = path + "supplier/" + BlockchainUtils.generateSortableUuid();
+			SupplierOrcDao.writeOrc(pathNameExt, rowsColsSupplier);
+
+			List<List<Object>> rowsColsSupplierBlockchain = new ArrayList<List<Object>>();
+			List<List<Object>> rowsColsSupplierBlock = new ArrayList<List<Object>>();
+			List<List<Object>> rowsColsSupplierBlockTransaction = new ArrayList<List<Object>>();
+			List<List<Object>> rowsColsSupplierTransaction = new ArrayList<List<Object>>();
+			for( SupplierBlockchainVo supplierBlockchainVo : allSupplierBlockchainVos ) { 
+				rowsColsSupplierBlockchain.add( new SupplierBlockchainOrcVo(supplierBlockchainVo).toObjectList());
+				if( supplierBlockchainVo.getSupplierBlockVos() != null ) {
+					for( SupplierBlockVo supplierBlockVo : supplierBlockchainVo.getSupplierBlockVos() ) {
+						rowsColsSupplierBlock.add( new SupplierBlockOrcVo(supplierBlockVo).toObjectList());
+						if( supplierBlockVo.getSupplierBlockTransactionVo() != null ) {
+							rowsColsSupplierBlockTransaction.add( 
+								new SupplierBlockTransactionOrcVo(supplierBlockVo.getSupplierBlockTransactionVo()).toObjectList());
+							if( supplierBlockVo.getSupplierBlockTransactionVo().getSupplierTransactionVo() != null ) { 
+								rowsColsSupplierTransaction.add( 
+										new SupplierTransactionOrcVo(supplierBlockVo.getSupplierBlockTransactionVo().getSupplierTransactionVo()).toObjectList());
+							}
+						}
+					}
+				}
+			}
+			pathNameExt = path + "supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
+			SupplierBlockchainOrcDao.writeOrc(pathNameExt, rowsColsSupplierBlockchain);
+			pathNameExt = path + "supplier_block/" + BlockchainUtils.generateSortableUuid();
+			SupplierBlockOrcDao.writeOrc(pathNameExt, rowsColsSupplierBlock);
+			pathNameExt = path + "supplier_block_transaction/" + BlockchainUtils.generateSortableUuid();
+			SupplierBlockTransactionOrcDao.writeOrc(pathNameExt, rowsColsSupplierBlockTransaction);
+			pathNameExt = path + "supplier_transaction/" + BlockchainUtils.generateSortableUuid();
+			SupplierTransactionOrcDao.writeOrc(pathNameExt, rowsColsSupplierTransaction);
+			
+			List<List<Object>> rowsColsLotCanine = new ArrayList<List<Object>>();
+			List<List<Object>> rowsColsMapLotCanineSupplierBlockchainVo = new ArrayList<List<Object>>();
+			for( LotCanineVo lotCanineVo : lotCanineVos ) {
+				rowsColsLotCanine.add( new LotCanineOrcVo(lotCanineVo).toObjectList());
+				if( lotCanineVo.getMapLotCanineSupplierBlockchainVos() != null ) {
+					for( MapLotCanineSupplierBlockchainVo mapLotCanineSupplierBlockchainVo : lotCanineVo.getMapLotCanineSupplierBlockchainVos() ) {
+						rowsColsMapLotCanineSupplierBlockchainVo.add( 
+								new MapLotCanineSupplierBlockchainOrcVo(mapLotCanineSupplierBlockchainVo).toObjectList() );
+					}
+				}
+			}
+			pathNameExt = path + "lot_canine/" + BlockchainUtils.generateSortableUuid();
+			LotCanineOrcDao.writeOrc(pathNameExt, rowsColsLotCanine);
+			pathNameExt = path + "Map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
+			MapLotCanineSupplierBlockchainOrcDao.writeOrc(pathNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
+			
 			try (Connection con = PooledDataSource.getInstance().getConnection();){
 				con.setAutoCommit(false);
+				SupplierDao.insertBatchList( supplierVos );
+				SupplierBlockchainDao.insertBatchList( con, allSupplierBlockchainVos );
 				LotCanineDao.insertBatchList(con, lotCanineVos);
 				con.commit();
 			}
@@ -272,7 +343,6 @@ public class GenSimSuppliers {
 			else
 				prefChar = 'A';
 		}
-		SupplierDao.insertBatchList( supplierVos );
 
 		return supplierVos;
 	}

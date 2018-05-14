@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.petezybrick.bcsc.service.database.*;
 
 
-public class MapLotCanineSupplierBlockchainVo extends BaseOrcVo {
-	private static final Logger logger = LogManager.getLogger(MapLotCanineSupplierBlockchainVo.class);
+public class MapLotCanineSupplierBlockchainOrcVo extends BaseOrcVo {
+	private static final Logger logger = LogManager.getLogger(MapLotCanineSupplierBlockchainOrcVo.class);
 	private String mapLotCanineSupplierBlockchainUuid;
 	private String lotCanineUuid;
 	private String supplierBlockchainUuid;
@@ -20,11 +21,11 @@ public class MapLotCanineSupplierBlockchainVo extends BaseOrcVo {
 	private String ingredientName;
 
 
-	public MapLotCanineSupplierBlockchainVo() {
+	public MapLotCanineSupplierBlockchainOrcVo() {
 	}
 
 
-	public MapLotCanineSupplierBlockchainVo(ResultSet rs) throws SQLException {
+	public MapLotCanineSupplierBlockchainOrcVo(ResultSet rs) throws SQLException {
 		this.mapLotCanineSupplierBlockchainUuid = rs.getString("map_lot_canine_supplier_blockchain_uuid");
 		this.lotCanineUuid = rs.getString("lot_canine_uuid");
 		this.supplierBlockchainUuid = rs.getString("supplier_blockchain_uuid");
@@ -33,10 +34,19 @@ public class MapLotCanineSupplierBlockchainVo extends BaseOrcVo {
 	}
 
 
+	public MapLotCanineSupplierBlockchainOrcVo(MapLotCanineSupplierBlockchainVo fromVo) throws SQLException {
+		this.mapLotCanineSupplierBlockchainUuid = fromVo.getMapLotCanineSupplierBlockchainUuid();
+		this.lotCanineUuid = fromVo.getLotCanineUuid();
+		this.supplierBlockchainUuid = fromVo.getSupplierBlockchainUuid();
+		this.ingredientSequence = fromVo.getIngredientSequence();
+		this.ingredientName = fromVo.getIngredientName();
+	}
+
+
 	@Override
-	public MapLotCanineSupplierBlockchainVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+	public MapLotCanineSupplierBlockchainOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
 		if( "1.0".equals(schemaVersion ) ) {
-			return new MapLotCanineSupplierBlockchainVo()
+			return new MapLotCanineSupplierBlockchainOrcVo()
 				.setMapLotCanineSupplierBlockchainUuid((String)objs.get(0))
 				.setLotCanineUuid((String)objs.get(1))
 				.setSupplierBlockchainUuid((String)objs.get(2))
@@ -86,23 +96,23 @@ public class MapLotCanineSupplierBlockchainVo extends BaseOrcVo {
 	}
 
 
-	public MapLotCanineSupplierBlockchainVo setMapLotCanineSupplierBlockchainUuid( String mapLotCanineSupplierBlockchainUuid ) {
+	public MapLotCanineSupplierBlockchainOrcVo setMapLotCanineSupplierBlockchainUuid( String mapLotCanineSupplierBlockchainUuid ) {
 		this.mapLotCanineSupplierBlockchainUuid = mapLotCanineSupplierBlockchainUuid;
 		return this;
 	}
-	public MapLotCanineSupplierBlockchainVo setLotCanineUuid( String lotCanineUuid ) {
+	public MapLotCanineSupplierBlockchainOrcVo setLotCanineUuid( String lotCanineUuid ) {
 		this.lotCanineUuid = lotCanineUuid;
 		return this;
 	}
-	public MapLotCanineSupplierBlockchainVo setSupplierBlockchainUuid( String supplierBlockchainUuid ) {
+	public MapLotCanineSupplierBlockchainOrcVo setSupplierBlockchainUuid( String supplierBlockchainUuid ) {
 		this.supplierBlockchainUuid = supplierBlockchainUuid;
 		return this;
 	}
-	public MapLotCanineSupplierBlockchainVo setIngredientSequence( Integer ingredientSequence ) {
+	public MapLotCanineSupplierBlockchainOrcVo setIngredientSequence( Integer ingredientSequence ) {
 		this.ingredientSequence = ingredientSequence;
 		return this;
 	}
-	public MapLotCanineSupplierBlockchainVo setIngredientName( String ingredientName ) {
+	public MapLotCanineSupplierBlockchainOrcVo setIngredientName( String ingredientName ) {
 		this.ingredientName = ingredientName;
 		return this;
 	}

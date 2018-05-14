@@ -10,25 +10,27 @@ import com.petezybrick.bcsc.service.database.PooledDataSource;
 import com.petezybrick.bcsc.service.orc.OrcCommon;
 
 
-public class SupplierDao {
-	private static final Logger logger = LogManager.getLogger(SupplierDao.class);
-	private static final String schemaName = "supplier";
+public class LotCanineOrcDao {
+	private static final Logger logger = LogManager.getLogger(LotCanineOrcDao.class);
+	private static final String schemaName = "lot_canine";
 	private static final String schemaVersion = "1.0";
-	private static String sqlFindTemplate = "SELECT supplier_uuid,duns_number,supplier_name,supplier_category,supplier_sub_category,state_province,country,encoded_public_key FROM supplier WHERE <Criteria Here>";
+	private static String sqlFindTemplate = "SELECT lot_canine_uuid,manufacturer_lot_number,lot_filled_date FROM lot_canine WHERE <Criteria Here>";
 
 
 
 	public static void writeOrc( String pathNameExt, List<List<Object>> rowsCols ) throws Exception {
 		OrcCommon.write( pathNameExt, schemaName, schemaVersion, rowsCols );
 	}
-	public static SupplierVo findByTemplate( SupplierVo supplierVo ) throws Exception {
+
+
+	public static LotCanineOrcVo findByTemplate( LotCanineOrcVo lotCanineOrcVo ) throws Exception {
 		try( Connection con = PooledDataSource.getInstance().getConnection();
 		     PreparedStatement pstmt = con.prepareStatement(sqlFindTemplate); ) {
 			con.setAutoCommit(true);
 			int offset = 1;
-			// pstmt.setString(offset++, supplierVo.getAttribute( );
+			// pstmt.setString(offset++, lotCanineOrcVo.getAttribute( );
 			ResultSet rs = pstmt.executeQuery();
-			if( rs.next() ) return new SupplierVo(rs);
+			if( rs.next() ) return new LotCanineOrcVo(rs);
 			else return null;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

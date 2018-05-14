@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.petezybrick.bcsc.service.database.*;
 
 
-public class SupplierBlockVo extends BaseOrcVo {
-	private static final Logger logger = LogManager.getLogger(SupplierBlockVo.class);
+public class SupplierBlockOrcVo extends BaseOrcVo {
+	private static final Logger logger = LogManager.getLogger(SupplierBlockOrcVo.class);
 	private String supplierBlockUuid;
 	private String supplierBlockchainUuid;
 	private String hash;
@@ -21,11 +22,11 @@ public class SupplierBlockVo extends BaseOrcVo {
 	private Integer blockSequence;
 
 
-	public SupplierBlockVo() {
+	public SupplierBlockOrcVo() {
 	}
 
 
-	public SupplierBlockVo(ResultSet rs) throws SQLException {
+	public SupplierBlockOrcVo(ResultSet rs) throws SQLException {
 		this.supplierBlockUuid = rs.getString("supplier_block_uuid");
 		this.supplierBlockchainUuid = rs.getString("supplier_blockchain_uuid");
 		this.hash = rs.getString("hash");
@@ -35,10 +36,20 @@ public class SupplierBlockVo extends BaseOrcVo {
 	}
 
 
+	public SupplierBlockOrcVo(SupplierBlockVo fromVo) throws SQLException {
+		this.supplierBlockUuid = fromVo.getSupplierBlockUuid();
+		this.supplierBlockchainUuid = fromVo.getSupplierBlockchainUuid();
+		this.hash = fromVo.getHash();
+		this.previousHash = fromVo.getPreviousHash();
+		this.blockTimestamp = fromVo.getBlockTimestamp();
+		this.blockSequence = fromVo.getBlockSequence();
+	}
+
+
 	@Override
-	public SupplierBlockVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+	public SupplierBlockOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
 		if( "1.0".equals(schemaVersion ) ) {
-			return new SupplierBlockVo()
+			return new SupplierBlockOrcVo()
 				.setSupplierBlockUuid((String)objs.get(0))
 				.setSupplierBlockchainUuid((String)objs.get(1))
 				.setHash((String)objs.get(2))
@@ -94,27 +105,27 @@ public class SupplierBlockVo extends BaseOrcVo {
 	}
 
 
-	public SupplierBlockVo setSupplierBlockUuid( String supplierBlockUuid ) {
+	public SupplierBlockOrcVo setSupplierBlockUuid( String supplierBlockUuid ) {
 		this.supplierBlockUuid = supplierBlockUuid;
 		return this;
 	}
-	public SupplierBlockVo setSupplierBlockchainUuid( String supplierBlockchainUuid ) {
+	public SupplierBlockOrcVo setSupplierBlockchainUuid( String supplierBlockchainUuid ) {
 		this.supplierBlockchainUuid = supplierBlockchainUuid;
 		return this;
 	}
-	public SupplierBlockVo setHash( String hash ) {
+	public SupplierBlockOrcVo setHash( String hash ) {
 		this.hash = hash;
 		return this;
 	}
-	public SupplierBlockVo setPreviousHash( String previousHash ) {
+	public SupplierBlockOrcVo setPreviousHash( String previousHash ) {
 		this.previousHash = previousHash;
 		return this;
 	}
-	public SupplierBlockVo setBlockTimestamp( Timestamp blockTimestamp ) {
+	public SupplierBlockOrcVo setBlockTimestamp( Timestamp blockTimestamp ) {
 		this.blockTimestamp = blockTimestamp;
 		return this;
 	}
-	public SupplierBlockVo setBlockSequence( Integer blockSequence ) {
+	public SupplierBlockOrcVo setBlockSequence( Integer blockSequence ) {
 		this.blockSequence = blockSequence;
 		return this;
 	}

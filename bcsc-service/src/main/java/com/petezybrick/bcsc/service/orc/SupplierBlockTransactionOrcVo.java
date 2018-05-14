@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.petezybrick.bcsc.service.database.*;
 
 
-public class SupplierBlockTransactionVo extends BaseOrcVo {
-	private static final Logger logger = LogManager.getLogger(SupplierBlockTransactionVo.class);
+public class SupplierBlockTransactionOrcVo extends BaseOrcVo {
+	private static final Logger logger = LogManager.getLogger(SupplierBlockTransactionOrcVo.class);
 	private String supplierBlockTransactionUuid;
 	private String supplierBlockUuid;
 	private String transactionId;
@@ -22,11 +23,11 @@ public class SupplierBlockTransactionVo extends BaseOrcVo {
 	private Integer transactionSequence;
 
 
-	public SupplierBlockTransactionVo() {
+	public SupplierBlockTransactionOrcVo() {
 	}
 
 
-	public SupplierBlockTransactionVo(ResultSet rs) throws SQLException {
+	public SupplierBlockTransactionOrcVo(ResultSet rs) throws SQLException {
 		this.supplierBlockTransactionUuid = rs.getString("supplier_block_transaction_uuid");
 		this.supplierBlockUuid = rs.getString("supplier_block_uuid");
 		this.transactionId = rs.getString("transaction_id");
@@ -37,10 +38,21 @@ public class SupplierBlockTransactionVo extends BaseOrcVo {
 	}
 
 
+	public SupplierBlockTransactionOrcVo(SupplierBlockTransactionVo fromVo) throws SQLException {
+		this.supplierBlockTransactionUuid = fromVo.getSupplierBlockTransactionUuid();
+		this.supplierBlockUuid = fromVo.getSupplierBlockUuid();
+		this.transactionId = fromVo.getTransactionId();
+		this.encodedPublicKeyFrom = fromVo.getEncodedPublicKeyFrom();
+		this.encodedPublicKeyTo = fromVo.getEncodedPublicKeyTo();
+		this.signature = ByteBuffer.wrap( fromVo.getSignature() );
+		this.transactionSequence = fromVo.getTransactionSequence();
+	}
+
+
 	@Override
-	public SupplierBlockTransactionVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+	public SupplierBlockTransactionOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
 		if( "1.0".equals(schemaVersion ) ) {
-			return new SupplierBlockTransactionVo()
+			return new SupplierBlockTransactionOrcVo()
 				.setSupplierBlockTransactionUuid((String)objs.get(0))
 				.setSupplierBlockUuid((String)objs.get(1))
 				.setTransactionId((String)objs.get(2))
@@ -102,31 +114,31 @@ public class SupplierBlockTransactionVo extends BaseOrcVo {
 	}
 
 
-	public SupplierBlockTransactionVo setSupplierBlockTransactionUuid( String supplierBlockTransactionUuid ) {
+	public SupplierBlockTransactionOrcVo setSupplierBlockTransactionUuid( String supplierBlockTransactionUuid ) {
 		this.supplierBlockTransactionUuid = supplierBlockTransactionUuid;
 		return this;
 	}
-	public SupplierBlockTransactionVo setSupplierBlockUuid( String supplierBlockUuid ) {
+	public SupplierBlockTransactionOrcVo setSupplierBlockUuid( String supplierBlockUuid ) {
 		this.supplierBlockUuid = supplierBlockUuid;
 		return this;
 	}
-	public SupplierBlockTransactionVo setTransactionId( String transactionId ) {
+	public SupplierBlockTransactionOrcVo setTransactionId( String transactionId ) {
 		this.transactionId = transactionId;
 		return this;
 	}
-	public SupplierBlockTransactionVo setEncodedPublicKeyFrom( String encodedPublicKeyFrom ) {
+	public SupplierBlockTransactionOrcVo setEncodedPublicKeyFrom( String encodedPublicKeyFrom ) {
 		this.encodedPublicKeyFrom = encodedPublicKeyFrom;
 		return this;
 	}
-	public SupplierBlockTransactionVo setEncodedPublicKeyTo( String encodedPublicKeyTo ) {
+	public SupplierBlockTransactionOrcVo setEncodedPublicKeyTo( String encodedPublicKeyTo ) {
 		this.encodedPublicKeyTo = encodedPublicKeyTo;
 		return this;
 	}
-	public SupplierBlockTransactionVo setSignature( ByteBuffer signature ) {
+	public SupplierBlockTransactionOrcVo setSignature( ByteBuffer signature ) {
 		this.signature = signature;
 		return this;
 	}
-	public SupplierBlockTransactionVo setTransactionSequence( Integer transactionSequence ) {
+	public SupplierBlockTransactionOrcVo setTransactionSequence( Integer transactionSequence ) {
 		this.transactionSequence = transactionSequence;
 		return this;
 	}

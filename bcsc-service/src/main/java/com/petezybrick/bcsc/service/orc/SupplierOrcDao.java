@@ -10,25 +10,27 @@ import com.petezybrick.bcsc.service.database.PooledDataSource;
 import com.petezybrick.bcsc.service.orc.OrcCommon;
 
 
-public class SupplierBlockDao {
-	private static final Logger logger = LogManager.getLogger(SupplierBlockDao.class);
-	private static final String schemaName = "supplier_block";
+public class SupplierOrcDao {
+	private static final Logger logger = LogManager.getLogger(SupplierOrcDao.class);
+	private static final String schemaName = "supplier";
 	private static final String schemaVersion = "1.0";
-	private static String sqlFindTemplate = "SELECT supplier_block_uuid,supplier_blockchain_uuid,hash,previous_hash,block_timestamp,block_sequence FROM supplier_block WHERE <Criteria Here>";
+	private static String sqlFindTemplate = "SELECT supplier_uuid,duns_number,supplier_name,supplier_category,supplier_sub_category,state_province,country,encoded_public_key FROM supplier WHERE <Criteria Here>";
 
 
 
 	public static void writeOrc( String pathNameExt, List<List<Object>> rowsCols ) throws Exception {
 		OrcCommon.write( pathNameExt, schemaName, schemaVersion, rowsCols );
 	}
-	public static SupplierBlockVo findByTemplate( SupplierBlockVo supplierBlockVo ) throws Exception {
+
+
+	public static SupplierOrcVo findByTemplate( SupplierOrcVo supplierOrcVo ) throws Exception {
 		try( Connection con = PooledDataSource.getInstance().getConnection();
 		     PreparedStatement pstmt = con.prepareStatement(sqlFindTemplate); ) {
 			con.setAutoCommit(true);
 			int offset = 1;
-			// pstmt.setString(offset++, supplierBlockVo.getAttribute( );
+			// pstmt.setString(offset++, supplierOrcVo.getAttribute( );
 			ResultSet rs = pstmt.executeQuery();
-			if( rs.next() ) return new SupplierBlockVo(rs);
+			if( rs.next() ) return new SupplierOrcVo(rs);
 			else return null;
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);

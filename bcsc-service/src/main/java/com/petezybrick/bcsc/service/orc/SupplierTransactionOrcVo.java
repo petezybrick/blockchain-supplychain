@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.petezybrick.bcsc.service.database.*;
 
 
-public class SupplierTransactionVo extends BaseOrcVo {
-	private static final Logger logger = LogManager.getLogger(SupplierTransactionVo.class);
+public class SupplierTransactionOrcVo extends BaseOrcVo {
+	private static final Logger logger = LogManager.getLogger(SupplierTransactionOrcVo.class);
 	private String supplierTransactionUuid;
 	private String supplierBlockTransactionUuid;
 	private String supplierUuid;
@@ -25,11 +26,11 @@ public class SupplierTransactionVo extends BaseOrcVo {
 	private Timestamp rcvdDateIso8601;
 
 
-	public SupplierTransactionVo() {
+	public SupplierTransactionOrcVo() {
 	}
 
 
-	public SupplierTransactionVo(ResultSet rs) throws SQLException {
+	public SupplierTransactionOrcVo(ResultSet rs) throws SQLException {
 		this.supplierTransactionUuid = rs.getString("supplier_transaction_uuid");
 		this.supplierBlockTransactionUuid = rs.getString("supplier_block_transaction_uuid");
 		this.supplierUuid = rs.getString("supplier_uuid");
@@ -43,10 +44,24 @@ public class SupplierTransactionVo extends BaseOrcVo {
 	}
 
 
+	public SupplierTransactionOrcVo(SupplierTransactionVo fromVo) throws SQLException {
+		this.supplierTransactionUuid = fromVo.getSupplierTransactionUuid();
+		this.supplierBlockTransactionUuid = fromVo.getSupplierBlockTransactionUuid();
+		this.supplierUuid = fromVo.getSupplierUuid();
+		this.supplierLotNumber = fromVo.getSupplierLotNumber();
+		this.itemNumber = fromVo.getItemNumber();
+		this.description = fromVo.getDescription();
+		this.qty = fromVo.getQty();
+		this.units = fromVo.getUnits();
+		this.shippedDateIso8601 = fromVo.getShippedDateIso8601();
+		this.rcvdDateIso8601 = fromVo.getRcvdDateIso8601();
+	}
+
+
 	@Override
-	public SupplierTransactionVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+	public SupplierTransactionOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
 		if( "1.0".equals(schemaVersion ) ) {
-			return new SupplierTransactionVo()
+			return new SupplierTransactionOrcVo()
 				.setSupplierTransactionUuid((String)objs.get(0))
 				.setSupplierBlockTransactionUuid((String)objs.get(1))
 				.setSupplierUuid((String)objs.get(2))
@@ -126,43 +141,43 @@ public class SupplierTransactionVo extends BaseOrcVo {
 	}
 
 
-	public SupplierTransactionVo setSupplierTransactionUuid( String supplierTransactionUuid ) {
+	public SupplierTransactionOrcVo setSupplierTransactionUuid( String supplierTransactionUuid ) {
 		this.supplierTransactionUuid = supplierTransactionUuid;
 		return this;
 	}
-	public SupplierTransactionVo setSupplierBlockTransactionUuid( String supplierBlockTransactionUuid ) {
+	public SupplierTransactionOrcVo setSupplierBlockTransactionUuid( String supplierBlockTransactionUuid ) {
 		this.supplierBlockTransactionUuid = supplierBlockTransactionUuid;
 		return this;
 	}
-	public SupplierTransactionVo setSupplierUuid( String supplierUuid ) {
+	public SupplierTransactionOrcVo setSupplierUuid( String supplierUuid ) {
 		this.supplierUuid = supplierUuid;
 		return this;
 	}
-	public SupplierTransactionVo setSupplierLotNumber( String supplierLotNumber ) {
+	public SupplierTransactionOrcVo setSupplierLotNumber( String supplierLotNumber ) {
 		this.supplierLotNumber = supplierLotNumber;
 		return this;
 	}
-	public SupplierTransactionVo setItemNumber( String itemNumber ) {
+	public SupplierTransactionOrcVo setItemNumber( String itemNumber ) {
 		this.itemNumber = itemNumber;
 		return this;
 	}
-	public SupplierTransactionVo setDescription( String description ) {
+	public SupplierTransactionOrcVo setDescription( String description ) {
 		this.description = description;
 		return this;
 	}
-	public SupplierTransactionVo setQty( Integer qty ) {
+	public SupplierTransactionOrcVo setQty( Integer qty ) {
 		this.qty = qty;
 		return this;
 	}
-	public SupplierTransactionVo setUnits( String units ) {
+	public SupplierTransactionOrcVo setUnits( String units ) {
 		this.units = units;
 		return this;
 	}
-	public SupplierTransactionVo setShippedDateIso8601( Timestamp shippedDateIso8601 ) {
+	public SupplierTransactionOrcVo setShippedDateIso8601( Timestamp shippedDateIso8601 ) {
 		this.shippedDateIso8601 = shippedDateIso8601;
 		return this;
 	}
-	public SupplierTransactionVo setRcvdDateIso8601( Timestamp rcvdDateIso8601 ) {
+	public SupplierTransactionOrcVo setRcvdDateIso8601( Timestamp rcvdDateIso8601 ) {
 		this.rcvdDateIso8601 = rcvdDateIso8601;
 		return this;
 	}

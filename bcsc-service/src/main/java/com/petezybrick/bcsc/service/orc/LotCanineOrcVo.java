@@ -9,30 +9,38 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.petezybrick.bcsc.service.database.*;
 
 
-public class LotCanineVo extends BaseOrcVo {
-	private static final Logger logger = LogManager.getLogger(LotCanineVo.class);
+public class LotCanineOrcVo extends BaseOrcVo {
+	private static final Logger logger = LogManager.getLogger(LotCanineOrcVo.class);
 	private String lotCanineUuid;
 	private String manufacturerLotNumber;
 	private Timestamp lotFilledDate;
 
 
-	public LotCanineVo() {
+	public LotCanineOrcVo() {
 	}
 
 
-	public LotCanineVo(ResultSet rs) throws SQLException {
+	public LotCanineOrcVo(ResultSet rs) throws SQLException {
 		this.lotCanineUuid = rs.getString("lot_canine_uuid");
 		this.manufacturerLotNumber = rs.getString("manufacturer_lot_number");
 		this.lotFilledDate = rs.getTimestamp("lot_filled_date");
 	}
 
 
+	public LotCanineOrcVo(LotCanineVo fromVo) throws SQLException {
+		this.lotCanineUuid = fromVo.getLotCanineUuid();
+		this.manufacturerLotNumber = fromVo.getManufacturerLotNumber();
+		this.lotFilledDate = fromVo.getLotFilledDate();
+	}
+
+
 	@Override
-	public LotCanineVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+	public LotCanineOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
 		if( "1.0".equals(schemaVersion ) ) {
-			return new LotCanineVo()
+			return new LotCanineOrcVo()
 				.setLotCanineUuid((String)objs.get(0))
 				.setManufacturerLotNumber((String)objs.get(1))
 				.setLotFilledDate((Timestamp)objs.get(2))
@@ -70,15 +78,15 @@ public class LotCanineVo extends BaseOrcVo {
 	}
 
 
-	public LotCanineVo setLotCanineUuid( String lotCanineUuid ) {
+	public LotCanineOrcVo setLotCanineUuid( String lotCanineUuid ) {
 		this.lotCanineUuid = lotCanineUuid;
 		return this;
 	}
-	public LotCanineVo setManufacturerLotNumber( String manufacturerLotNumber ) {
+	public LotCanineOrcVo setManufacturerLotNumber( String manufacturerLotNumber ) {
 		this.manufacturerLotNumber = manufacturerLotNumber;
 		return this;
 	}
-	public LotCanineVo setLotFilledDate( Timestamp lotFilledDate ) {
+	public LotCanineOrcVo setLotFilledDate( Timestamp lotFilledDate ) {
 		this.lotFilledDate = lotFilledDate;
 		return this;
 	}

@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import com.petezybrick.bcsc.service.database.*;
 
 
-public class SupplierVo extends BaseOrcVo {
-	private static final Logger logger = LogManager.getLogger(SupplierVo.class);
+public class SupplierOrcVo extends BaseOrcVo {
+	private static final Logger logger = LogManager.getLogger(SupplierOrcVo.class);
 	private String supplierUuid;
 	private String dunsNumber;
 	private String supplierName;
@@ -23,11 +24,11 @@ public class SupplierVo extends BaseOrcVo {
 	private String encodedPublicKey;
 
 
-	public SupplierVo() {
+	public SupplierOrcVo() {
 	}
 
 
-	public SupplierVo(ResultSet rs) throws SQLException {
+	public SupplierOrcVo(ResultSet rs) throws SQLException {
 		this.supplierUuid = rs.getString("supplier_uuid");
 		this.dunsNumber = rs.getString("duns_number");
 		this.supplierName = rs.getString("supplier_name");
@@ -39,10 +40,22 @@ public class SupplierVo extends BaseOrcVo {
 	}
 
 
+	public SupplierOrcVo(SupplierVo fromVo) throws SQLException {
+		this.supplierUuid = fromVo.getSupplierUuid();
+		this.dunsNumber = fromVo.getDunsNumber();
+		this.supplierName = fromVo.getSupplierName();
+		this.supplierCategory = fromVo.getSupplierCategory();
+		this.supplierSubCategory = fromVo.getSupplierSubCategory();
+		this.stateProvince = fromVo.getStateProvince();
+		this.country = fromVo.getCountry();
+		this.encodedPublicKey = fromVo.getEncodedPublicKey();
+	}
+
+
 	@Override
-	public SupplierVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
+	public SupplierOrcVo createInstance(List<Object> objs, String schemaVersion ) throws Exception {
 		if( "1.0".equals(schemaVersion ) ) {
-			return new SupplierVo()
+			return new SupplierOrcVo()
 				.setSupplierUuid((String)objs.get(0))
 				.setDunsNumber((String)objs.get(1))
 				.setSupplierName((String)objs.get(2))
@@ -110,35 +123,35 @@ public class SupplierVo extends BaseOrcVo {
 	}
 
 
-	public SupplierVo setSupplierUuid( String supplierUuid ) {
+	public SupplierOrcVo setSupplierUuid( String supplierUuid ) {
 		this.supplierUuid = supplierUuid;
 		return this;
 	}
-	public SupplierVo setDunsNumber( String dunsNumber ) {
+	public SupplierOrcVo setDunsNumber( String dunsNumber ) {
 		this.dunsNumber = dunsNumber;
 		return this;
 	}
-	public SupplierVo setSupplierName( String supplierName ) {
+	public SupplierOrcVo setSupplierName( String supplierName ) {
 		this.supplierName = supplierName;
 		return this;
 	}
-	public SupplierVo setSupplierCategory( String supplierCategory ) {
+	public SupplierOrcVo setSupplierCategory( String supplierCategory ) {
 		this.supplierCategory = supplierCategory;
 		return this;
 	}
-	public SupplierVo setSupplierSubCategory( String supplierSubCategory ) {
+	public SupplierOrcVo setSupplierSubCategory( String supplierSubCategory ) {
 		this.supplierSubCategory = supplierSubCategory;
 		return this;
 	}
-	public SupplierVo setStateProvince( String stateProvince ) {
+	public SupplierOrcVo setStateProvince( String stateProvince ) {
 		this.stateProvince = stateProvince;
 		return this;
 	}
-	public SupplierVo setCountry( String country ) {
+	public SupplierOrcVo setCountry( String country ) {
 		this.country = country;
 		return this;
 	}
-	public SupplierVo setEncodedPublicKey( String encodedPublicKey ) {
+	public SupplierOrcVo setEncodedPublicKey( String encodedPublicKey ) {
 		this.encodedPublicKey = encodedPublicKey;
 		return this;
 	}
