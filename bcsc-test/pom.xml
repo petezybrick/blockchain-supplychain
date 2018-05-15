@@ -10,6 +10,9 @@
 	<artifactId>bcsc-test</artifactId>
 	<packaging>jar</packaging>
 
+    <properties>
+        <hadoop.version>2.9.0</hadoop.version>
+    </properties>
 
 	<dependencies>
 		<dependency>
@@ -32,6 +35,12 @@
 			<artifactId>bcsc-apiclient</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop.version}</version>
+        </dependency>
+
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

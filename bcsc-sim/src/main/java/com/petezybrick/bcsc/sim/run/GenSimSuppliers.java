@@ -247,7 +247,7 @@ public class GenSimSuppliers {
 			}
 			pathNameExt = path + "lot_canine/" + BlockchainUtils.generateSortableUuid();
 			LotCanineOrcDao.writeOrc(pathNameExt, rowsColsLotCanine);
-			pathNameExt = path + "Map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
+			pathNameExt = path + "map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
 			MapLotCanineSupplierBlockchainOrcDao.writeOrc(pathNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
 			
 			try (Connection con = PooledDataSource.getInstance().getConnection();){
