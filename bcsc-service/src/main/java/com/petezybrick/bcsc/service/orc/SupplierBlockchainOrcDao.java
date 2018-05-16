@@ -18,8 +18,8 @@ public class SupplierBlockchainOrcDao {
 
 
 
-	public static void writeOrc( String pathNameExt, List<List<Object>> rowsCols ) throws Exception {
-		OrcCommon.write( pathNameExt, schemaName, schemaVersion, rowsCols );
+	public static void writeOrc( String targetPath, String targetNameExt, List<List<Object>> rowsCols ) throws Exception {
+		OrcCommon.write( targetPath, targetNameExt, schemaName, schemaVersion, rowsCols );
 	}
 
 

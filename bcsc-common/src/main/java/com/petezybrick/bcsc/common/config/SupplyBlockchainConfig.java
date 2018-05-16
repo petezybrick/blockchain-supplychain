@@ -72,6 +72,9 @@ public class SupplyBlockchainConfig implements Serializable {
 	
 	/** The jdbc url. */
 	private String jdbcUrl;	
+	
+	private String hdfsUri;
+	private String hadoopUserName;
 
 
 	/**
@@ -243,7 +246,29 @@ public class SupplyBlockchainConfig implements Serializable {
 	public String toString() {
 		return "SupplyBlockchainConfig [supplyBlockchainConfigJsonKey=" + supplyBlockchainConfigJsonKey + ", contactPoint=" + contactPoint + ", keyspaceName="
 				+ keyspaceName + ", jdbcDriverClassName=" + jdbcDriverClassName + ", jdbcInsertBlockSize=" + jdbcInsertBlockSize + ", jdbcLogin=" + jdbcLogin
-				+ ", jdbcPassword=" + jdbcPassword + ", jdbcUrl=" + jdbcUrl + "]";
+				+ ", jdbcPassword=" + jdbcPassword + ", jdbcUrl=" + jdbcUrl + ", hdfsUri=" + hdfsUri + ", hadoopUserName=" + hadoopUserName + "]";
+	}
+
+
+	public String getHdfsUri() {
+		return hdfsUri;
+	}
+
+
+	public SupplyBlockchainConfig setHdfsUri(String hdfsUri) {
+		this.hdfsUri = hdfsUri;
+		return this;
+	}
+
+
+	public String getHadoopUserName() {
+		return hadoopUserName;
+	}
+
+
+	public SupplyBlockchainConfig setHadoopUserName(String hadoopUserName) {
+		this.hadoopUserName = hadoopUserName;
+		return this;
 	}
 	
 

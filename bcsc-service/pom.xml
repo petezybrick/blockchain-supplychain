@@ -10,6 +10,10 @@
 	<artifactId>bcsc-service</artifactId>
 	<packaging>jar</packaging>
 
+	<properties>
+		<hadoop.version>2.9.0</hadoop.version>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.petezybrick</groupId>
@@ -30,6 +34,11 @@
 			<groupId>org.apache.orc</groupId>
 			<artifactId>orc-mapreduce</artifactId>
 			<version>1.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>${hadoop.version}</version>
 		</dependency>
 	</dependencies>
 

@@ -2,13 +2,18 @@ package com.petezybrick.bcsc.service.orc;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FSDataInputStream;
+import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.common.type.HiveDecimal;
 import org.apache.hadoop.hive.ql.exec.vector.BytesColumnVector;
@@ -19,6 +24,9 @@ import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
+import org.apache.hadoop.yarn.webapp.GenericExceptionHandler;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.orc.OrcFile;
 import org.apache.orc.Reader;
 import org.apache.orc.RecordReader;
@@ -26,14 +34,28 @@ import org.apache.orc.TypeDescription;
 import org.apache.orc.TypeDescription.Category;
 import org.apache.orc.Writer;
 
+import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
+import com.petezybrick.bcsc.common.utils.BlockchainUtils;
+import com.petezybrick.bcsc.service.hive.HivePooledDataSource;
+
 public class OrcCommon {
+	private static final Logger logger = LogManager.getLogger(OrcCommon.class);
 
-
-	public static List<BaseOrcVo> read(String pathNameExt, BaseOrcVo baseOrcVo) throws Exception {
-		List<BaseOrcVo> orcVos = new ArrayList<BaseOrcVo>();
-
+	
+	public static List<BaseOrcVo> read(String targetPath, String targetNameExt, BaseOrcVo baseOrcVo) throws Exception {
 		Configuration conf = new Configuration();
-		Reader reader = OrcFile.createReader(new Path(pathNameExt), OrcFile.readerOptions(conf));
+		Path readPath = null;
+		
+		if( targetPath.startsWith("hdfs:")) {
+			readPath = initHdfs( conf, targetPath, targetNameExt );
+		} else if( targetPath.startsWith("s3") ) {
+			
+		} else {
+			readPath = new Path(targetPath + "/" + targetNameExt);
+		}
+		
+		List<BaseOrcVo> orcVos = new ArrayList<BaseOrcVo>();
+		Reader reader = OrcFile.createReader( readPath, OrcFile.readerOptions(conf));
 
 		String schemaName = BaseOrcVo.roByteBufferToString(reader.getMetadataValue(OrcSchemaMgr.METADATA_SCHEMA_NAME_KEY));
 		String schemaVersion = BaseOrcVo.roByteBufferToString(reader.getMetadataValue(OrcSchemaMgr.METADATA_SCHEMA_VERSION_KEY));
@@ -62,18 +84,34 @@ public class OrcCommon {
 	}
 
 	
-	public static void write( String pathNameExt, String schemaName, String schemaVersion, List<List<Object>> rowsCols ) throws Exception {
+	public static void write( String targetPath, String targetNameExt, String schemaName, String schemaVersion, List<List<Object>> rowsCols ) throws Exception {
 		Configuration conf = new Configuration();
-		TypeDescription schema = OrcSchemaMgr.mapOrcSchemas.get( schemaName + "|" + schemaVersion );
+		Path path = null;
 		
+		if( targetPath.startsWith("hdfs")) {
+			path = initHdfs( conf, targetPath, targetNameExt );
+			String hdfsUri = SupplyBlockchainConfig.getInstance().getHdfsUri() ;
+			FileSystem fs = FileSystem.get(URI.create(hdfsUri), conf);
+			String hdfsPath = targetPath.substring(6);
+			Path newFolderPath = new Path(hdfsUri + hdfsPath);
+			if (!fs.exists(newFolderPath)) fs.mkdirs(newFolderPath);
+			if( fs.exists( path ) ) fs.delete(path, false);
+		} else if( targetPath.startsWith("s3")) {
+			
+		} else {
+			FileUtils.forceMkdir( new File(targetPath));
+			new File(targetPath + "/" + targetNameExt).delete();
+			path = new Path(targetPath + "/" + targetNameExt);
+		}
+		
+		
+		TypeDescription schema = OrcSchemaMgr.mapOrcSchemas.get( schemaName + "|" + schemaVersion );		
 		List<ColumnVector> colVectors = new ArrayList<ColumnVector>();
 		VectorizedRowBatch batch = schema.createRowBatch();
 		for( int i=0 ; i<schema.getFieldNames().size() ; i++ ) {
 			colVectors.add( batch.cols[i]);
 		}
-		
-		new File(pathNameExt).delete();
-		Writer writer = OrcFile.createWriter(new Path(pathNameExt),
+		Writer writer = OrcFile.createWriter( path,
 				OrcFile.writerOptions(conf)
 						.setSchema(schema));
 		writer.addUserMetadata(OrcSchemaMgr.METADATA_SCHEMA_NAME_KEY, ByteBuffer.wrap( schemaName.getBytes() ));		
@@ -221,4 +259,18 @@ public class OrcCommon {
 			throw new IllegalArgumentException("Unknown type " + category);
 		}
 	}
+
+	
+	private static Path initHdfs( Configuration conf, String targetPath, String targetNameExt ) throws Exception {
+		String hdfsUri = SupplyBlockchainConfig.getInstance().getHdfsUri();
+		conf.set("fs.defaultFS", hdfsUri);
+		conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+		conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+		System.setProperty("HADOOP_USER_NAME", SupplyBlockchainConfig.getInstance().getHdfsUri() );
+		System.setProperty("hadoop.home.dir", "/");
+		String hdfsPath = targetPath.substring(6);
+		Path newFolderPath = new Path(hdfsUri + hdfsPath);
+		return new Path(newFolderPath + "/" + targetNameExt);
+	}
+
 }

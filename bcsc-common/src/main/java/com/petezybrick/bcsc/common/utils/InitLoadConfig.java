@@ -49,7 +49,9 @@ public class InitLoadConfig {
 				.setJdbcLogin("supplier")
 				.setJdbcPassword("Password*8")
 				.setJdbcUrl("jdbc:mysql://bcsc-mysql:3306/db_supplier")
-				.setSupplyBlockchainConfigJsonKey("dev_docker");
+				.setSupplyBlockchainConfigJsonKey("dev_docker")
+				.setHdfsUri("hdfs://bcsc-hive-namenode:9000")
+				.setHadoopUserName("bcsc");
         String rawJson = BlockchainUtils.objectMapper.writeValueAsString(supplyBlockchainConfig);
 		ConfigVo configVo = new ConfigVo("dev_docker", rawJson );
 		return configVo;
@@ -65,7 +67,9 @@ public class InitLoadConfig {
 				.setJdbcLogin("supplier")
 				.setJdbcPassword("Password*8")
 				.setJdbcUrl("jdbc:mysql://localhost:3307/db_supplier")
-				.setSupplyBlockchainConfigJsonKey("dev_localhost");
+				.setSupplyBlockchainConfigJsonKey("dev_localhost")
+				.setHdfsUri("hdfs://localhost:9000")
+				.setHadoopUserName("bcsc");
         String rawJson = BlockchainUtils.objectMapper.writeValueAsString(supplyBlockchainConfig);
 		ConfigVo configVo = new ConfigVo("dev_localhost", rawJson );
 		return configVo;

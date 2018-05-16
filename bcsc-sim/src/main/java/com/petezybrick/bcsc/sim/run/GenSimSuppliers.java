@@ -198,12 +198,13 @@ public class GenSimSuppliers {
 			
 			// ORC files
 			String path = System.getProperty("java.io.tmpdir");
+			path = "hdfs://user/bcsc/testorc/";
 			if( !path.endsWith("/")) path = path + "/";
-			String pathNameExt = null;
+			String targetNameExt = null;
 			List<List<Object>> rowsColsSupplier = new ArrayList<List<Object>>();
 			for( SupplierVo supplierVo : supplierVos ) rowsColsSupplier.add( new SupplierOrcVo(supplierVo).toObjectList());
-			pathNameExt = path + "supplier/" + BlockchainUtils.generateSortableUuid();
-			SupplierOrcDao.writeOrc(pathNameExt, rowsColsSupplier);
+			targetNameExt = "supplier/" + BlockchainUtils.generateSortableUuid();
+			SupplierOrcDao.writeOrc(path, targetNameExt, rowsColsSupplier);
 
 			List<List<Object>> rowsColsSupplierBlockchain = new ArrayList<List<Object>>();
 			List<List<Object>> rowsColsSupplierBlock = new ArrayList<List<Object>>();
@@ -225,14 +226,14 @@ public class GenSimSuppliers {
 					}
 				}
 			}
-			pathNameExt = path + "supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
-			SupplierBlockchainOrcDao.writeOrc(pathNameExt, rowsColsSupplierBlockchain);
-			pathNameExt = path + "supplier_block/" + BlockchainUtils.generateSortableUuid();
-			SupplierBlockOrcDao.writeOrc(pathNameExt, rowsColsSupplierBlock);
-			pathNameExt = path + "supplier_block_transaction/" + BlockchainUtils.generateSortableUuid();
-			SupplierBlockTransactionOrcDao.writeOrc(pathNameExt, rowsColsSupplierBlockTransaction);
-			pathNameExt = path + "supplier_transaction/" + BlockchainUtils.generateSortableUuid();
-			SupplierTransactionOrcDao.writeOrc(pathNameExt, rowsColsSupplierTransaction);
+			targetNameExt = "supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
+			SupplierBlockchainOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierBlockchain);
+			targetNameExt = "supplier_block/" + BlockchainUtils.generateSortableUuid();
+			SupplierBlockOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierBlock);
+			targetNameExt = "supplier_block_transaction/" + BlockchainUtils.generateSortableUuid();
+			SupplierBlockTransactionOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierBlockTransaction);
+			targetNameExt = "supplier_transaction/" + BlockchainUtils.generateSortableUuid();
+			SupplierTransactionOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierTransaction);
 			
 			List<List<Object>> rowsColsLotCanine = new ArrayList<List<Object>>();
 			List<List<Object>> rowsColsMapLotCanineSupplierBlockchainVo = new ArrayList<List<Object>>();
@@ -245,10 +246,10 @@ public class GenSimSuppliers {
 					}
 				}
 			}
-			pathNameExt = path + "lot_canine/" + BlockchainUtils.generateSortableUuid();
-			LotCanineOrcDao.writeOrc(pathNameExt, rowsColsLotCanine);
-			pathNameExt = path + "map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
-			MapLotCanineSupplierBlockchainOrcDao.writeOrc(pathNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
+			targetNameExt = "lot_canine/" + BlockchainUtils.generateSortableUuid();
+			LotCanineOrcDao.writeOrc(path, targetNameExt, rowsColsLotCanine);
+			targetNameExt = "map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
+			MapLotCanineSupplierBlockchainOrcDao.writeOrc(path, targetNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
 			
 			try (Connection con = PooledDataSource.getInstance().getConnection();){
 				con.setAutoCommit(false);

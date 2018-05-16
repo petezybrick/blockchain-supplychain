@@ -23,7 +23,8 @@ import com.petezybrick.bcsc.service.orc.OrcSchemaMgr;
 
 public class TestOrcReadWrite {
 	private List<String> persons;
-	private String pathNameExt;
+	private String targetPath;
+	private String targetNameExt;
 	private String schemaName;
 	private String schemaVersion;
 
@@ -48,7 +49,8 @@ public class TestOrcReadWrite {
 	
 	@Before
 	public void setUp() throws Exception {
-		this.pathNameExt = "/tmp/person.orc";
+		this.targetPath = "/tmp/";
+		this.targetNameExt = "person.orc";
 		this.schemaName = "person";
 		this.schemaVersion  = "1.0";
 
@@ -88,14 +90,14 @@ public class TestOrcReadWrite {
 				writePersonOrcVos.add( personOrcVo );
 			}		
 			List<List<Object>> personRowCols = PersonOrcDao.createRowsCols(writePersonOrcVos);
-			OrcCommon.write( pathNameExt, schemaName, schemaVersion, personRowCols );
+			OrcCommon.write( targetPath, targetNameExt, schemaName, schemaVersion, personRowCols );
 			
 			final PersonOrcVo personOrcVo = new PersonOrcVo();
-			List<BaseOrcVo> readPersonOrcVos = OrcCommon.read(pathNameExt, personOrcVo);
+			List<BaseOrcVo> readPersonOrcVos = OrcCommon.read(targetPath, targetNameExt, personOrcVo);
 			readPersonOrcVos.forEach(pov -> System.out.println((PersonOrcVo) pov));
 			// TODO: compare values here
 		} finally {
-			new File(pathNameExt).delete();
+			new File(targetPath + targetNameExt).delete();
 		}
 	}
 

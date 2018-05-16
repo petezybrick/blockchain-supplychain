@@ -3,6 +3,7 @@ package com.petezybrick.bcsc.service.test.orc;
 import java.io.File;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
+import java.security.Security;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,13 +18,15 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 import com.petezybrick.bcsc.service.orc.BaseOrcVo;
 import com.petezybrick.bcsc.service.orc.OrcCommon;
 import com.petezybrick.bcsc.service.orc.OrcSchemaMgr;
 
 public class TestOrcHdfsReadWrite {
 	private List<String> persons;
-	private String pathNameExt;
+	private String targetPath;
+	private String targetNameExt;
 	private String schemaName;
 	private String schemaVersion;
 
@@ -45,10 +48,17 @@ public class TestOrcHdfsReadWrite {
 		);
 
 	}
+	@BeforeClass
+	public static void beforeClass() throws Exception {
+		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+		SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
+				System.getenv("KEYSPACE_NAME") );
+	}
 	
 	@Before
 	public void setUp() throws Exception {
-		this.pathNameExt = "https://localhost:50070/user/pete/test_orc_hdfs";
+		this.targetPath = "hdfs://user/bcsc/testorc/";
+		this.targetNameExt = "person.orc";
 		this.schemaName = "person";
 		this.schemaVersion  = "1.0";
 
@@ -88,14 +98,14 @@ public class TestOrcHdfsReadWrite {
 				writePersonOrcVos.add( personOrcVo );
 			}		
 			List<List<Object>> personRowCols = PersonOrcDao.createRowsCols(writePersonOrcVos);
-			OrcCommon.write( pathNameExt, schemaName, schemaVersion, personRowCols );
+			OrcCommon.write( targetPath, targetNameExt, schemaName, schemaVersion, personRowCols );
 			
 			final PersonOrcVo personOrcVo = new PersonOrcVo();
-			List<BaseOrcVo> readPersonOrcVos = OrcCommon.read(pathNameExt, personOrcVo);
+			List<BaseOrcVo> readPersonOrcVos = OrcCommon.read(targetPath, targetNameExt, personOrcVo);
 			readPersonOrcVos.forEach(pov -> System.out.println((PersonOrcVo) pov));
 			// TODO: compare values here
 		} finally {
-			new File(pathNameExt).delete();
+			//new File(pathNameExt).delete();
 		}
 	}
 

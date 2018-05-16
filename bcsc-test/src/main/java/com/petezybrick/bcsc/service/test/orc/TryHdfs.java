@@ -23,7 +23,7 @@ public class TryHdfs {
 //			System.err.println("1 arg is required :\n\t- hdfsmasteruri (8020 port) ex: hdfs://namenodeserver:8020");
 //			System.exit(128);
 //		}
-		String hdfsuri = "hdfs://localhost:9000";
+		String hdfsUri = "hdfs://localhost:9000";
 
 		String path = "/user/pete/trywrite/";
 		String fileName = "hello.csv";
@@ -32,7 +32,7 @@ public class TryHdfs {
 		// ====== Init HDFS File System Object
 		Configuration conf = new Configuration();
 		// Set FileSystem URI
-		conf.set("fs.defaultFS", hdfsuri);
+		conf.set("fs.defaultFS", hdfsUri);
 		// Because of Maven
 		conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
 		conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
@@ -40,7 +40,7 @@ public class TryHdfs {
 		System.setProperty("HADOOP_USER_NAME", "pete");
 		System.setProperty("hadoop.home.dir", "/");
 		// Get the filesystem - HDFS
-		FileSystem fs = FileSystem.get(URI.create(hdfsuri), conf);
+		FileSystem fs = FileSystem.get(URI.create(hdfsUri), conf);
 
 		// ==== Create folder if not exists
 		Path workingDir = fs.getWorkingDirectory();
