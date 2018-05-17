@@ -1,14 +1,15 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>com.petezybrick</groupId>
-    <artifactId>blockchain-supplychain</artifactId>
-    <version>1.0.0</version>
-  </parent>
-  
-  <artifactId>bcsc-sim</artifactId>
-  
-  	<dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.petezybrick</groupId>
+		<artifactId>blockchain-supplychain</artifactId>
+		<version>1.0.0</version>
+	</parent>
+
+	<artifactId>bcsc-sim</artifactId>
+
+	<dependencies>
 		<dependency>
 			<groupId>com.petezybrick</groupId>
 			<artifactId>bcsc-common</artifactId>
@@ -19,6 +20,12 @@
 			<artifactId>bcsc-service</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
+
 	</dependencies>
-  
+
 </project>

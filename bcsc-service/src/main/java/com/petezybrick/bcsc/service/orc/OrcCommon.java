@@ -11,8 +11,6 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hive.common.type.HiveDecimal;
@@ -24,7 +22,6 @@ import org.apache.hadoop.hive.ql.exec.vector.LongColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.TimestampColumnVector;
 import org.apache.hadoop.hive.ql.exec.vector.VectorizedRowBatch;
 import org.apache.hadoop.hive.serde2.io.HiveDecimalWritable;
-import org.apache.hadoop.yarn.webapp.GenericExceptionHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.orc.OrcFile;
@@ -35,14 +32,12 @@ import org.apache.orc.TypeDescription.Category;
 import org.apache.orc.Writer;
 
 import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
-import com.petezybrick.bcsc.common.utils.BlockchainUtils;
-import com.petezybrick.bcsc.service.hive.HivePooledDataSource;
 
 public class OrcCommon {
 	private static final Logger logger = LogManager.getLogger(OrcCommon.class);
 
-	
 	public static List<BaseOrcVo> read(String targetPath, String targetNameExt, BaseOrcVo baseOrcVo) throws Exception {
+		logger.debug("targetPath {}, targetNameExt {}", targetPath, targetNameExt );
 		Configuration conf = new Configuration();
 		Path readPath = null;
 		
@@ -59,6 +54,7 @@ public class OrcCommon {
 
 		String schemaName = BaseOrcVo.roByteBufferToString(reader.getMetadataValue(OrcSchemaMgr.METADATA_SCHEMA_NAME_KEY));
 		String schemaVersion = BaseOrcVo.roByteBufferToString(reader.getMetadataValue(OrcSchemaMgr.METADATA_SCHEMA_VERSION_KEY));
+		logger.debug("schemaName {}, schemaVersion {}", schemaName, schemaVersion );
 		RecordReader recordReader = reader.rows();
 		VectorizedRowBatch batch = reader.getSchema().createRowBatch();
 		OrcSchemaMgr.validateSchema(schemaName, schemaVersion, reader.getSchema());
@@ -80,11 +76,14 @@ public class OrcCommon {
 			}
 		}
 		recordReader.close();
+		logger.debug("numRows {}", orcVos.size() );
 		return orcVos;
 	}
 
 	
 	public static void write( String targetPath, String targetNameExt, String schemaName, String schemaVersion, List<List<Object>> rowsCols ) throws Exception {
+		logger.debug("targetPath {}, targetNameExt {}, schemaName {}, schemaVersion {}, numRows {}", 
+				targetPath, targetNameExt, schemaName, schemaVersion, rowsCols.size() );
 		Configuration conf = new Configuration();
 		Path path = null;
 		
@@ -271,6 +270,25 @@ public class OrcCommon {
 		String hdfsPath = targetPath.substring(6);
 		Path newFolderPath = new Path(hdfsUri + hdfsPath);
 		return new Path(newFolderPath + "/" + targetNameExt);
+	}
+	
+	
+	public static void deleteTargetFolder( String targetPath ) throws Exception {
+		logger.debug("targetPath {}", targetPath );
+		Configuration conf = new Configuration();
+		
+		if( targetPath.startsWith("hdfs")) {
+			initHdfs( conf, targetPath, "" );
+			String hdfsUri = SupplyBlockchainConfig.getInstance().getHdfsUri() ;
+			FileSystem fs = FileSystem.get(URI.create(hdfsUri), conf);
+			String hdfsPath = targetPath.substring(6);
+			Path newFolderPath = new Path(hdfsUri + hdfsPath);
+			if (fs.exists(newFolderPath)) fs.delete(newFolderPath, true);
+		} else if( targetPath.startsWith("s3")) {
+			
+		} else {
+			FileUtils.deleteDirectory( new File(targetPath));
+		}
 	}
 
 }

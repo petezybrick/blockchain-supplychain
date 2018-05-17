@@ -10,10 +10,6 @@
 	<artifactId>bcsc-test</artifactId>
 	<packaging>jar</packaging>
 
-    <properties>
-        <hadoop.version>2.9.0</hadoop.version>
-    </properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>com.petezybrick</groupId>

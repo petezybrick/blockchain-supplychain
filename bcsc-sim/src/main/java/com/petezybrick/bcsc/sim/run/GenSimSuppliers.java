@@ -46,6 +46,7 @@ import com.petezybrick.bcsc.service.orc.LotCanineOrcDao;
 import com.petezybrick.bcsc.service.orc.LotCanineOrcVo;
 import com.petezybrick.bcsc.service.orc.MapLotCanineSupplierBlockchainOrcDao;
 import com.petezybrick.bcsc.service.orc.MapLotCanineSupplierBlockchainOrcVo;
+import com.petezybrick.bcsc.service.orc.OrcCommon;
 import com.petezybrick.bcsc.service.orc.SupplierBlockOrcDao;
 import com.petezybrick.bcsc.service.orc.SupplierBlockOrcVo;
 import com.petezybrick.bcsc.service.orc.SupplierBlockTransactionOrcDao;
@@ -71,8 +72,8 @@ public class GenSimSuppliers {
 			"Wheat Cooperative, LLC", "distributor", "wheat", "Corn Gluten Cooperative, LLC", "distributor", "corn", "Oat Groats Cooperative, LLC",
 			"distributor", "oat", "Fish Oil Cooperative, LLC", "distributor", "fish_oil", "Beet Pulp Cooperative, LLC", "distributor", "beet", };
 	public static final int NUM_SIM_SUPPLIERS = triples.length / 3;
-	public static final int NUM_SIM_CHAINS_PER_SOURCE = 100;
-	public static final int NUM_SIM_LOTS_PER_CHAIN_PER_SOURCE = 25;
+	public static final int NUM_SIM_CHAINS_PER_SOURCE = 10;
+	public static final int NUM_SIM_LOTS_PER_CHAIN_PER_SOURCE = 5;
 	public static final int NUM_SIM_LOTS = 10;
 	public static final int NUM_SIM_PROD_WEEKS = 8;
 	// Demo/learning purposes only - use Keystore
@@ -197,14 +198,16 @@ public class GenSimSuppliers {
 			}
 			
 			// ORC files
-			String path = System.getProperty("java.io.tmpdir");
-			path = "hdfs://user/bcsc/testorc/";
-			if( !path.endsWith("/")) path = path + "/";
+			// TODO: delete the target folder
+			String targetPath = System.getProperty("java.io.tmpdir");
+			targetPath = "hdfs://user/bcsc/bcsc_data/";
+			OrcCommon.deleteTargetFolder( targetPath );
+			if( !targetPath.endsWith("/")) targetPath = targetPath + "/";
 			String targetNameExt = null;
 			List<List<Object>> rowsColsSupplier = new ArrayList<List<Object>>();
 			for( SupplierVo supplierVo : supplierVos ) rowsColsSupplier.add( new SupplierOrcVo(supplierVo).toObjectList());
 			targetNameExt = "supplier/" + BlockchainUtils.generateSortableUuid();
-			SupplierOrcDao.writeOrc(path, targetNameExt, rowsColsSupplier);
+			SupplierOrcDao.writeOrc(targetPath, targetNameExt, rowsColsSupplier);
 
 			List<List<Object>> rowsColsSupplierBlockchain = new ArrayList<List<Object>>();
 			List<List<Object>> rowsColsSupplierBlock = new ArrayList<List<Object>>();
@@ -227,13 +230,13 @@ public class GenSimSuppliers {
 				}
 			}
 			targetNameExt = "supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
-			SupplierBlockchainOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierBlockchain);
+			SupplierBlockchainOrcDao.writeOrc(targetPath, targetNameExt, rowsColsSupplierBlockchain);
 			targetNameExt = "supplier_block/" + BlockchainUtils.generateSortableUuid();
-			SupplierBlockOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierBlock);
+			SupplierBlockOrcDao.writeOrc(targetPath, targetNameExt, rowsColsSupplierBlock);
 			targetNameExt = "supplier_block_transaction/" + BlockchainUtils.generateSortableUuid();
-			SupplierBlockTransactionOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierBlockTransaction);
+			SupplierBlockTransactionOrcDao.writeOrc(targetPath, targetNameExt, rowsColsSupplierBlockTransaction);
 			targetNameExt = "supplier_transaction/" + BlockchainUtils.generateSortableUuid();
-			SupplierTransactionOrcDao.writeOrc(path, targetNameExt, rowsColsSupplierTransaction);
+			SupplierTransactionOrcDao.writeOrc(targetPath, targetNameExt, rowsColsSupplierTransaction);
 			
 			List<List<Object>> rowsColsLotCanine = new ArrayList<List<Object>>();
 			List<List<Object>> rowsColsMapLotCanineSupplierBlockchainVo = new ArrayList<List<Object>>();
@@ -247,9 +250,9 @@ public class GenSimSuppliers {
 				}
 			}
 			targetNameExt = "lot_canine/" + BlockchainUtils.generateSortableUuid();
-			LotCanineOrcDao.writeOrc(path, targetNameExt, rowsColsLotCanine);
+			LotCanineOrcDao.writeOrc(targetPath, targetNameExt, rowsColsLotCanine);
 			targetNameExt = "map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
-			MapLotCanineSupplierBlockchainOrcDao.writeOrc(path, targetNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
+			MapLotCanineSupplierBlockchainOrcDao.writeOrc(targetPath, targetNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
 			
 			try (Connection con = PooledDataSource.getInstance().getConnection();){
 				con.setAutoCommit(false);
@@ -261,7 +264,7 @@ public class GenSimSuppliers {
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 		}
-		System.out.println("+++++ Done +++++");
+		logger.info("+++++ Done +++++");
 	}
 
 	
