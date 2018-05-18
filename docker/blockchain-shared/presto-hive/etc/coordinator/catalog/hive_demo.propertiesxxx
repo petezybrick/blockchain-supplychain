@@ -1,2 +1,0 @@
-connector.name=hive-hadoop
-hive.metastore.uri=thrift://example.net:9083
