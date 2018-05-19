@@ -67,11 +67,58 @@ Hive setup, verify with basic table
 		select * from db_people.person;
 		select * from db_people.person where birth_date>'1965-01-01';
 	
-	
-
+./presto --server localhost:8090 --catalog hive_bcsc --schema db_bcsc
  
- 
+hive --service metastore 
 hive --service hiveserver2 &
 
 echo 'myuser:mypass' | chpasswd
 
+
++++ 2018-05-18 - new step by step instructions
+
+Build the Presto/Hive image
+review presto-hive dockerfile
+open a terminal session
+cd /home/pete/development/gitrepo/blockchain-supplychain/docker/blockchain-shared/presto-hive
+docker build -t hadoop-presto:2.9.0 .
+
+Start the cluster, there will be metastore errors since the database hasn't been configured yet
+docker-compose --file docker-compose-presto-hive.yml up
+I copied the schema files hive-schema-2.3.0.mysql.sql and hive-txn-schema-2.3.0.mysql.sql to ./data
+docker exec -it bcsc-hive-mysql /bin/bash
+cd /tmp/blockchain-shared/presto-hive/data
+mysql -u root -p
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Password*8';
+FLUSH PRIVILEGES;
+create database metastore;
+use metastore;
+source hive-schema-2.3.0.mysql.sql;
+Stop and restart the cluster
+docker-compose --file docker-compose-presto-hive.yml up
+
+Create the database and tables in Hive catalog, path in HDFS
+docker exec -it bcsc-hive-namenode /bin/bash
+hdfs dfs -mkdir -p /user/bcsc
+cd /tmp/blockchain-shared/presto-hive/data
+beeline -f create_bcsc_tables.sql
+Open beeline and verify the tables are there
+beeline
+use db_bcsc;
+show tables;
+	note; to exit beeline, use: !quit
+exit from the docker session
+
+Run GenSimSuppliers, verify the data is loaded in HDFS 
+bring up Hadoop console: http://localhost:50070
+Click on Utilities, Browse the file system
+verify files exist under /user/bcsc/bcsc_data
+Verify files can be queried via Presto
+cd /home/pete/development/server
+./presto-cli --server localhost:8090 --catalog hive_bcsc --schema db_bcsc
+show tables
+	verify results
+
+	
+
+ 
