@@ -126,10 +126,27 @@ services:
     expose:
       - 8080
     ports:
-      - 8091:8080
+      - 8098:8080
     volumes:
       - ../blockchain-shared:/tmp/blockchain-shared
       - ../blockchain-shared/presto-hive/etc/worker1:/usr/local/presto/etc
+    depends_on:
+      - bcsc-presto-coordinator     
+   
+  bcsc-presto-worker2:
+    image: presto:0.194
+    command: python2.7 /usr/local/presto/bin/launcher.py run
+    hostname: bcsc-presto-worker2
+    container_name: bcsc-presto-worker2
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 8080
+    ports:
+      - 8099:8080
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
+      - ../blockchain-shared/presto-hive/etc/worker2:/usr/local/presto/etc
     depends_on:
       - bcsc-presto-coordinator     
  

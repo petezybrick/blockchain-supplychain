@@ -4,6 +4,7 @@ CALL PROC_DROP_FOREIGN_KEY('supplier_transaction', 'fk_supplier_block_transactio
 CALL PROC_DROP_FOREIGN_KEY('supplier_transaction', 'fk_supplier_transaction_supplier');
 CALL PROC_DROP_FOREIGN_KEY('supplier_block_transaction', 'fk_supplier_block');
 CALL PROC_DROP_FOREIGN_KEY('supplier_block', 'fk_supplier_blockchain');
+CALL PROC_DROP_FOREIGN_KEY('customer', 'fk_customer_loyalty');
 
 
 DROP TABLE IF EXISTS map_lot_canine_supplier_blockchain;
@@ -13,6 +14,31 @@ DROP TABLE IF EXISTS supplier_block;
 DROP TABLE IF EXISTS supplier_block_transaction;
 DROP TABLE IF EXISTS supplier_transaction;
 DROP TABLE IF EXISTS supplier;
+DROP TABLE IF EXISTS customer_loyalty;
+DROP TABLE IF EXISTS customer;
+
+
+
+CREATE TABLE customer (
+	customer_uuid CHAR(36) NOT NULL PRIMARY KEY,
+	first_name varchar(36) not null,
+	last_name VARCHAR(36) not null,
+	email_address VARCHAR(255) not null,
+	insert_ts timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
+	update_ts TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE customer_loyalty (
+	customer_loyalty_uuid CHAR(36) NOT NULL PRIMARY KEY,
+	customer_uuid CHAR(36),
+	desc_type char(1) not null,
+	desc_text varchar(1024) not null,
+	manufacturer_lot_number varchar(64),
+	insert_ts timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
+	update_ts TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE supplier (
 	supplier_uuid CHAR(36) NOT NULL PRIMARY KEY,
@@ -114,4 +140,6 @@ ALTER TABLE map_lot_canine_supplier_blockchain ADD CONSTRAINT fk_log_canine_supp
 	FOREIGN KEY (supplier_blockchain_uuid) REFERENCES supplier_blockchain(supplier_blockchain_uuid)
 	ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-	
+LTER TABLE customer_loyalty ADD CONSTRAINT fk_customer_loyalty 
+	FOREIGN KEY (customer_uuid) REFERENCES customer(customer_uuid)
+	ON DELETE NO ACTION ON UPDATE NO ACTION;	
