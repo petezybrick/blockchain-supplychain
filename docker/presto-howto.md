@@ -115,7 +115,7 @@ Click on Utilities, Browse the file system
 verify files exist under /user/bcsc/bcsc_data
 Verify files can be queried via Presto
 cd /home/pete/development/server
-./presto-cli --server localhost:8090 --catalog hive_bcsc --schema db_bcsc
+./presto-cli --server localhost:8090 --catalog cat_bcsc --schema db_bcsc
 show tables
 	verify results
 

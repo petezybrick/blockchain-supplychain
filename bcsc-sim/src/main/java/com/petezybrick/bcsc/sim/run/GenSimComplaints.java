@@ -2,6 +2,8 @@ package com.petezybrick.bcsc.sim.run;
 
 import java.io.File;
 import java.security.Security;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -13,14 +15,20 @@ import org.apache.logging.log4j.Logger;
 
 import com.petezybrick.bcsc.common.config.CassandraBaseDao;
 import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
+import com.petezybrick.bcsc.common.utils.BlockchainUtils;
+import com.petezybrick.bcsc.service.database.CustomerDao;
+import com.petezybrick.bcsc.service.database.CustomerLoyaltyDao;
+import com.petezybrick.bcsc.service.database.CustomerLoyaltyVo;
+import com.petezybrick.bcsc.service.database.CustomerVo;
+import com.petezybrick.bcsc.service.database.LotCanineDao;
 import com.petezybrick.bcsc.service.database.PooledDataSource;
 
 public class GenSimComplaints {
 	private static final Logger logger = LogManager.getLogger(GenSimComplaints.class);
 	private static final Random random = new Random();
 	private static final int NUM_CUSTOMER_COMPLAINTS = 100;
-	private static final List<String> MANU_LOT_NUMBERS = Arrays.asList("aa","bb","cc");
-	private static final int NUM_MANU_LOT_NUMBERS = MANU_LOT_NUMBERS.size();
+	private List<String> manuLotNumbers;
+	private int numManuLotNumbers;
 	private static final List<String> COMPLAINT_TEXTS = Arrays.asList("indigestion","refuses to eat","constipation");
 	private static final int NUM_COMPLAINT_TEXTS = COMPLAINT_TEXTS.size();
 			
@@ -39,63 +47,55 @@ public class GenSimComplaints {
 	
 	
 	public void process( String pathNameExtUsers ) throws Exception {
+		long before = System.currentTimeMillis();
+		logger.info("Start");
+		final String LOYALTY_TYPE_COMPLAINT = "C";
 		SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
 				System.getenv("KEYSPACE_NAME") );
-		PooledDataSource.getInstance( SupplyBlockchainConfig.getInstance() ); 
-		List<CustomerComplaintVo> customerComplaintVos = new ArrayList<CustomerComplaintVo>();
-		List<String> customerLogins = readCustomerLogins( pathNameExtUsers );
+		manuLotNumbers = LotCanineDao.findAllLotNumbers();
+		numManuLotNumbers = manuLotNumbers.size();
+		List<CustomerLoyaltyVo> customerLoyaltyVos = new ArrayList<CustomerLoyaltyVo>();
+		List<CustomerVo> customerVos = createCustomers( pathNameExtUsers );
 		for( int i=0 ; i<NUM_CUSTOMER_COMPLAINTS ; i++ ) {
-			String customerLogin = customerLogins.get(i);
-			String manufacturerLotNumber = MANU_LOT_NUMBERS.get( random.nextInt(NUM_MANU_LOT_NUMBERS));
+			CustomerVo customerVo = customerVos.get(i);
+			String manufacturerLotNumber = manuLotNumbers.get( random.nextInt(numManuLotNumbers));
 			String complaintText = COMPLAINT_TEXTS.get(random.nextInt(NUM_COMPLAINT_TEXTS));
-			customerComplaintVos.add( new CustomerComplaintVo().setCustomerLogin(customerLogin)
+			customerLoyaltyVos.add( new CustomerLoyaltyVo()
+					.setCustomerLoyaltyUuid(BlockchainUtils.generateSortableUuid())
+					.setCustomerUuid(customerVo.getCustomerUuid())
+					.setDescType(LOYALTY_TYPE_COMPLAINT)
+					.setDescText(complaintText)
 					.setManufacturerLotNumber(manufacturerLotNumber)
-					.setComplaintText(complaintText) );
+					);
 		}
-		customerComplaintVos.forEach(ccv -> System.out.println(ccv.toString()));
+		try (Connection con = PooledDataSource.getInstance().getConnection();){
+			logger.info("Deletes");
+			CustomerLoyaltyDao.deleteAll( con );
+			CustomerDao.deleteAll( con );
+			logger.info("Insert Customers");
+			CustomerDao.insertBatchList(con, customerVos);
+			logger.info("Insert CustomerLoyaltys");
+			CustomerLoyaltyDao.insertBatchList(con, customerLoyaltyVos);
+			logger.info("Complete, elapsedMs {}", System.currentTimeMillis() - before);
+		}
 	}
 
 	
-	private List<String> readCustomerLogins( String pathNameExtUsers ) throws Exception {
-		List<String> users = new ArrayList<String>();
+	private List<CustomerVo> createCustomers( String pathNameExtUsers ) throws Exception {
+		List<CustomerVo> customerVos = new ArrayList<CustomerVo>();
 		List<String> rows = FileUtils.readLines(new File(pathNameExtUsers));
+		int numCustomers = 0;
 		for( String row : rows ) {
 			String[] tokens = row.split("[\t]");
-			users.add(tokens[2]);
+			customerVos.add( new CustomerVo()
+					.setCustomerUuid(BlockchainUtils.generateSortableUuid())
+					.setFirstName(tokens[0])
+					.setLastName(tokens[1])
+					.setEmailAddress(tokens[2])
+					);
+			if( ++numCustomers == NUM_CUSTOMER_COMPLAINTS) break;
 		}
-		return users;
+		return customerVos;
 	}
 	
-	private static class CustomerComplaintVo {
-		private String customerLogin;
-		private String manufacturerLotNumber;
-		private String complaintText;
-		
-		public String getCustomerLogin() {
-			return customerLogin;
-		}
-		public String getManufacturerLotNumber() {
-			return manufacturerLotNumber;
-		}
-		public String getComplaintText() {
-			return complaintText;
-		}
-		public CustomerComplaintVo setCustomerLogin(String customerLogin) {
-			this.customerLogin = customerLogin;
-			return this;
-		}
-		public CustomerComplaintVo setManufacturerLotNumber(String manufacturerLotNumber) {
-			this.manufacturerLotNumber = manufacturerLotNumber;
-			return this;
-		}
-		public CustomerComplaintVo setComplaintText(String complaintText) {
-			this.complaintText = complaintText;
-			return this;
-		}
-		@Override
-		public String toString() {
-			return "CustomerComplaintVo [customerLogin=" + customerLogin + ", manufacturerLotNumber=" + manufacturerLotNumber + ", complaintText="
-					+ complaintText + "]";
-		}
-	}
 }
