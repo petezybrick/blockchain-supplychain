@@ -17,7 +17,7 @@
  * @version 1.0.0, 2017-09
  * 
  */
-package com.petezybrick.bcsc.service.hive;
+package com.petezybrick.bcsc.service.database;
 
 import java.sql.Connection;
 
@@ -32,13 +32,13 @@ import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 /**
  * The Class PooledDataSource.
  */
-public class HivePooledDataSource {
+public class PrestoDataSource {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(HivePooledDataSource.class);
+	private static final Logger logger = LogManager.getLogger(PrestoDataSource.class);
 	
 	/** The pooled data source. */
-	private static HivePooledDataSource pooledDataSource;
+	private static PrestoDataSource prestoDataSource;
 	
 	/** The bds. */
 	private BasicDataSource bds;
@@ -50,15 +50,18 @@ public class HivePooledDataSource {
 	 * @param masterConfig the master config
 	 * @throws Exception the exception
 	 */
-	private HivePooledDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
-		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLoginSupplier(), masterConfig.getJdbcDriverClassNameSupplier(), masterConfig.getJdbcUrlSupplier());
+	private PrestoDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
+		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLoginPresto(), masterConfig.getJdbcDriverClassNamePresto(), masterConfig.getJdbcUrlPresto());
 		bds = new BasicDataSource();
-		bds.setDriverClassName(masterConfig.getJdbcDriverClassNameSupplier());
-		bds.setUrl(masterConfig.getJdbcUrlSupplier());
-		bds.setUsername(masterConfig.getJdbcLoginSupplier());
-		bds.setPassword(masterConfig.getJdbcPasswordSupplier());
-		// Optimize for bulk inserts
-		bds.setDefaultAutoCommit(false);
+//		bds.setDriverClassName(masterConfig.getJdbcDriverClassName());
+//		bds.setUrl(masterConfig.getJdbcUrl());
+//		bds.setUsername(masterConfig.getJdbcLogin());
+//		bds.setPassword(masterConfig.getJdbcPassword());		
+		bds.setDriverClassName(masterConfig.getJdbcDriverClassNamePresto());
+		bds.setUrl(masterConfig.getJdbcUrlPresto());
+		bds.setUsername(masterConfig.getJdbcLoginPresto());
+		bds.setPassword(masterConfig.getJdbcPasswordPresto());
+		bds.setDefaultAutoCommit(true);
 	}
 		
 		
@@ -69,17 +72,20 @@ public class HivePooledDataSource {
 	 * @return single instance of PooledDataSource
 	 * @throws Exception the exception
 	 */
-	public static HivePooledDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
-		if(pooledDataSource != null ) return pooledDataSource;
+	public static PrestoDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
+		if(prestoDataSource != null ) return prestoDataSource;
 		else {
-			pooledDataSource = new HivePooledDataSource(masterConfig);
-			return pooledDataSource;
+			prestoDataSource = new PrestoDataSource(masterConfig);
+			return prestoDataSource;
 		}
 	}
 	
-	public static HivePooledDataSource getInstance( ) throws Exception {
-		if(pooledDataSource != null ) return pooledDataSource;
-		else throw new Exception("SupplyBlockchainConfig not initialized");
+	public static PrestoDataSource getInstance( ) throws Exception {
+		if(prestoDataSource != null ) return prestoDataSource;
+		else {
+			prestoDataSource = new PrestoDataSource(SupplyBlockchainConfig.getInstance());
+			return prestoDataSource;
+		}
 	}
 	
 	

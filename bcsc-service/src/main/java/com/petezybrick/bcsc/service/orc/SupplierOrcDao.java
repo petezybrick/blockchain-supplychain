@@ -6,7 +6,7 @@ import java.sql.PreparedStatement;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.petezybrick.bcsc.service.database.PooledDataSource;
+import com.petezybrick.bcsc.service.database.SupplierDataSource;
 import com.petezybrick.bcsc.service.orc.OrcCommon;
 
 
@@ -24,7 +24,7 @@ public class SupplierOrcDao {
 
 
 	public static SupplierOrcVo findByTemplate( SupplierOrcVo supplierOrcVo ) throws Exception {
-		try( Connection con = PooledDataSource.getInstance().getConnection();
+		try( Connection con = SupplierDataSource.getInstance().getConnection();
 		     PreparedStatement pstmt = con.prepareStatement(sqlFindTemplate); ) {
 			con.setAutoCommit(true);
 			int offset = 1;

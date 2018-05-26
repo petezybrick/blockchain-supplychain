@@ -59,19 +59,31 @@ public class SupplyBlockchainConfig implements Serializable {
 	private static SupplyBlockchainConfig supplyBlockchainConfig;
 	
 	/** The jdbc driver class name. */
-	private String jdbcDriverClassName;
+	private String jdbcDriverClassNameSupplier;
 	
 	/** The jdbc insert block size. */
-	private Integer jdbcInsertBlockSize;
+	private Integer jdbcInsertBlockSizeSupplier;
 	
 	/** The jdbc login. */
-	private String jdbcLogin;
+	private String jdbcLoginSupplier;
 	
 	/** The jdbc password. */
-	private String jdbcPassword;
+	private String jdbcPasswordSupplier;
 	
 	/** The jdbc url. */
-	private String jdbcUrl;	
+	private String jdbcUrlSupplier;	
+	
+	/** The jdbc driver class name. */
+	private String jdbcDriverClassNamePresto;
+	
+	/** The jdbc login. */
+	private String jdbcLoginPresto;
+	
+	/** The jdbc password. */
+	private String jdbcPasswordPresto;
+	
+	/** The jdbc url. */
+	private String jdbcUrlPresto;	
 	
 	private String hdfsUri;
 	private String hadoopUserName;
@@ -134,6 +146,7 @@ public class SupplyBlockchainConfig implements Serializable {
 				return supplyBlockchainConfigNew;
 			} catch(Exception e ) {
 				exception = e;
+			} finally {
 				ConfigDao.disconnect();
 			}
 			if( System.currentTimeMillis() > maxWait ) break;
@@ -169,28 +182,28 @@ public class SupplyBlockchainConfig implements Serializable {
 	}
 
 	
-	public String getJdbcDriverClassName() {
-		return jdbcDriverClassName;
+	public String getJdbcDriverClassNameSupplier() {
+		return jdbcDriverClassNameSupplier;
 	}
 
 
-	public Integer getJdbcInsertBlockSize() {
-		return jdbcInsertBlockSize;
+	public Integer getJdbcInsertBlockSizeSupplier() {
+		return jdbcInsertBlockSizeSupplier;
 	}
 
 
-	public String getJdbcLogin() {
-		return jdbcLogin;
+	public String getJdbcLoginSupplier() {
+		return jdbcLoginSupplier;
 	}
 
 
-	public String getJdbcPassword() {
-		return jdbcPassword;
+	public String getJdbcPasswordSupplier() {
+		return jdbcPasswordSupplier;
 	}
 
 
-	public String getJdbcUrl() {
-		return jdbcUrl;
+	public String getJdbcUrlSupplier() {
+		return jdbcUrlSupplier;
 	}
 
 
@@ -212,32 +225,32 @@ public class SupplyBlockchainConfig implements Serializable {
 	}
 
 
-	public SupplyBlockchainConfig setJdbcDriverClassName(String jdbcDriverClassName) {
-		this.jdbcDriverClassName = jdbcDriverClassName;
+	public SupplyBlockchainConfig setJdbcDriverClassNameSupplier(String jdbcDriverClassNameSupplier) {
+		this.jdbcDriverClassNameSupplier = jdbcDriverClassNameSupplier;
 		return this;
 	}
 
 
-	public SupplyBlockchainConfig setJdbcInsertBlockSize(Integer jdbcInsertBlockSize) {
-		this.jdbcInsertBlockSize = jdbcInsertBlockSize;
+	public SupplyBlockchainConfig setJdbcInsertBlockSizeSupplier(Integer jdbcInsertBlockSizeSupplier) {
+		this.jdbcInsertBlockSizeSupplier = jdbcInsertBlockSizeSupplier;
 		return this;
 	}
 
 
-	public SupplyBlockchainConfig setJdbcLogin(String jdbcLogin) {
-		this.jdbcLogin = jdbcLogin;
+	public SupplyBlockchainConfig setJdbcLoginSupplier(String jdbcLoginSupplier) {
+		this.jdbcLoginSupplier = jdbcLoginSupplier;
 		return this;
 	}
 
 
-	public SupplyBlockchainConfig setJdbcPassword(String jdbcPassword) {
-		this.jdbcPassword = jdbcPassword;
+	public SupplyBlockchainConfig setJdbcPasswordSupplier(String jdbcPasswordSupplier) {
+		this.jdbcPasswordSupplier = jdbcPasswordSupplier;
 		return this;
 	}
 
 
-	public SupplyBlockchainConfig setJdbcUrl(String jdbcUrl) {
-		this.jdbcUrl = jdbcUrl;
+	public SupplyBlockchainConfig setJdbcUrlSupplier(String jdbcUrlSupplier) {
+		this.jdbcUrlSupplier = jdbcUrlSupplier;
 		return this;
 	}
 
@@ -245,8 +258,10 @@ public class SupplyBlockchainConfig implements Serializable {
 	@Override
 	public String toString() {
 		return "SupplyBlockchainConfig [supplyBlockchainConfigJsonKey=" + supplyBlockchainConfigJsonKey + ", contactPoint=" + contactPoint + ", keyspaceName="
-				+ keyspaceName + ", jdbcDriverClassName=" + jdbcDriverClassName + ", jdbcInsertBlockSize=" + jdbcInsertBlockSize + ", jdbcLogin=" + jdbcLogin
-				+ ", jdbcPassword=" + jdbcPassword + ", jdbcUrl=" + jdbcUrl + ", hdfsUri=" + hdfsUri + ", hadoopUserName=" + hadoopUserName + "]";
+				+ keyspaceName + ", jdbcDriverClassNameSupplier=" + jdbcDriverClassNameSupplier + ", jdbcInsertBlockSizeSupplier=" + jdbcInsertBlockSizeSupplier
+				+ ", jdbcLoginSupplier=" + jdbcLoginSupplier + ", jdbcPasswordSupplier=" + jdbcPasswordSupplier + ", jdbcUrlSupplier=" + jdbcUrlSupplier
+				+ ", jdbcDriverClassNamePresto=" + jdbcDriverClassNamePresto + ", jdbcLoginPresto=" + jdbcLoginPresto + ", jdbcPasswordPresto="
+				+ jdbcPasswordPresto + ", jdbcUrlPresto=" + jdbcUrlPresto + ", hdfsUri=" + hdfsUri + ", hadoopUserName=" + hadoopUserName + "]";
 	}
 
 
@@ -268,6 +283,50 @@ public class SupplyBlockchainConfig implements Serializable {
 
 	public SupplyBlockchainConfig setHadoopUserName(String hadoopUserName) {
 		this.hadoopUserName = hadoopUserName;
+		return this;
+	}
+
+
+	public String getJdbcDriverClassNamePresto() {
+		return jdbcDriverClassNamePresto;
+	}
+
+
+	public String getJdbcLoginPresto() {
+		return jdbcLoginPresto;
+	}
+
+
+	public String getJdbcPasswordPresto() {
+		return jdbcPasswordPresto;
+	}
+
+
+	public String getJdbcUrlPresto() {
+		return jdbcUrlPresto;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcDriverClassNamePresto(String jdbcDriverClassNamePresto) {
+		this.jdbcDriverClassNamePresto = jdbcDriverClassNamePresto;
+		return this;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcLoginPresto(String jdbcLoginPresto) {
+		this.jdbcLoginPresto = jdbcLoginPresto;
+		return this;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcPasswordPresto(String jdbcPasswordPresto) {
+		this.jdbcPasswordPresto = jdbcPasswordPresto;
+		return this;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcUrlPresto(String jdbcUrlPresto) {
+		this.jdbcUrlPresto = jdbcUrlPresto;
 		return this;
 	}
 	

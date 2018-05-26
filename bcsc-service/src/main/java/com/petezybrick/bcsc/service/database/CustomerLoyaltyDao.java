@@ -57,7 +57,7 @@ public class CustomerLoyaltyDao {
 
 	
 	public static void insert( CustomerLoyaltyVo customerLoyaltyVo ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlInsert);	){
 			con.setAutoCommit(false);
 			int offset = 1;
@@ -75,7 +75,7 @@ public class CustomerLoyaltyDao {
 	}
 
 	public static void deleteByPk( CustomerLoyaltyVo customerLoyaltyVo ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlDeleteByPk);	){
 			con.setAutoCommit(true);
 			int offset = 1;
@@ -99,7 +99,7 @@ public class CustomerLoyaltyDao {
 	}
 
 	public static CustomerLoyaltyVo findByPk( CustomerLoyaltyVo customerLoyaltyVo ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindByPk);	){
 			con.setAutoCommit(true);
 			int offset = 1;
@@ -115,7 +115,7 @@ public class CustomerLoyaltyDao {
 
 	
 	public static List<CustomerLoyaltyAllVo> findComplaints( ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindComplaints);) {
 			con.setAutoCommit(true);
 			int offset = 1;
@@ -133,7 +133,7 @@ public class CustomerLoyaltyDao {
 	
 	
 	public static void deleteAll( ) throws Exception {
-		try (Connection con = PooledDataSource.getInstance().getConnection();
+		try (Connection con = SupplierDataSource.getInstance().getConnection();
 				Statement stmt = con.createStatement();){
 			con.setAutoCommit(true);
 			stmt.execute( sqlDeleteAll );

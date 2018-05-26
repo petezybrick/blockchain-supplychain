@@ -1,6 +1,11 @@
 Create the Presto image
 
 create MySQL for demo
+docker exec -it bcsc-mysql /bin/bash
+mysql -u root -p
+	Note: the password is Password*8
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Password*8';
+FLUSH PRIVILEGES;
 
 
 download  https://repo1.maven.org/maven2/com/facebook/presto/presto-server/0.194/presto-server-0.194.tar.gz

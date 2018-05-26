@@ -52,7 +52,7 @@ public class CustomerDao {
 	}
 
 	public static void insert( CustomerVo customerVo ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlInsert);	){
 			con.setAutoCommit(false);
 			int offset = 1;
@@ -69,7 +69,7 @@ public class CustomerDao {
 	}
 
 	public static void deleteByPk( CustomerVo customerVo ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlDeleteByPk);	){
 			con.setAutoCommit(true);
 			int offset = 1;
@@ -93,7 +93,7 @@ public class CustomerDao {
 	}
 
 	public static CustomerVo findByPk( CustomerVo customerVo ) throws Exception {
-		try (	Connection con = PooledDataSource.getInstance().getConnection();
+		try (	Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindByPk);	){
 			con.setAutoCommit(true);
 			int offset = 1;
@@ -109,7 +109,7 @@ public class CustomerDao {
 	
 	
 	public static void deleteAll( ) throws Exception {
-		try (Connection con = PooledDataSource.getInstance().getConnection();
+		try (Connection con = SupplierDataSource.getInstance().getConnection();
 				Statement stmt = con.createStatement();){
 			con.setAutoCommit(true);
 			stmt.execute( sqlDeleteAll );

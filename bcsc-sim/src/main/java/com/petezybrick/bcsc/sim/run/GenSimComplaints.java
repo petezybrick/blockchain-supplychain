@@ -21,7 +21,13 @@ import com.petezybrick.bcsc.service.database.CustomerLoyaltyDao;
 import com.petezybrick.bcsc.service.database.CustomerLoyaltyVo;
 import com.petezybrick.bcsc.service.database.CustomerVo;
 import com.petezybrick.bcsc.service.database.LotCanineDao;
-import com.petezybrick.bcsc.service.database.PooledDataSource;
+import com.petezybrick.bcsc.service.database.LotIngredientVo;
+import com.petezybrick.bcsc.service.database.LotSupplierBlockVo;
+import com.petezybrick.bcsc.service.database.LotTreeVo;
+import com.petezybrick.bcsc.service.database.LoyaltyComplaintLotCanineDao;
+import com.petezybrick.bcsc.service.database.LoyaltyComplaintLotCanineVo;
+import com.petezybrick.bcsc.service.database.SupplierDataSource;
+import com.petezybrick.bcsc.service.utils.BcscServiceUtils;
 
 public class GenSimComplaints {
 	private static final Logger logger = LogManager.getLogger(GenSimComplaints.class);
@@ -37,7 +43,10 @@ public class GenSimComplaints {
 		try {
 			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 			GenSimComplaints genSimComplaints = new GenSimComplaints();
-			genSimComplaints.process( args[0] );
+			SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
+					System.getenv("KEYSPACE_NAME") );
+			//genSimComplaints.populateComplaints( args[0] );
+			genSimComplaints.injectBadSupplier(  );
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		} finally {
@@ -46,12 +55,40 @@ public class GenSimComplaints {
 	}
 	
 	
-	public void process( String pathNameExtUsers ) throws Exception {
+	/*
+	 * Force 75% of complaints to have the same Brewers Rice Fertilizer supplier
+	 * Use the first Brewers Rice Fertilizer supplier as the offending supplier
+	 */
+	public void injectBadSupplier( ) throws Exception {
+		List<LoyaltyComplaintLotCanineVo> loyaltyComplaintLotCanineVos = LoyaltyComplaintLotCanineDao.findComplaints();
+		LotSupplierBlockVo lotSupplierBlockVoFirst = null;
+		for( LoyaltyComplaintLotCanineVo loyaltyComplaintLotCanineVo : loyaltyComplaintLotCanineVos ) {
+			LotTreeVo lotTreeItem = LotCanineDao.findLotTree(loyaltyComplaintLotCanineVo.getManufacturerLotNumber());
+//			BcscServiceUtils.dumpLotTreeItemToConsole( lotTreeItem );
+			for( LotIngredientVo lotIngredientItem :  lotTreeItem.getLotIngredientItems()) {
+				if( "brewers_rice".equals(lotIngredientItem.getIngredientName())) {
+					for(LotSupplierBlockVo lotSupplierBlockItem : lotIngredientItem.getLotSupplierBlockItems() ) {
+						if( "supplier".equals(lotSupplierBlockItem.getSupplierCategory()) 
+								&& "fertilizer".equals(lotSupplierBlockItem.getSupplierSubCategory())) {
+							if( lotSupplierBlockVoFirst != null ) {
+								System.out.println("found: " + lotSupplierBlockItem.toString() );
+							} else {
+								lotSupplierBlockVoFirst = lotSupplierBlockItem;
+							}
+							
+						}
+						
+					}
+				}
+			}
+		}
+	}
+
+	
+	public void populateComplaints( String pathNameExtUsers ) throws Exception {
 		long before = System.currentTimeMillis();
 		logger.info("Start");
 		final String LOYALTY_TYPE_COMPLAINT = "C";
-		SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
-				System.getenv("KEYSPACE_NAME") );
 		manuLotNumbers = LotCanineDao.findAllLotNumbers();
 		numManuLotNumbers = manuLotNumbers.size();
 		List<CustomerLoyaltyVo> customerLoyaltyVos = new ArrayList<CustomerLoyaltyVo>();
@@ -68,7 +105,7 @@ public class GenSimComplaints {
 					.setManufacturerLotNumber(manufacturerLotNumber)
 					);
 		}
-		try (Connection con = PooledDataSource.getInstance().getConnection();){
+		try (Connection con = SupplierDataSource.getInstance().getConnection();){
 			logger.info("Deletes");
 			CustomerLoyaltyDao.deleteAll( con );
 			CustomerDao.deleteAll( con );

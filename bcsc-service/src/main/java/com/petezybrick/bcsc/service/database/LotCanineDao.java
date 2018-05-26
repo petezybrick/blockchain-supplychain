@@ -48,7 +48,7 @@ public class LotCanineDao {
 			"order by mlcsb.ingredient_sequence, sb.block_sequence";
 	
 	public static void deleteAll( ) throws Exception {
-		try (Connection con = PooledDataSource.getInstance().getConnection();
+		try (Connection con = SupplierDataSource.getInstance().getConnection();
 				Statement stmt = con.createStatement();){
 			con.setAutoCommit(true);
 			stmt.execute( sqlDeleteAll );
@@ -104,7 +104,7 @@ public class LotCanineDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(false);
 			pstmt = con.prepareStatement(sqlInsert);
 			int offset = 1;
@@ -144,7 +144,7 @@ public class LotCanineDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(true);
 			pstmt = con.prepareStatement(sqlDeleteByPk);
 			int offset = 1;
@@ -198,7 +198,7 @@ public class LotCanineDao {
 
 	
 	public static LotCanineVo findByPk( SupplyBlockchainConfig supplyBlockchainConfig, LotCanineVo lotCanineVo ) throws Exception {
-		try ( Connection con = PooledDataSource.getInstance().getConnection();
+		try ( Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindByPk);
 			){
 			con.setAutoCommit(true);
@@ -216,7 +216,7 @@ public class LotCanineDao {
 	
 	
 	public static LotCanineVo findByLotNumber( String manufacturerLotNumber ) throws Exception {
-		try ( Connection con = PooledDataSource.getInstance().getConnection();
+		try ( Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindByLotNumber);
 			){
 			con.setAutoCommit(true);
@@ -234,7 +234,7 @@ public class LotCanineDao {
 	
 	
 	public static List<String> findAllLotNumbers( ) throws Exception {
-		try ( Connection con = PooledDataSource.getInstance().getConnection();
+		try ( Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindAllLotNumbers);
 			){
 			con.setAutoCommit(true);
@@ -253,7 +253,7 @@ public class LotCanineDao {
 	
 	
 	public static LotTreeVo findLotTree( String manufacturerLotNumber ) throws Exception {
-		try ( Connection con = PooledDataSource.getInstance().getConnection();
+		try ( Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlFindLotTree);
 			){
 			con.setAutoCommit(true);

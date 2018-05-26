@@ -113,6 +113,7 @@ services:
     volumes:
       - ../blockchain-shared:/tmp/blockchain-shared
       - ../blockchain-shared/presto-hive/etc/coordinator:/usr/local/presto/etc
+      - ../blockchain-shared/presto-hive/catalog:/usr/local/presto/etc/catalog
     depends_on:
       - bcsc-hive-secondarynamenode      
   
@@ -130,6 +131,7 @@ services:
     volumes:
       - ../blockchain-shared:/tmp/blockchain-shared
       - ../blockchain-shared/presto-hive/etc/worker1:/usr/local/presto/etc
+      - ../blockchain-shared/presto-hive/catalog:/usr/local/presto/etc/catalog
     depends_on:
       - bcsc-presto-coordinator     
    
@@ -147,6 +149,7 @@ services:
     volumes:
       - ../blockchain-shared:/tmp/blockchain-shared
       - ../blockchain-shared/presto-hive/etc/worker2:/usr/local/presto/etc
+      - ../blockchain-shared/presto-hive/catalog:/usr/local/presto/etc/catalog
     depends_on:
       - bcsc-presto-coordinator     
  

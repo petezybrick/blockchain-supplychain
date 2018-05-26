@@ -32,13 +32,13 @@ import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 /**
  * The Class PooledDataSource.
  */
-public class PooledDataSource {
+public class SupplierDataSource {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(PooledDataSource.class);
+	private static final Logger logger = LogManager.getLogger(SupplierDataSource.class);
 	
 	/** The pooled data source. */
-	private static PooledDataSource pooledDataSource;
+	private static SupplierDataSource supplierDataSource;
 	
 	/** The bds. */
 	private BasicDataSource bds;
@@ -50,17 +50,18 @@ public class PooledDataSource {
 	 * @param masterConfig the master config
 	 * @throws Exception the exception
 	 */
-	private PooledDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
-		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLogin(), masterConfig.getJdbcDriverClassName(), masterConfig.getJdbcUrl());
+	private SupplierDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
+		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLoginSupplier(), masterConfig.getJdbcDriverClassNameSupplier(), masterConfig.getJdbcUrlSupplier());
 		bds = new BasicDataSource();
 //		bds.setDriverClassName(masterConfig.getJdbcDriverClassName());
 //		bds.setUrl(masterConfig.getJdbcUrl());
 //		bds.setUsername(masterConfig.getJdbcLogin());
 //		bds.setPassword(masterConfig.getJdbcPassword());		
-		bds.setDriverClassName(masterConfig.getJdbcDriverClassName());
-		bds.setUrl(masterConfig.getJdbcUrl());
-		bds.setUsername(masterConfig.getJdbcLogin());
-		bds.setPassword(masterConfig.getJdbcPassword());
+		bds.setDriverClassName(masterConfig.getJdbcDriverClassNameSupplier());
+		bds.setUrl(masterConfig.getJdbcUrlSupplier());
+		bds.setUsername(masterConfig.getJdbcLoginSupplier());
+		bds.setPassword(masterConfig.getJdbcPasswordSupplier());
+		bds.setDefaultAutoCommit(true);
 	}
 		
 		
@@ -71,19 +72,19 @@ public class PooledDataSource {
 	 * @return single instance of PooledDataSource
 	 * @throws Exception the exception
 	 */
-	public static PooledDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
-		if(pooledDataSource != null ) return pooledDataSource;
+	public static SupplierDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
+		if(supplierDataSource != null ) return supplierDataSource;
 		else {
-			pooledDataSource = new PooledDataSource(masterConfig);
-			return pooledDataSource;
+			supplierDataSource = new SupplierDataSource(masterConfig);
+			return supplierDataSource;
 		}
 	}
 	
-	public static PooledDataSource getInstance( ) throws Exception {
-		if(pooledDataSource != null ) return pooledDataSource;
+	public static SupplierDataSource getInstance( ) throws Exception {
+		if(supplierDataSource != null ) return supplierDataSource;
 		else {
-			pooledDataSource = new PooledDataSource(SupplyBlockchainConfig.getInstance());
-			return pooledDataSource;
+			supplierDataSource = new SupplierDataSource(SupplyBlockchainConfig.getInstance());
+			return supplierDataSource;
 		}
 	}
 	

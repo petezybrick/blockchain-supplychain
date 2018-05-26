@@ -11,6 +11,16 @@
 
 	<dependencies>
 		<dependency>
+			<groupId>com.facebook.presto</groupId>
+			<artifactId>presto-jdbc</artifactId>
+			<version>${presto.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<version>${hadoop.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>com.petezybrick</groupId>
 			<artifactId>bcsc-common</artifactId>
 			<version>${project.parent.version}</version>
@@ -20,11 +30,7 @@
 			<artifactId>bcsc-service</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.hadoop</groupId>
-			<artifactId>hadoop-client</artifactId>
-			<version>${hadoop.version}</version>
-		</dependency>
+
 
 	</dependencies>
 

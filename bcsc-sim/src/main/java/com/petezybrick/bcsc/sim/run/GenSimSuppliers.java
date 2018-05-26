@@ -31,7 +31,7 @@ import com.petezybrick.bcsc.service.database.LotCanineDao;
 import com.petezybrick.bcsc.service.database.LotCanineVo;
 import com.petezybrick.bcsc.service.database.MapLotCanineSupplierBlockchainDao;
 import com.petezybrick.bcsc.service.database.MapLotCanineSupplierBlockchainVo;
-import com.petezybrick.bcsc.service.database.PooledDataSource;
+import com.petezybrick.bcsc.service.database.SupplierDataSource;
 import com.petezybrick.bcsc.service.database.SupplierBlockDao;
 import com.petezybrick.bcsc.service.database.SupplierBlockTransactionDao;
 import com.petezybrick.bcsc.service.database.SupplierBlockTransactionVo;
@@ -117,7 +117,7 @@ public class GenSimSuppliers {
 		try {
 			config = SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
 					System.getenv("KEYSPACE_NAME") );
-			PooledDataSource.getInstance( config ); 
+			SupplierDataSource.getInstance( config ); 
 			// Clear out old simulated data
 			deleteAllTables();
 
@@ -254,7 +254,7 @@ public class GenSimSuppliers {
 			targetNameExt = "map_lot_canine_supplier_blockchain/" + BlockchainUtils.generateSortableUuid();
 			MapLotCanineSupplierBlockchainOrcDao.writeOrc(targetPath, targetNameExt, rowsColsMapLotCanineSupplierBlockchainVo);
 			
-			try (Connection con = PooledDataSource.getInstance().getConnection();){
+			try (Connection con = SupplierDataSource.getInstance().getConnection();){
 				con.setAutoCommit(false);
 				SupplierDao.insertBatchList( supplierVos );
 				SupplierBlockchainDao.insertBatchList( con, allSupplierBlockchainVos );
@@ -370,7 +370,7 @@ public class GenSimSuppliers {
 	
 	
 	private void createSupplierBlockchainsTables( List<SupplierBlockchainVo> supplierBlockchainVos) throws Exception {
-		try (Connection con = PooledDataSource.getInstance().getConnection();){
+		try (Connection con = SupplierDataSource.getInstance().getConnection();){
 			con.setAutoCommit(false);
 			SupplierBlockchainDao.insertBatchList( con, supplierBlockchainVos );
 			con.commit();

@@ -12,11 +12,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.petezybrick</groupId>
-			<artifactId>bcsc-common</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-dbcp2</artifactId>
 			<version>2.1.1</version>
@@ -41,6 +36,12 @@
 			<artifactId>presto-jdbc</artifactId>
 			<version>${presto.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.petezybrick</groupId>
+			<artifactId>bcsc-common</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
 	</dependencies>
 
 </project>

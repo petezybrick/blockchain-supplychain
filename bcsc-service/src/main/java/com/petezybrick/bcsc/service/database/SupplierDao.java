@@ -21,7 +21,7 @@ public class SupplierDao {
 
 
 	public static void deleteAll( ) throws Exception {
-		try (Connection con = PooledDataSource.getInstance().getConnection();
+		try (Connection con = SupplierDataSource.getInstance().getConnection();
 				Statement stmt = con.createStatement();){
 			con.setAutoCommit(true);
 			stmt.execute( sqlDeleteAll );
@@ -30,7 +30,7 @@ public class SupplierDao {
 	
 	public static void insertBatchList( List<SupplierVo> supplierVos ) throws Exception {
 		final int BATCH_SIZE = 1000;
-		try (Connection con = PooledDataSource.getInstance().getConnection();
+		try (Connection con = SupplierDataSource.getInstance().getConnection();
 				PreparedStatement pstmt = con.prepareStatement(sqlInsert);){
 			int cnt = 0;
 			con.setAutoCommit(false);
@@ -88,7 +88,7 @@ public class SupplierDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(false);
 			pstmt = con.prepareStatement(sqlInsert);
 			int offset = 1;
@@ -133,7 +133,7 @@ public class SupplierDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(true);
 			pstmt = con.prepareStatement(sqlDeleteByPk);
 			int offset = 1;
@@ -189,7 +189,7 @@ public class SupplierDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(true);
 			pstmt = con.prepareStatement(sqlFindByPk);
 			int offset = 1;

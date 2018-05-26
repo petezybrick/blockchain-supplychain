@@ -21,7 +21,7 @@ public class SupplierBlockchainDao {
 
 
 	public static void deleteAll( ) throws Exception {
-		try (Connection con = PooledDataSource.getInstance().getConnection();
+		try (Connection con = SupplierDataSource.getInstance().getConnection();
 				Statement stmt = con.createStatement();){
 			con.setAutoCommit(true);
 			stmt.execute( sqlDeleteAll );
@@ -77,7 +77,7 @@ public class SupplierBlockchainDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(false);
 			pstmt = con.prepareStatement(sqlInsert);
 			int offset = 1;
@@ -116,7 +116,7 @@ public class SupplierBlockchainDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(true);
 			pstmt = con.prepareStatement(sqlDeleteByPk);
 			int offset = 1;
@@ -172,7 +172,7 @@ public class SupplierBlockchainDao {
 		Connection con = null;
 		PreparedStatement pstmt = null;
 		try {
-			con = PooledDataSource.getInstance(supplyBlockchainConfig).getConnection();
+			con = SupplierDataSource.getInstance(supplyBlockchainConfig).getConnection();
 			con.setAutoCommit(true);
 			pstmt = con.prepareStatement(sqlFindByPk);
 			int offset = 1;
