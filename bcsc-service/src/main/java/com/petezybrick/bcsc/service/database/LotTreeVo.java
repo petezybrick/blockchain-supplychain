@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 
 public class LotTreeVo {
+	private String lotCanineUuid;
 	private String manufacturerLotNumber;
 	private Timestamp manufacturerLotFilledDate;
 	private List<LotIngredientVo> lotIngredientVos;
@@ -32,8 +33,15 @@ public class LotTreeVo {
 	}
 	@Override
 	public String toString() {
-		return "LotTreeVo [manufacturerLotNumber=" + manufacturerLotNumber + ", manufacturerLotFilledDate=" + manufacturerLotFilledDate + ", lotIngredientVos="
-				+ lotIngredientVos + "]";
+		return "LotTreeVo [lotCanineUuid=" + lotCanineUuid + ", manufacturerLotNumber=" + manufacturerLotNumber + ", manufacturerLotFilledDate="
+				+ manufacturerLotFilledDate + ", lotIngredientVos=" + lotIngredientVos + "]";
+	}
+	public String getLotCanineUuid() {
+		return lotCanineUuid;
+	}
+	public LotTreeVo setLotCanineUuid(String lotCanineUuid) {
+		this.lotCanineUuid = lotCanineUuid;
+		return this;
 	}
 
 	

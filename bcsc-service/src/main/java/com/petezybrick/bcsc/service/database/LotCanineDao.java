@@ -23,14 +23,19 @@ public class LotCanineDao {
 	private static String sqlFindByLotNumber = "SELECT lot_canine_uuid,manufacturer_lot_number,lot_filled_date,insert_ts,update_ts FROM lot_canine WHERE manufacturer_lot_number=?";
 	private static String sqlFindLotTree = 
 		"select " + 
+			"lc.lot_canine_uuid as lot_canine_uuid, " +
 			"lc.manufacturer_lot_number as manufacturer_lot_number, " + 
 			"lc.lot_filled_date as manufacturer_lot_filled_date, " + 
+			"mlcsb.supplier_blockchain_uuid as supplier_blockchain_uuid, " +
 			"mlcsb.ingredient_sequence as ingredient_sequence, " + 
 			"mlcsb.ingredient_name as ingredient_name, " + 
+			"sb.supplier_block_uuid as supplier_block_uuid, " +
 			"sb.block_sequence as block_sequence, " + 
 			"sb.hash as hash, " + 
 			"sb.previous_hash as previous_hash, " + 
+			"st.supplier_block_transaction_uuid as supplier_block_transaction_uuid, " + 
 			"st.supplier_lot_number as supplier_lot_number, " + 
+			"s.supplier_uuid as supplier_uuid, " + 
 			"s.supplier_category as supplier_category, " + 
 			"s.supplier_sub_category as supplier_sub_category, " + 
 			"s.supplier_name as supplier_name, " + 
@@ -273,9 +278,11 @@ public class LotCanineDao {
 		LotTreeVo lotTreeItem = null;
 		List<LotIngredientVo> lotIngredientItems = null;
 		LotIngredientVo lotIngredientItem = null;
+		
 		while( rs.next() ) {
 			if( lotTreeItem == null ) {
-				lotTreeItem = new LotTreeVo().setManufacturerLotNumber(rs.getString("manufacturer_lot_number"))
+				lotTreeItem = new LotTreeVo().setLotCanineUuid(rs.getString("lot_canine_uuid"))
+						.setManufacturerLotNumber(rs.getString("manufacturer_lot_number"))
 						.setManufacturerLotFilledDate(rs.getTimestamp("manufacturer_lot_filled_date"));
 				lotIngredientItems = new ArrayList<LotIngredientVo>();
 				lotTreeItem.setLotIngredientItems(lotIngredientItems);
@@ -298,23 +305,14 @@ public class LotCanineDao {
 					.setSupplierCategory(rs.getString("supplier_category"))
 					.setSupplierLotNumber(rs.getString("supplier_lot_number"))
 					.setSupplierName(rs.getString("supplier_name"))
-					.setSupplierSubCategory(rs.getString("supplier_sub_category"));
+					.setSupplierSubCategory(rs.getString("supplier_sub_category"))
+					.setSupplierBlockchainUuid(rs.getString("supplier_blockchain_uuid"))
+					.setSupplierBlockUuid(rs.getString("supplier_block_uuid"))
+					.setSupplierBlockTransactionUuid(rs.getString("supplier_block_transaction_uuid"))
+					.setSupplierUuid(rs.getString("supplier_uuid"));
 			lotIngredientItem.getLotSupplierBlockItems().add(lotSupplierBlockItem);
 		}
-		
-//		"mlcsb.ingredient_name as ingredient_name, " + 
-//		"sb.block_sequence as block_sequence, " + 
-//		"sb.hash as hash, " + 
-//		"sb.previous_hash as previous_hash, " + 
-//		"st.supplier_lot_number as supplier_lot_number, " + 
-//		"s.supplier_category as supplier_category, " + 
-//		"s.supplier_sub_category as supplier_sub_category, " + 
-//		"s.supplier_name as supplier_name, " + 
-//		"s.duns_number as duns_number " + 
-//		country " + 
-//		"s.state_province as state_province
 
-		
 		return lotTreeItem;
 	}
 }
