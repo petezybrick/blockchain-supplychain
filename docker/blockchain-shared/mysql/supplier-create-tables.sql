@@ -62,7 +62,7 @@ CREATE TABLE supplier_blockchain (
 
 CREATE TABLE supplier_block (
 	supplier_block_uuid CHAR(36) NOT NULL PRIMARY KEY,
-	supplier_blockchain_uuid CHAR(36) NOT NULL,
+	supplier_blockchain_uuid CHAR(36) UNIQUE NOT NULL,
 	hash varchar(1024) not null,
 	previous_hash varchar(1024) not null,
 	block_timestamp timestamp(3) not null,
@@ -73,7 +73,7 @@ CREATE TABLE supplier_block (
 
 CREATE TABLE supplier_block_transaction (
 	supplier_block_transaction_uuid CHAR(36) NOT NULL PRIMARY KEY,
-	supplier_block_uuid CHAR(36) NOT NULL,
+	supplier_block_uuid CHAR(36) UNIQUE NOT NULL,
 	transaction_id varchar(1024) not null,
 	encoded_public_key_from VARCHAR(1024) not null,
 	encoded_public_key_to VARCHAR(1024) not null,
@@ -85,7 +85,7 @@ CREATE TABLE supplier_block_transaction (
 
 CREATE TABLE supplier_transaction (
 	supplier_transaction_uuid CHAR(36) NOT NULL PRIMARY KEY,
-	supplier_block_transaction_uuid CHAR(36) NOT NULL,
+	supplier_block_transaction_uuid CHAR(36) UNIQUE NOT NULL,
 	supplier_uuid CHAR(36) NOT NULL,
 	supplier_lot_number VARCHAR(255) not null,
 	item_number VARCHAR(255) not null,
@@ -100,7 +100,7 @@ CREATE TABLE supplier_transaction (
 
 CREATE TABLE lot_canine (
 	lot_canine_uuid CHAR(36) NOT NULL PRIMARY KEY,
-	manufacturer_lot_number VARCHAR(255) not null,
+	manufacturer_lot_number VARCHAR(255) UNIQUE not null,
 	lot_filled_date timestamp(3) null DEFAULT null,
 	insert_ts timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
 	update_ts TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
@@ -140,6 +140,8 @@ ALTER TABLE map_lot_canine_supplier_blockchain ADD CONSTRAINT fk_log_canine_supp
 	FOREIGN KEY (supplier_blockchain_uuid) REFERENCES supplier_blockchain(supplier_blockchain_uuid)
 	ON DELETE NO ACTION ON UPDATE NO ACTION;
 
-LTER TABLE customer_loyalty ADD CONSTRAINT fk_customer_loyalty 
+ALTER TABLE customer_loyalty ADD CONSTRAINT fk_customer_loyalty 
 	FOREIGN KEY (customer_uuid) REFERENCES customer(customer_uuid)
-	ON DELETE NO ACTION ON UPDATE NO ACTION;	
+	ON DELETE NO ACTION ON UPDATE NO ACTION;
+
+	
