@@ -16,8 +16,8 @@ public class SupplierBlockDao {
 	private static final Logger logger = LogManager.getLogger(SupplierBlockDao.class);
 	private static String sqlDeleteAll = "DELETE FROM supplier_block";
 	private static String sqlDeleteByPk = "DELETE FROM supplier_block WHERE supplier_block_uuid=?";
-	private static String sqlInsert = "INSERT INTO supplier_block (supplier_block_uuid,supplier_blockchain_uuid,hash,previous_hash,block_timestamp,block_sequence,update_ts) VALUES (?,?,?,?,?,?,?)";
-	private static String sqlFindByPk = "SELECT supplier_block_uuid,supplier_blockchain_uuid,hash,previous_hash,block_timestamp,block_sequence,insert_ts,update_ts FROM supplier_block WHERE supplier_block_uuid=?";
+	private static String sqlInsert = "INSERT INTO supplier_block (supplier_block_uuid,supplier_blockchain_uuid,supplier_uuid,hash,previous_hash,block_timestamp,block_sequence,update_ts) VALUES (?,?,?,?,?,?,?,?)";
+	private static String sqlFindByPk = "SELECT supplier_block_uuid,supplier_blockchain_uuid,supplier_uuid,hash,previous_hash,block_timestamp,block_sequence,insert_ts,update_ts FROM supplier_block WHERE supplier_block_uuid=?";
 
 
 	public static void deleteAll( ) throws Exception {
@@ -37,6 +37,7 @@ public class SupplierBlockDao {
 				int offset = 1;
 				pstmt.setString( offset++, supplierBlockVo.getSupplierBlockUuid() );
 				pstmt.setString( offset++, supplierBlockVo.getSupplierBlockchainUuid() );
+				pstmt.setString( offset++, supplierBlockVo.getSupplierUuid() );
 				pstmt.setString( offset++, supplierBlockVo.getHash() );
 				pstmt.setString( offset++, supplierBlockVo.getPreviousHash() );
 				pstmt.setTimestamp( offset++, supplierBlockVo.getBlockTimestamp() );
@@ -62,6 +63,7 @@ public class SupplierBlockDao {
 			int offset = 1;
 			pstmt.setString( offset++, supplierBlockVo.getSupplierBlockUuid() );
 			pstmt.setString( offset++, supplierBlockVo.getSupplierBlockchainUuid() );
+			pstmt.setString( offset++, supplierBlockVo.getSupplierUuid() );
 			pstmt.setString( offset++, supplierBlockVo.getHash() );
 			pstmt.setString( offset++, supplierBlockVo.getPreviousHash() );
 			pstmt.setTimestamp( offset++, supplierBlockVo.getBlockTimestamp() );
@@ -91,6 +93,7 @@ public class SupplierBlockDao {
 			int offset = 1;
 			pstmt.setString( offset++, supplierBlockVo.getSupplierBlockUuid() );
 			pstmt.setString( offset++, supplierBlockVo.getSupplierBlockchainUuid() );
+			pstmt.setString( offset++, supplierBlockVo.getSupplierUuid() );
 			pstmt.setString( offset++, supplierBlockVo.getHash() );
 			pstmt.setString( offset++, supplierBlockVo.getPreviousHash() );
 			pstmt.setTimestamp( offset++, supplierBlockVo.getBlockTimestamp() );

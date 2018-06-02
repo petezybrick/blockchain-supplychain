@@ -15,6 +15,7 @@ public class SupplierBlockVo {
 	private static final Logger logger = LogManager.getLogger(SupplierBlockVo.class);
 	private String supplierBlockUuid;
 	private String supplierBlockchainUuid;
+	private String supplierUuid;
 	private String hash;
 	private String previousHash;
 	private Timestamp blockTimestamp;
@@ -50,6 +51,7 @@ public class SupplierBlockVo {
 	public SupplierBlockVo(ResultSet rs) throws SQLException {
 		this.supplierBlockUuid = rs.getString("supplier_block_uuid");
 		this.supplierBlockchainUuid = rs.getString("supplier_blockchain_uuid");
+		this.supplierUuid = rs.getString("supplier_uuid");
 		this.hash = rs.getString("hash");
 		this.previousHash = rs.getString("previous_hash");
 		this.blockTimestamp = rs.getTimestamp("block_timestamp");
@@ -132,9 +134,9 @@ public class SupplierBlockVo {
 
 	@Override
 	public String toString() {
-		return "SupplierBlockVo [supplierBlockUuid=" + supplierBlockUuid + ", supplierBlockchainUuid=" + supplierBlockchainUuid + ", hash=" + hash
-				+ ", previousHash=" + previousHash + ", blockTimestamp=" + blockTimestamp + ", blockSequence=" + blockSequence + ", insertTs=" + insertTs
-				+ ", updateTs=" + updateTs + ", supplierBlockTransactionVo=" + supplierBlockTransactionVo + "]";
+		return "SupplierBlockVo [supplierBlockUuid=" + supplierBlockUuid + ", supplierBlockchainUuid=" + supplierBlockchainUuid + ", supplierUuid="
+				+ supplierUuid + ", hash=" + hash + ", previousHash=" + previousHash + ", blockTimestamp=" + blockTimestamp + ", blockSequence=" + blockSequence
+				+ ", insertTs=" + insertTs + ", updateTs=" + updateTs + ", supplierBlockTransactionVo=" + supplierBlockTransactionVo + "]";
 	}
 
 	@Override
@@ -149,6 +151,7 @@ public class SupplierBlockVo {
 		result = prime * result + ((supplierBlockTransactionVo == null) ? 0 : supplierBlockTransactionVo.hashCode());
 		result = prime * result + ((supplierBlockUuid == null) ? 0 : supplierBlockUuid.hashCode());
 		result = prime * result + ((supplierBlockchainUuid == null) ? 0 : supplierBlockchainUuid.hashCode());
+		result = prime * result + ((supplierUuid == null) ? 0 : supplierUuid.hashCode());
 		result = prime * result + ((updateTs == null) ? 0 : updateTs.hashCode());
 		return result;
 	}
@@ -199,11 +202,25 @@ public class SupplierBlockVo {
 				return false;
 		} else if (!supplierBlockchainUuid.equals(other.supplierBlockchainUuid))
 			return false;
+		if (supplierUuid == null) {
+			if (other.supplierUuid != null)
+				return false;
+		} else if (!supplierUuid.equals(other.supplierUuid))
+			return false;
 		if (updateTs == null) {
 			if (other.updateTs != null)
 				return false;
 		} else if (!updateTs.equals(other.updateTs))
 			return false;
 		return true;
+	}
+
+	public String getSupplierUuid() {
+		return supplierUuid;
+	}
+
+	public SupplierBlockVo setSupplierUuid(String supplierUuid) {
+		this.supplierUuid = supplierUuid;
+		return this;
 	}
 }

@@ -28,6 +28,7 @@ import com.petezybrick.bcsc.service.database.LoyaltyComplaintLotCanineDao;
 import com.petezybrick.bcsc.service.database.LoyaltyComplaintLotCanineVo;
 import com.petezybrick.bcsc.service.database.SupplierDataSource;
 import com.petezybrick.bcsc.service.utils.BcscServiceUtils;
+import com.petezybrick.bcsc.sim.database.AdverseEffectManLotDao;
 
 public class GenSimComplaints {
 	private static final Logger logger = LogManager.getLogger(GenSimComplaints.class);
@@ -45,8 +46,7 @@ public class GenSimComplaints {
 			GenSimComplaints genSimComplaints = new GenSimComplaints();
 			SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
 					System.getenv("KEYSPACE_NAME") );
-			//genSimComplaints.populateComplaints( args[0] );
-			genSimComplaints.injectBadSupplier(  );
+			genSimComplaints.populateComplaints( args[0] );
 		} catch (Exception e) {
 			logger.error(e.getLocalizedMessage(), e);
 		} finally {
@@ -55,41 +55,11 @@ public class GenSimComplaints {
 	}
 	
 	
-	/*
-	 * Force 75% of complaints to have the same Brewers Rice Fertilizer supplier
-	 * Use the first Brewers Rice Fertilizer supplier as the offending supplier
-	 */
-	public void injectBadSupplier( ) throws Exception {
-		List<LoyaltyComplaintLotCanineVo> loyaltyComplaintLotCanineVos = LoyaltyComplaintLotCanineDao.findComplaints();
-		LotSupplierBlockVo lotSupplierBlockVoFirst = null;
-		for( LoyaltyComplaintLotCanineVo loyaltyComplaintLotCanineVo : loyaltyComplaintLotCanineVos ) {
-			LotTreeVo lotTreeItem = LotCanineDao.findLotTree(loyaltyComplaintLotCanineVo.getManufacturerLotNumber());
-//			BcscServiceUtils.dumpLotTreeItemToConsole( lotTreeItem );
-			for( LotIngredientVo lotIngredientItem :  lotTreeItem.getLotIngredientItems()) {
-				if( "brewers_rice".equals(lotIngredientItem.getIngredientName())) {
-					for(LotSupplierBlockVo lotSupplierBlockItem : lotIngredientItem.getLotSupplierBlockItems() ) {
-						if( "supplier".equals(lotSupplierBlockItem.getSupplierCategory()) 
-								&& "fertilizer".equals(lotSupplierBlockItem.getSupplierSubCategory())) {
-							if( lotSupplierBlockVoFirst != null ) {
-								System.out.println("found: " + lotSupplierBlockItem.toString() );
-							} else {
-								lotSupplierBlockVoFirst = lotSupplierBlockItem;
-							}
-							
-						}
-						
-					}
-				}
-			}
-		}
-	}
-
-	
 	public void populateComplaints( String pathNameExtUsers ) throws Exception {
 		long before = System.currentTimeMillis();
 		logger.info("Start");
 		final String LOYALTY_TYPE_COMPLAINT = "C";
-		manuLotNumbers = LotCanineDao.findAllLotNumbers();
+		manuLotNumbers = AdverseEffectManLotDao.findAllManLotNumbers();
 		numManuLotNumbers = manuLotNumbers.size();
 		List<CustomerLoyaltyVo> customerLoyaltyVos = new ArrayList<CustomerLoyaltyVo>();
 		List<CustomerVo> customerVos = createCustomers( pathNameExtUsers );

@@ -15,6 +15,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +58,7 @@ import com.petezybrick.bcsc.service.orc.SupplierOrcDao;
 import com.petezybrick.bcsc.service.orc.SupplierOrcVo;
 import com.petezybrick.bcsc.service.orc.SupplierTransactionOrcDao;
 import com.petezybrick.bcsc.service.orc.SupplierTransactionOrcVo;
+import com.petezybrick.bcsc.sim.database.AdverseEffectManLotDao;
 import com.petezybrick.bcsc.sim.run.SimBlockchainSequenceItem.DescCatSubcatItem;
 
 public class GenSimSuppliers {
@@ -76,6 +78,12 @@ public class GenSimSuppliers {
 	public static final int NUM_SIM_LOTS_PER_CHAIN_PER_SOURCE = 5;
 	public static final int NUM_SIM_LOTS = 10;
 	public static final int NUM_SIM_PROD_WEEKS = 8;
+	public static final int ADVERSE_EFFECT_MAX_PCT = 60;
+	public static final int ADVERSE_EFFECT_OFFSET = 7;
+	public static final String ADVERSE_EFFECT_SUPPLIER_TYPE = "brewers_rice";
+	public static final String ADVERSE_EFFECT_SUPPLIER_CATEGORY = "supplier";
+	public static final String ADVERSE_EFFECT_SUPPLIER_SUBCATEGORY = "fertilizer";
+
 	// Demo/learning purposes only - use Keystore
 	public static final String encodedPrivateKey = 
 		"307B020100301306072A8648CE3D020106082A8648CE3D0301010461305F020101041815D67A1C8826B62A54AD050B65A9812470C04B5E25FDAA1DA00A06082A8648CE3D030101A13403320004F127F659E0B608FC1145E152DC54F1EA152824D21343AC0869077EB70837D9C70EEB9174D87D0AA89BF4C8AD5668402E";
@@ -90,6 +98,8 @@ public class GenSimSuppliers {
 	private int simdDateMinutesOffset;
 	private String pathSimBlockchainSequenceItemsJson;
 	private SupplyBlockchainConfig config;
+	private String adverseEffectSupplierUuid;
+	private List<String> adverseEffectManLots = new ArrayList<String>();
 
 	public GenSimSuppliers(String pathSimBlockchainSequenceItemsJson) throws Exception {
 		this.pathSimBlockchainSequenceItemsJson = pathSimBlockchainSequenceItemsJson;
@@ -165,13 +175,13 @@ public class GenSimSuppliers {
 				String lotNumberRoot = simProdWeek.format(fmt) + "-";
 				int lotNumberSeq = 1;
 				for( int j=0 ; j<NUM_SIM_LOTS ; j++ ) {
+					String manufacturerLotNumber = lotNumberRoot +  lotNumberSeq;
 					List<MapLotCanineSupplierBlockchainVo> mapLotCanineSupplierBlockchainVos = new ArrayList<MapLotCanineSupplierBlockchainVo>();
 					String lotCanineUuid = BlockchainUtils.generateSortableUuid();
 					int ingredientSequence = 1;
 					for( String supplierType : supplierTypes ) {
 						List<SupplierBlockchainVo> list = mapSimBlockchainsBySourceKey.get(supplierType);
 						int offset = random.nextInt(list.size());
-						//System.out.println(offset + " " + list.size());
 						SupplierBlockchainVo supplierBlockchainVo = list.get(offset);
 						String mapLotCanineSupplierBlockchainUuid = BlockchainUtils.generateSortableUuid();
 						MapLotCanineSupplierBlockchainVo mapLotCanineSupplierBlockchainVo = new MapLotCanineSupplierBlockchainVo()
@@ -182,23 +192,26 @@ public class GenSimSuppliers {
 								.setSupplierBlockchainUuid(supplierBlockchainVo.getSupplierBlockchainUuid())
 								;
 						mapLotCanineSupplierBlockchainVos.add(mapLotCanineSupplierBlockchainVo);
+						// If this manufacturer lot (i.e. a bag of dog food) contains the override for bad fertilizer, then add to list
+						// so this man lot number can be used to populate the complaints
+						if( ADVERSE_EFFECT_SUPPLIER_TYPE.equals(supplierBlockchainVo.getSupplierType()))
+							findManLotsWithBadFertilizer( supplierBlockchainVo, manufacturerLotNumber );
 					}
 					LotCanineVo lotCanineVo = new LotCanineVo()
 							.setLotCanineUuid(lotCanineUuid)
-							.setManufacturerLotNumber(lotNumberRoot +  lotNumberSeq)
+							.setManufacturerLotNumber(manufacturerLotNumber)
 							.setLotFilledDate( Timestamp.from( simProdWeek.toInstant()))
 							.setMapLotCanineSupplierBlockchainVos(mapLotCanineSupplierBlockchainVos)
 							;
 					//System.out.println("=========================");
-					System.out.println(lotCanineVo);
+					//System.out.println(lotCanineVo);
 					lotCanineVos.add(lotCanineVo);
 					lotNumberSeq++;
 				}
 				simProdWeek = simProdWeek.plusWeeks(1);
 			}
 			
-			// ORC files
-			// TODO: delete the target folder
+			// ORC files to HDFS
 			String targetPath = System.getProperty("java.io.tmpdir");
 			targetPath = "hdfs://user/bcsc/bcsc_data/";
 			OrcCommon.deleteTargetFolder( targetPath );
@@ -261,10 +274,23 @@ public class GenSimSuppliers {
 				LotCanineDao.insertBatchList(con, lotCanineVos);
 				con.commit();
 			}
+			AdverseEffectManLotDao.insertBatchList(adverseEffectManLots);
+			
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
+			throw e;
 		}
 		logger.info("+++++ Done +++++");
+	}
+	
+	
+	private void findManLotsWithBadFertilizer( SupplierBlockchainVo supplierBlockchainVo, String manufacturerLotNumber ) throws Exception {
+		for( SupplierBlockVo supplierBlockVo : supplierBlockchainVo.getSupplierBlockVos() ) {
+			if( adverseEffectSupplierUuid.equals( supplierBlockVo.getSupplierBlockTransactionVo().getSupplierTransactionVo().getSupplierUuid() ) ) {
+				adverseEffectManLots.add(manufacturerLotNumber);
+				return;
+			}
+		}	
 	}
 
 	
@@ -280,13 +306,27 @@ public class GenSimSuppliers {
 				String previousHash = "0";
 				List<SupplierBlockVo> supplierBlocks = new ArrayList<SupplierBlockVo>();
 				for (DescCatSubcatItem descCatSubcatItem : simBlockchainSequenceItem.getDescCatSubcatItems()) {
+					String supplierLot = "lot-" + descCatSubcatItem.getCategory() + "-" + descCatSubcatItem.getSubCategory() 
+						+ "-" + lotSuffix;
 					String key = descCatSubcatItem.getCategory() + "|" + descCatSubcatItem.getSubCategory();
 					List<SupplierVo> supplierVosByKey = mapSupplierVos.get(key);
 					SupplierVo supplierVoRnd = supplierVosByKey.get(random.nextInt(NUM_SIM_EACH_SUPPLIER));
+					// Override supplier to inject bad brewers_rice fertilizer, which will be the source
+					// of customer complaints
+					if( ADVERSE_EFFECT_SUPPLIER_TYPE.equals( simBlockchainSequenceItem.getSupplierType() ) &&
+							ADVERSE_EFFECT_SUPPLIER_CATEGORY.equals( descCatSubcatItem.getCategory() ) &&
+							ADVERSE_EFFECT_SUPPLIER_SUBCATEGORY.equals( descCatSubcatItem.getSubCategory() ) ) {
+						if( adverseEffectSupplierUuid == null ) 
+							adverseEffectSupplierUuid = supplierVosByKey.get(ADVERSE_EFFECT_OFFSET).getSupplierUuid();
+						if( random.nextInt(100) < ADVERSE_EFFECT_MAX_PCT ) {
+							//System.out.println("+++ OVERRIDE +++");
+							supplierVoRnd = supplierVosByKey.get(ADVERSE_EFFECT_OFFSET);
+						}
+					}
+
 					String supplierTransactionUuid = BlockchainUtils.generateSortableUuid();
 					String supplierBlockTransactionUuid = BlockchainUtils.generateSortableUuid();
-					String supplierLot = "lot-" + descCatSubcatItem.getCategory() + "-" + descCatSubcatItem.getSubCategory() 
-						+ "-" + lotSuffix;
+
 					String itemNumber = String.format("%08d", lotSuffix + 100 );
 					lotSuffix++;
 					SupplierTransactionVo supplierTransactionVo = new SupplierTransactionVo()
@@ -310,17 +350,16 @@ public class GenSimSuppliers {
 							.setBlockSequence(blockSequence).setSupplierBlockUuid(supplierBlockUuid)
 							.setSupplierBlockchainUuid(supplierBlockChainUuid)
 							.setBlockTimestamp(Timestamp.from( simDate.plusMinutes(simdDateMinutesOffset++).toInstant()) )
+							.setSupplierUuid(supplierVoRnd.getSupplierUuid())
 							.updateHash();
 					supplierBlocks.add(supplierBlockVo);
 					blockSequence++;
 					previousHash = supplierBlockVo.getHash();
 				}
-				System.out.println("+++++++++++++++++++++++++++++++++++");
-				for (SupplierBlockVo supplierBlock : supplierBlocks) {
-					System.out.println(supplierBlock);
-				}
+
 				supplierBlockChains.add(new SupplierBlockchainVo().setSupplierBlockchainUuid(supplierBlockChainUuid)
-						.setSupplierType(simBlockchainSequenceItem.getSupplierType()).setSupplierBlockVos(supplierBlocks));
+						.setSupplierType(simBlockchainSequenceItem.getSupplierType())
+						.setSupplierBlockVos(supplierBlocks));
 			}	
 		}
 		return supplierBlockChains;
@@ -339,7 +378,7 @@ public class GenSimSuppliers {
 				SupplierVo supplierVo = new SupplierVo().setSupplierUuid(BlockchainUtils.generateSortableUuid()).setDunsNumber(String.format("%09d", dunsNumber++))
 						.setSupplierName(supplierName).setSupplierCategory(triples[j + 1]).setSupplierSubCategory(triples[j + 2])
 						.setStateProvince(randomStateProvince()).setCountry("US").setEncodedPublicKey(encodedPublicKey);
-				System.out.println(supplierVo);
+				//System.out.println(supplierVo);
 				supplierVos.add(supplierVo);
 			}
 			if (prefChar != 'Z')
@@ -351,6 +390,7 @@ public class GenSimSuppliers {
 		return supplierVos;
 	}
 
+	
 	public static String randomStateProvince() {
 		final String[] abbrevs = { "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA",
 				"MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT",
@@ -366,6 +406,7 @@ public class GenSimSuppliers {
 		SupplierBlockDao.deleteAll();
 		SupplierBlockchainDao.deleteAll();
 		SupplierDao.deleteAll();
+		AdverseEffectManLotDao.deleteAll();
 	}
 	
 	

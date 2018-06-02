@@ -79,4 +79,6 @@ public class SupplierBlockchainVo {
 		return "SupplierBlockchainVo [supplierBlockchainUuid=" + supplierBlockchainUuid + ", supplierType=" + supplierType + ", insertTs=" + insertTs
 				+ ", updateTs=" + updateTs + ", supplierBlockVos=" + supplierBlockVos + "]";
 	}
+
+
 }
