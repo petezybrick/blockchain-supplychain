@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  bcsc-zeppelin:
+    image: zeppelin:0.7.0
+    command: /usr/share/zeppelin-0.7.0/bin/iote2e-start-zeppelin.sh
+    hostname: bcsc-zeppelin
+    container_name: bcsc-zeppelin
+    mem_limit: 2g
+    memswap_limit: 2g
+    expose:
+      - 8081
+    ports:
+      - 8082:8081
+    volumes:
+      - ../blockchain-shared:/tmp/blockchain-shared
