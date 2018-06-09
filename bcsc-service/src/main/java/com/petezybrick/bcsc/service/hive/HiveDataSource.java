@@ -20,6 +20,7 @@
 package com.petezybrick.bcsc.service.hive;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.apache.logging.log4j.LogManager;
@@ -32,16 +33,13 @@ import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 /**
  * The Class PooledDataSource.
  */
-public class HivePooledDataSource {
+public class HiveDataSource {
 	
 	/** The Constant logger. */
-	private static final Logger logger = LogManager.getLogger(HivePooledDataSource.class);
+	private static final Logger logger = LogManager.getLogger(HiveDataSource.class);
 	
 	/** The pooled data source. */
-	private static HivePooledDataSource pooledDataSource;
-	
-	/** The bds. */
-	private BasicDataSource bds;
+	private static HiveDataSource pooledDataSource;
 	
 	
 	/**
@@ -50,15 +48,8 @@ public class HivePooledDataSource {
 	 * @param masterConfig the master config
 	 * @throws Exception the exception
 	 */
-	private HivePooledDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
+	private HiveDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
 		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLoginHive(), masterConfig.getJdbcDriverClassNameHive(), masterConfig.getJdbcUrlHive());
-		bds = new BasicDataSource();
-		bds.setDriverClassName(masterConfig.getJdbcDriverClassNameHive());
-		bds.setUrl(masterConfig.getJdbcUrlHive());
-		bds.setUsername(masterConfig.getJdbcLoginHive());
-		bds.setPassword(masterConfig.getJdbcPasswordHive());
-		// Optimize for bulk inserts
-		bds.setDefaultAutoCommit(false);
 	}
 		
 		
@@ -69,17 +60,20 @@ public class HivePooledDataSource {
 	 * @return single instance of PooledDataSource
 	 * @throws Exception the exception
 	 */
-	public static HivePooledDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
+	public static HiveDataSource getInstance( SupplyBlockchainConfig masterConfig ) throws Exception {
 		if(pooledDataSource != null ) return pooledDataSource;
 		else {
-			pooledDataSource = new HivePooledDataSource(masterConfig);
+			pooledDataSource = new HiveDataSource(masterConfig);
 			return pooledDataSource;
 		}
 	}
 	
-	public static HivePooledDataSource getInstance( ) throws Exception {
+	public static HiveDataSource getInstance( ) throws Exception {
 		if(pooledDataSource != null ) return pooledDataSource;
-		else throw new Exception("SupplyBlockchainConfig not initialized");
+		else {
+			pooledDataSource = new HiveDataSource(SupplyBlockchainConfig.getInstance());
+			return pooledDataSource;
+		}
 	}
 	
 	
@@ -91,7 +85,12 @@ public class HivePooledDataSource {
 	 */
 	public Connection getConnection() throws Exception {
 		try {
-			return bds.getConnection();
+			Class.forName(SupplyBlockchainConfig.getInstance().getJdbcDriverClassNameHive());
+			// Connect to Hive
+			Connection con = DriverManager.getConnection(SupplyBlockchainConfig.getInstance().getJdbcUrlHive(),
+					SupplyBlockchainConfig.getInstance().getJdbcLoginHive(),
+					SupplyBlockchainConfig.getInstance().getJdbcPasswordHive());
+			return con;
 		} catch( Exception e ) {
 			throw new RuntimeException(e);
 		}
@@ -104,7 +103,7 @@ public class HivePooledDataSource {
 	 * @param newAutoCommit the new auto commit
 	 */
 	public void overrideDefaultAutoCommit( boolean newAutoCommit ) {
-		bds.setDefaultAutoCommit(newAutoCommit);
+		logger.warn("AutoCommit not supported for Hive");
 	}
 	
 }

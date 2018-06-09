@@ -1,21 +1,23 @@
 package com.petezybrick.bcsc.service.orc;
 
 
-import java.nio.ByteBuffer;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.petezybrick.bcsc.service.database.*;
+
+import com.petezybrick.bcsc.service.database.SupplierBlockVo;
 
 
 public class SupplierBlockOrcVo extends BaseOrcVo {
 	private static final Logger logger = LogManager.getLogger(SupplierBlockOrcVo.class);
 	private String supplierBlockUuid;
 	private String supplierBlockchainUuid;
+	private String supplierUuid;
 	private String hash;
 	private String previousHash;
 	private Timestamp blockTimestamp;
@@ -29,6 +31,7 @@ public class SupplierBlockOrcVo extends BaseOrcVo {
 	public SupplierBlockOrcVo(ResultSet rs) throws SQLException {
 		this.supplierBlockUuid = rs.getString("supplier_block_uuid");
 		this.supplierBlockchainUuid = rs.getString("supplier_blockchain_uuid");
+		this.supplierUuid = rs.getString("supplier_uuid");
 		this.hash = rs.getString("hash");
 		this.previousHash = rs.getString("previous_hash");
 		this.blockTimestamp = rs.getTimestamp("block_timestamp");
@@ -39,6 +42,7 @@ public class SupplierBlockOrcVo extends BaseOrcVo {
 	public SupplierBlockOrcVo(SupplierBlockVo fromVo) throws SQLException {
 		this.supplierBlockUuid = fromVo.getSupplierBlockUuid();
 		this.supplierBlockchainUuid = fromVo.getSupplierBlockchainUuid();
+		this.supplierUuid = fromVo.getSupplierUuid();
 		this.hash = fromVo.getHash();
 		this.previousHash = fromVo.getPreviousHash();
 		this.blockTimestamp = fromVo.getBlockTimestamp();
@@ -52,10 +56,11 @@ public class SupplierBlockOrcVo extends BaseOrcVo {
 			return new SupplierBlockOrcVo()
 				.setSupplierBlockUuid((String)objs.get(0))
 				.setSupplierBlockchainUuid((String)objs.get(1))
-				.setHash((String)objs.get(2))
-				.setPreviousHash((String)objs.get(3))
-				.setBlockTimestamp((Timestamp)objs.get(4))
-				.setBlockSequence((Integer)objs.get(5))
+				.setSupplierUuid((String)objs.get(2))
+				.setHash((String)objs.get(3))
+				.setPreviousHash((String)objs.get(4))
+				.setBlockTimestamp((Timestamp)objs.get(5))
+				.setBlockSequence((Integer)objs.get(6))
 				;
 		} else throw new Exception("Invalid schema version 1.0");
 	}
@@ -65,10 +70,11 @@ public class SupplierBlockOrcVo extends BaseOrcVo {
 	public void fromObjectList( List<Object> objs ) throws Exception {
 		this.supplierBlockUuid = (String)objs.get(0);
 		this.supplierBlockchainUuid = (String)objs.get(1);
-		this.hash = (String)objs.get(2);
-		this.previousHash = (String)objs.get(3);
-		this.blockTimestamp = (Timestamp)objs.get(4);
-		this.blockSequence = (Integer)objs.get(5);
+		this.supplierUuid = (String)objs.get(2);
+		this.hash = (String)objs.get(3);
+		this.previousHash = (String)objs.get(4);
+		this.blockTimestamp = (Timestamp)objs.get(5);
+		this.blockSequence = (Integer)objs.get(6);
 	}
 
 
@@ -77,6 +83,7 @@ public class SupplierBlockOrcVo extends BaseOrcVo {
 		List<Object> objs = new ArrayList<Object>();
 		objs.add(supplierBlockUuid);
 		objs.add(supplierBlockchainUuid);
+		objs.add(supplierUuid);
 		objs.add(hash);
 		objs.add(previousHash);
 		objs.add(blockTimestamp);
@@ -127,6 +134,17 @@ public class SupplierBlockOrcVo extends BaseOrcVo {
 	}
 	public SupplierBlockOrcVo setBlockSequence( Integer blockSequence ) {
 		this.blockSequence = blockSequence;
+		return this;
+	}
+
+
+	public String getSupplierUuid() {
+		return supplierUuid;
+	}
+
+
+	public SupplierBlockOrcVo setSupplierUuid(String supplierUuid) {
+		this.supplierUuid = supplierUuid;
 		return this;
 	}
 }

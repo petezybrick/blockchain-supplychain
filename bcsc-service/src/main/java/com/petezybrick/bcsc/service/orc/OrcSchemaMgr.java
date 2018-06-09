@@ -13,7 +13,7 @@ public class OrcSchemaMgr {
 	static {
 		mapOrcSchemas.put("supplier|1.0", TypeDescription.fromString("struct<supplier_uuid:STRING,duns_number:STRING,supplier_name:STRING,supplier_category:STRING,supplier_sub_category:STRING,state_province:STRING,country:STRING,encoded_public_key:STRING>"));
 		mapOrcSchemas.put("supplier_blockchain|1.0", TypeDescription.fromString("struct<supplier_blockchain_uuid:STRING,supplier_type:STRING>"));
-		mapOrcSchemas.put("supplier_block|1.0", TypeDescription.fromString("struct<supplier_block_uuid:STRING,supplier_blockchain_uuid:STRING,hash:STRING,previous_hash:STRING,block_timestamp:TIMESTAMP,block_sequence:INT>"));
+		mapOrcSchemas.put("supplier_block|1.0", TypeDescription.fromString("struct<supplier_block_uuid:STRING,supplier_blockchain_uuid:STRING,supplier_uuid:STRING,hash:STRING,previous_hash:STRING,block_timestamp:TIMESTAMP,block_sequence:INT>"));
 		mapOrcSchemas.put("supplier_block_transaction|1.0", TypeDescription.fromString("struct<supplier_block_transaction_uuid:STRING,supplier_block_uuid:STRING,transaction_id:STRING,encoded_public_key_from:STRING,encoded_public_key_to:STRING,signature:BINARY,transaction_sequence:INT>"));
 		mapOrcSchemas.put("supplier_transaction|1.0", TypeDescription.fromString("struct<supplier_transaction_uuid:STRING,supplier_block_transaction_uuid:STRING,supplier_uuid:STRING,supplier_lot_number:STRING,item_number:STRING,description:STRING,qty:INT,units:STRING,shipped_date_iso8601:TIMESTAMP,rcvd_date_iso8601:TIMESTAMP>"));
 		mapOrcSchemas.put("lot_canine|1.0", TypeDescription.fromString("struct<lot_canine_uuid:STRING,manufacturer_lot_number:STRING,lot_filled_date:TIMESTAMP>"));

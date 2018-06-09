@@ -1,6 +1,9 @@
 package com.petezybrick.bcsc.service.utils;
 
 import java.io.File;
+import java.security.Security;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -8,6 +11,9 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.orc.TypeDescription;
+
+import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
+import com.petezybrick.bcsc.service.hive.HiveDataSource;
 
 public class GenHiveCreateTables {
 	public static final String HIVE_DB_NAME = "db_bcsc";
@@ -19,6 +25,9 @@ public class GenHiveCreateTables {
 	
 	public static void main( String[] args ) {
 		try {
+			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
+			SupplyBlockchainConfig.getInstance( System.getenv("ENV"), System.getenv("CONTACT_POINT"),
+					System.getenv("KEYSPACE_NAME") );
 			GenHiveCreateTables genHiveCreateTables = new GenHiveCreateTables();
 			genHiveCreateTables.process( args );
 		} catch (Exception e) {
@@ -47,6 +56,7 @@ public class GenHiveCreateTables {
 		StringBuilder structStmt = null;
 		boolean isFirstColumn = false;
 		String tableName = null;
+		StringBuilder hiveCreateTable = null;
 		
 		for( String record : records ) {
 			record = record.trim();
@@ -61,15 +71,15 @@ public class GenHiveCreateTables {
 				isFirstColumn = true;
 				schema = TypeDescription.createStruct();
 				mapOrcSchemas.put(tableNameVersion,  schema );
-				hiveDropTables.add("DROP TABLE " + HIVE_DB_NAME + "." + tableName + ";");
-				hiveCreateTables.add("CREATE TABLE " + HIVE_DB_NAME + "." + tableName + " ( ");
+				hiveDropTables.add("DROP TABLE " + HIVE_DB_NAME + "." + tableName );
+				hiveCreateTable = new StringBuilder().append("CREATE TABLE " + HIVE_DB_NAME + "." + tableName + " ( ");
 
 			} else if(record.endsWith(";") ) {
 				if( isCreateTable ) {
 					schemaStmts.add("     );");
 					schemaStmts.add("");
-					hiveCreateTables.add(") STORED AS ORC LOCATION '/user/bcsc/bcsc_data/" + tableName + "';");
-					hiveCreateTables.add("");
+					hiveCreateTable.append(") STORED AS ORC LOCATION '/user/bcsc/bcsc_data/" + tableName + "'");
+					hiveCreateTables.add(hiveCreateTable.toString());
 					structStmt.append(">\"));");
 					structStmts.add(structStmt.toString());
 				}
@@ -85,11 +95,11 @@ public class GenHiveCreateTables {
 				String delim = "";
 				if( !isFirstColumn ) {
 					structStmt.append(",");
-					delim = ",";
+					delim = ", ";
 				}
 				else isFirstColumn = false;
 				structStmt.append(columnName).append(":").append(findStruct(tokens[1].toUpperCase()) );
-				hiveCreateTables.add("     " + delim + columnName + " " + findStruct(tokens[1].toUpperCase()));
+				hiveCreateTable.append(delim + columnName + " " + findStruct(tokens[1].toUpperCase()));
 			}
 		}
 		
@@ -97,11 +107,23 @@ public class GenHiveCreateTables {
 		System.out.println();
 		structStmts.forEach( ss -> System.out.println(ss.toString()));
 		System.out.println();
-		hiveDropTables.forEach(hdt -> System.out.println(hdt.toString()));
+		execSqlStmts( hiveDropTables );
 		System.out.println();
-		hiveCreateTables.forEach(hct -> System.out.println(hct.toString()));
+		execSqlStmts( hiveCreateTables );
+
 //		put("person|1.0", TypeDescription.createStruct()
 //				.addField("person_id", TypeDescription.createInt())
+
+	}
+	
+	private void execSqlStmts( List<String> sqlStmts ) throws Exception {
+		try (	Connection con = HiveDataSource.getInstance().getConnection();
+				Statement stmt = con.createStatement(); ) {
+			for( String sqlStmt : sqlStmts ) {
+				System.out.println("Executing: " + sqlStmt );
+				stmt.execute(sqlStmt);
+			}
+		}
 
 	}
 	

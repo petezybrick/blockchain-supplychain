@@ -76,4 +76,6 @@ Add Presto interpreter
 		default.password: 
 	Press Save
 
-
+Note: Had to downgrade Presto JDBC on Zeppelin from 0.194 to 0.179 due to properties issue that started at 0.180
+	https://issues.apache.org/jira/browse/ZEPPELIN-2891 
+	

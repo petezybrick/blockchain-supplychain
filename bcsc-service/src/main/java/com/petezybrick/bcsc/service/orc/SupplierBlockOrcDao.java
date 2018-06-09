@@ -14,8 +14,7 @@ public class SupplierBlockOrcDao {
 	private static final Logger logger = LogManager.getLogger(SupplierBlockOrcDao.class);
 	private static final String schemaName = "supplier_block";
 	private static final String schemaVersion = "1.0";
-	private static String sqlFindTemplate = "SELECT supplier_block_uuid,supplier_blockchain_uuid,hash,previous_hash,block_timestamp,block_sequence FROM supplier_block WHERE <Criteria Here>";
-
+	private static String sqlFindTemplate = "SELECT supplier_block_uuid,supplier_blockchain_uuid,supplier_uuid,hash,previous_hash,block_timestamp,block_sequence FROM supplier_block WHERE <Criteria Here>";
 
 
 	public static void writeOrc( String targetPath, String targetNameExt, List<List<Object>> rowsCols ) throws Exception {
