@@ -51,12 +51,12 @@ public class HivePooledDataSource {
 	 * @throws Exception the exception
 	 */
 	private HivePooledDataSource( SupplyBlockchainConfig masterConfig ) throws Exception {
-		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLoginSupplier(), masterConfig.getJdbcDriverClassNameSupplier(), masterConfig.getJdbcUrlSupplier());
+		logger.debug("JDBC: login {}, class {}, url {}", masterConfig.getJdbcLoginHive(), masterConfig.getJdbcDriverClassNameHive(), masterConfig.getJdbcUrlHive());
 		bds = new BasicDataSource();
-		bds.setDriverClassName(masterConfig.getJdbcDriverClassNameSupplier());
-		bds.setUrl(masterConfig.getJdbcUrlSupplier());
-		bds.setUsername(masterConfig.getJdbcLoginSupplier());
-		bds.setPassword(masterConfig.getJdbcPasswordSupplier());
+		bds.setDriverClassName(masterConfig.getJdbcDriverClassNameHive());
+		bds.setUrl(masterConfig.getJdbcUrlHive());
+		bds.setUsername(masterConfig.getJdbcLoginHive());
+		bds.setPassword(masterConfig.getJdbcPasswordHive());
 		// Optimize for bulk inserts
 		bds.setDefaultAutoCommit(false);
 	}

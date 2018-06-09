@@ -85,6 +85,18 @@ public class SupplyBlockchainConfig implements Serializable {
 	/** The jdbc url. */
 	private String jdbcUrlPresto;	
 	
+	/** The jdbc driver class name. */
+	private String jdbcDriverClassNameHive;
+	
+	/** The jdbc login. */
+	private String jdbcLoginHive;
+	
+	/** The jdbc password. */
+	private String jdbcPasswordHive;
+	
+	/** The jdbc url. */
+	private String jdbcUrlHive;	
+	
 	private String hdfsUri;
 	private String hadoopUserName;
 
@@ -261,7 +273,9 @@ public class SupplyBlockchainConfig implements Serializable {
 				+ keyspaceName + ", jdbcDriverClassNameSupplier=" + jdbcDriverClassNameSupplier + ", jdbcInsertBlockSizeSupplier=" + jdbcInsertBlockSizeSupplier
 				+ ", jdbcLoginSupplier=" + jdbcLoginSupplier + ", jdbcPasswordSupplier=" + jdbcPasswordSupplier + ", jdbcUrlSupplier=" + jdbcUrlSupplier
 				+ ", jdbcDriverClassNamePresto=" + jdbcDriverClassNamePresto + ", jdbcLoginPresto=" + jdbcLoginPresto + ", jdbcPasswordPresto="
-				+ jdbcPasswordPresto + ", jdbcUrlPresto=" + jdbcUrlPresto + ", hdfsUri=" + hdfsUri + ", hadoopUserName=" + hadoopUserName + "]";
+				+ jdbcPasswordPresto + ", jdbcUrlPresto=" + jdbcUrlPresto + ", jdbcDriverClassNameHive=" + jdbcDriverClassNameHive + ", jdbcLoginHive="
+				+ jdbcLoginHive + ", jdbcPasswordHive=" + jdbcPasswordHive + ", jdbcUrlHive=" + jdbcUrlHive + ", hdfsUri=" + hdfsUri + ", hadoopUserName="
+				+ hadoopUserName + "]";
 	}
 
 
@@ -327,6 +341,50 @@ public class SupplyBlockchainConfig implements Serializable {
 
 	public SupplyBlockchainConfig setJdbcUrlPresto(String jdbcUrlPresto) {
 		this.jdbcUrlPresto = jdbcUrlPresto;
+		return this;
+	}
+
+
+	public String getJdbcDriverClassNameHive() {
+		return jdbcDriverClassNameHive;
+	}
+
+
+	public String getJdbcLoginHive() {
+		return jdbcLoginHive;
+	}
+
+
+	public String getJdbcPasswordHive() {
+		return jdbcPasswordHive;
+	}
+
+
+	public String getJdbcUrlHive() {
+		return jdbcUrlHive;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcDriverClassNameHive(String jdbcDriverClassNameHive) {
+		this.jdbcDriverClassNameHive = jdbcDriverClassNameHive;
+		return this;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcLoginHive(String jdbcLoginHive) {
+		this.jdbcLoginHive = jdbcLoginHive;
+		return this;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcPasswordHive(String jdbcPasswordHive) {
+		this.jdbcPasswordHive = jdbcPasswordHive;
+		return this;
+	}
+
+
+	public SupplyBlockchainConfig setJdbcUrlHive(String jdbcUrlHive) {
+		this.jdbcUrlHive = jdbcUrlHive;
 		return this;
 	}
 	

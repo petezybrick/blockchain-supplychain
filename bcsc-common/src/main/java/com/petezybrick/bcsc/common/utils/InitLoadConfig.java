@@ -53,6 +53,10 @@ public class InitLoadConfig {
 				.setJdbcLoginPresto("test")
 				.setJdbcPasswordPresto("")
 				.setJdbcUrlPresto("jdbc:presto://bcsc-presto-coordinator:8080/cat_bcsc/db_bcsc")
+				.setJdbcDriverClassNameHive("org.apache.hive.jdbc.HiveDriver")
+				.setJdbcLoginHive("")
+				.setJdbcPasswordHive("")
+				.setJdbcUrlHive("jdbc:hive2://bcsc-hive-namenode:10000/db_bcsc")
 				.setSupplyBlockchainConfigJsonKey("dev_docker")
 				.setHdfsUri("hdfs://bcsc-hive-namenode:9000")
 				.setHadoopUserName("bcsc");
@@ -75,6 +79,10 @@ public class InitLoadConfig {
 				.setJdbcLoginPresto("test")
 				.setJdbcPasswordPresto("")
 				.setJdbcUrlPresto("jdbc:presto://localhost:8090/cat_bcsc/db_bcsc")
+				.setJdbcDriverClassNameHive("org.apache.hive.jdbc.HiveDriver")
+				.setJdbcLoginHive("")
+				.setJdbcPasswordHive("")
+				.setJdbcUrlHive("jdbc:hive2://localhost:10000/db_bcsc")
 				.setSupplyBlockchainConfigJsonKey("dev_localhost")
 				.setHdfsUri("hdfs://localhost:9000")
 				.setHadoopUserName("bcsc");
