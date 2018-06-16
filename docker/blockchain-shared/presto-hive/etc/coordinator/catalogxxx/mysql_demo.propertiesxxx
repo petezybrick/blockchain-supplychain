@@ -1,4 +1,0 @@
-connector.name=mysql
-connection-url=jdbc:mysql://bcsc-mysql:3306
-connection-user=root
-connection-password=Password*8

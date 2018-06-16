@@ -3,7 +3,6 @@ package com.petezybrick.bcsc.sim.run;
 import java.io.File;
 import java.security.Security;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -20,14 +19,11 @@ import com.petezybrick.bcsc.service.database.CustomerDao;
 import com.petezybrick.bcsc.service.database.CustomerLoyaltyDao;
 import com.petezybrick.bcsc.service.database.CustomerLoyaltyVo;
 import com.petezybrick.bcsc.service.database.CustomerVo;
-import com.petezybrick.bcsc.service.database.LotCanineDao;
-import com.petezybrick.bcsc.service.database.LotIngredientVo;
-import com.petezybrick.bcsc.service.database.LotSupplierBlockVo;
-import com.petezybrick.bcsc.service.database.LotTreeVo;
-import com.petezybrick.bcsc.service.database.LoyaltyComplaintLotCanineDao;
-import com.petezybrick.bcsc.service.database.LoyaltyComplaintLotCanineVo;
 import com.petezybrick.bcsc.service.database.SupplierDataSource;
-import com.petezybrick.bcsc.service.utils.BcscServiceUtils;
+import com.petezybrick.bcsc.service.orc.CustomerLoyaltyOrcDao;
+import com.petezybrick.bcsc.service.orc.CustomerLoyaltyOrcVo;
+import com.petezybrick.bcsc.service.orc.CustomerOrcDao;
+import com.petezybrick.bcsc.service.orc.CustomerOrcVo;
 import com.petezybrick.bcsc.sim.database.AdverseEffectManLotDao;
 
 public class GenSimComplaints {
@@ -75,6 +71,23 @@ public class GenSimComplaints {
 					.setManufacturerLotNumber(manufacturerLotNumber)
 					);
 		}
+		
+		// Write ORC files, assume the target folder was already cleaned up by GenSimSuppliers
+		String targetPath = "hdfs://user/bcsc/bcsc_data/";
+		String targetNameExt = null;
+		List<List<Object>> rowsColsCustomer = new ArrayList<List<Object>>();
+		for( CustomerVo customerVo : customerVos ) { 
+			rowsColsCustomer.add( new CustomerOrcVo(customerVo).toObjectList());
+		}
+		targetNameExt = "customer/" + BlockchainUtils.generateSortableUuid();
+		CustomerOrcDao.writeOrc(targetPath, targetNameExt, rowsColsCustomer);
+		List<List<Object>> rowsColsCustomerLoyalty = new ArrayList<List<Object>>();
+		for( CustomerLoyaltyVo customerLoyaltyVo : customerLoyaltyVos ) { 
+			rowsColsCustomerLoyalty.add( new CustomerLoyaltyOrcVo(customerLoyaltyVo).toObjectList());
+		}
+		targetNameExt = "customer_loyalty/" + BlockchainUtils.generateSortableUuid();
+		CustomerLoyaltyOrcDao.writeOrc(targetPath, targetNameExt, rowsColsCustomerLoyalty);
+		
 		try (Connection con = SupplierDataSource.getInstance().getConnection();){
 			logger.info("Deletes");
 			CustomerLoyaltyDao.deleteAll( con );
