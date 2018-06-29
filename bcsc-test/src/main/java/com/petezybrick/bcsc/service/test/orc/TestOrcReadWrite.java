@@ -38,7 +38,7 @@ public class TestOrcReadWrite {
 				.addField("gender", TypeDescription.createString())
 				.addField("birth_date", TypeDescription.createDate())
 				.addField("created_at", TypeDescription.createTimestamp())				
-				.addField("person_byte", TypeDescription.createBinary())
+				.addField("person_byte", TypeDescription.createByte())
 				.addField("person_boolean", TypeDescription.createBoolean())
 				.addField("person_double", TypeDescription.createDouble())
 				.addField("person_float", TypeDescription.createFloat())
@@ -56,10 +56,10 @@ public class TestOrcReadWrite {
 
 		// Initialize Test Data
 		this.persons = Arrays.asList( 
-				"1|Adams|Abigail|F|1960-01-02|2018-01-02T11:22:33|testBinary1|true|11.22|33.44|55.66",
-				"2|Baker|Benjamin|M|1965-02-01|2018-02-03T11:33:44|testBinary2|false|111.222|333.444|555.666",
-				"3|Charles|Charlene|F|1955-03-04|2018-04-05T11:44:55|testBinary3|true|1111.2222|3333.4444|5555.6666",
-				"4|Dempsey|David|M|1970-04-05|2018-06-07T11:00:11|testBinary4|false|11111.22222|33333.44444|55555.66666"
+				"1|Adams|Abigail|F|1960-01-02|2018-01-02T11:22:33|testByte1|true|11.22|33.44|55.66",
+				"2|Baker|Benjamin|M|1965-02-01|2018-02-03T11:33:44|testByte2|false|111.222|333.444|555.666",
+				"3|Charles|Charlene|F|1955-03-04|2018-04-05T11:44:55|testByte3|true|1111.2222|3333.4444|5555.6666",
+				"4|Dempsey|David|M|1970-04-05|2018-06-07T11:00:11|testByte4|false|11111.22222|33333.44444|55555.66666"
 				);
 	}
 
@@ -81,7 +81,7 @@ public class TestOrcReadWrite {
 						.setGender(tokens[3])
 						.setBirthDate( LocalDate.parse(tokens[4]) )
 						.setCreatedAt( new Timestamp(LocalDateTime.parse(tokens[5]).toInstant(ZoneOffset.UTC).toEpochMilli() ) )
-						.setPersonBinary( ByteBuffer.wrap(tokens[6].getBytes() ) )
+						.setPersonByte( ByteBuffer.wrap(tokens[6].getBytes() ) )
 						.setPersonBoolean( Boolean.valueOf( tokens[7]) ) 
 						.setPersonDouble( Double.valueOf( tokens[8])) 
 						.setPersonFloat( Float.valueOf( tokens[9]) ) 
@@ -96,6 +96,8 @@ public class TestOrcReadWrite {
 			List<BaseOrcVo> readPersonOrcVos = OrcCommon.read(targetPath, targetNameExt, personOrcVo);
 			readPersonOrcVos.forEach(pov -> System.out.println((PersonOrcVo) pov));
 			// TODO: compare values here
+		} catch( Exception e ) {
+			System.out.println(e);
 		} finally {
 			new File(targetPath + targetNameExt).delete();
 		}

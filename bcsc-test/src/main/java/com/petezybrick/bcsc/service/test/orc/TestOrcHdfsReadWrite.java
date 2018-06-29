@@ -89,7 +89,7 @@ public class TestOrcHdfsReadWrite {
 						.setGender(tokens[3])
 						.setBirthDate( LocalDate.parse(tokens[4]) )
 						.setCreatedAt( new Timestamp(LocalDateTime.parse(tokens[5]).toInstant(ZoneOffset.UTC).toEpochMilli() ) )
-						.setPersonBinary( ByteBuffer.wrap(tokens[6].getBytes() ) )
+						.setPersonByte( ByteBuffer.wrap(tokens[6].getBytes() ) )
 						.setPersonBoolean( Boolean.valueOf( tokens[7]) ) 
 						.setPersonDouble( Double.valueOf( tokens[8])) 
 						.setPersonFloat( Float.valueOf( tokens[9]) ) 

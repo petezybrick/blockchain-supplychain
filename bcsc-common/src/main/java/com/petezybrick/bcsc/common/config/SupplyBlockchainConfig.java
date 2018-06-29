@@ -158,6 +158,7 @@ public class SupplyBlockchainConfig implements Serializable {
 				return supplyBlockchainConfigNew;
 			} catch(Exception e ) {
 				exception = e;
+				logger.warn(e.getMessage());
 			} finally {
 				ConfigDao.disconnect();
 			}

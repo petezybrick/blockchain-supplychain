@@ -7,7 +7,11 @@ import java.nio.ByteBuffer;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -32,6 +36,7 @@ import org.apache.orc.TypeDescription.Category;
 import org.apache.orc.Writer;
 
 import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
+import com.petezybrick.bcsc.service.utils.BcscServiceUtils;
 
 public class OrcCommon {
 	private static final Logger logger = LogManager.getLogger(OrcCommon.class);
@@ -42,7 +47,7 @@ public class OrcCommon {
 		Path readPath = null;
 		
 		if( targetPath.startsWith("hdfs:")) {
-			readPath = initHdfs( conf, targetPath, targetNameExt );
+			readPath = BcscServiceUtils.initHdfs( conf, targetPath, targetNameExt );
 		} else if( targetPath.startsWith("s3") ) {
 			
 		} else {
@@ -88,7 +93,7 @@ public class OrcCommon {
 		Path path = null;
 		
 		if( targetPath.startsWith("hdfs")) {
-			path = initHdfs( conf, targetPath, targetNameExt );
+			path = BcscServiceUtils.initHdfs( conf, targetPath, targetNameExt );
 			String hdfsUri = SupplyBlockchainConfig.getInstance().getHdfsUri() ;
 			FileSystem fs = FileSystem.get(URI.create(hdfsUri), conf);
 			String hdfsPath = targetPath.substring(6);
@@ -98,9 +103,25 @@ public class OrcCommon {
 		} else if( targetPath.startsWith("s3")) {
 			
 		} else {
+			targetPath = "file://" + targetPath;
+			conf.set("fs.defaultFS", "file:///");
+			conf.set("fs.file.impl.disable.cache", "true");
+			// conf.set("fs.defaultFS", "file://");
+			conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
+			//conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
+			conf.set("fs.hdfs.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
 			FileUtils.forceMkdir( new File(targetPath));
 			new File(targetPath + "/" + targetNameExt).delete();
 			path = new Path(targetPath + "/" + targetNameExt);
+			System.out.println(conf);
+			Map<String,String> tree = new TreeMap<String,String>();
+			Iterator<Map.Entry<String, String>> it = conf.iterator();
+			while( it.hasNext() ) {
+				Map.Entry<String, String> entry = it.next();
+				tree.put( entry.getKey(), entry.getValue() );
+			}
+			tree.entrySet().forEach( t -> System.out.println(t.getKey() + "=" + t.getValue()));
+			System.out.println( path.getFileSystem(conf) );
 		}
 		
 		
@@ -185,8 +206,13 @@ public class OrcCommon {
 			colValues.add(  wdw.getHiveDecimal().bigDecimalValue() );		
 			break;
 		}
-		// Not supported for this application
 		case BYTE:
+			BytesColumnVector bcv = (BytesColumnVector) colVectors.get(colOffset);
+			byte[] bytes = Arrays.copyOfRange(bcv.vector[rowOffset],
+					bcv.start[rowOffset], bcv.length[rowOffset]);
+			colValues.add( ByteBuffer.wrap(bytes) );
+			break;
+		// Not supported for this application
 		case LIST:
 		case MAP:
 		case UNION:
@@ -247,8 +273,11 @@ public class OrcCommon {
 			dcv.vector[ rowOffset ] = new HiveDecimalWritable(hd);
 			break;
 		}
-		// Not supported for this application
 		case BYTE:
+			BytesColumnVector bcv = (BytesColumnVector)colVector;
+			bcv.setVal(rowOffset, ((ByteBuffer)colValues.get(colOffset)).array());
+			break;
+		// Not supported for this application
 		case LIST:
 		case MAP:
 		case UNION:
@@ -259,36 +288,5 @@ public class OrcCommon {
 		}
 	}
 
-	
-	private static Path initHdfs( Configuration conf, String targetPath, String targetNameExt ) throws Exception {
-		String hdfsUri = SupplyBlockchainConfig.getInstance().getHdfsUri();
-		conf.set("fs.defaultFS", hdfsUri);
-		conf.set("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class.getName());
-		conf.set("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class.getName());
-		System.setProperty("HADOOP_USER_NAME", SupplyBlockchainConfig.getInstance().getHdfsUri() );
-		System.setProperty("hadoop.home.dir", "/");
-		String hdfsPath = targetPath.substring(6);
-		Path newFolderPath = new Path(hdfsUri + hdfsPath);
-		return new Path(newFolderPath + "/" + targetNameExt);
-	}
-	
-	
-	public static void deleteTargetFolder( String targetPath ) throws Exception {
-		logger.debug("targetPath {}", targetPath );
-		Configuration conf = new Configuration();
-		
-		if( targetPath.startsWith("hdfs")) {
-			initHdfs( conf, targetPath, "" );
-			String hdfsUri = SupplyBlockchainConfig.getInstance().getHdfsUri() ;
-			FileSystem fs = FileSystem.get(URI.create(hdfsUri), conf);
-			String hdfsPath = targetPath.substring(6);
-			Path newFolderPath = new Path(hdfsUri + hdfsPath);
-			if (fs.exists(newFolderPath)) fs.delete(newFolderPath, true);
-		} else if( targetPath.startsWith("s3")) {
-			
-		} else {
-			FileUtils.deleteDirectory( new File(targetPath));
-		}
-	}
 
 }

@@ -121,7 +121,7 @@ public class GenHiveCreateTables {
 				Statement stmt = con.createStatement(); ) {
 			for( String sqlStmt : sqlStmts ) {
 				System.out.println("Executing: " + sqlStmt );
-				stmt.execute(sqlStmt);
+				//stmt.execute(sqlStmt);
 			}
 		}
 

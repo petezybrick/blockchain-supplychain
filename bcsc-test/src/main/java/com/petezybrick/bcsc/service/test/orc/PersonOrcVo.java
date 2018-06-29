@@ -17,7 +17,7 @@ public class PersonOrcVo extends BaseOrcVo{
 	private String gender;
 	private LocalDate birthDate;
 	private Timestamp createdAt;
-	private ByteBuffer personBinary;
+	private ByteBuffer personByte;
 	private Boolean personBoolean;
 	private Double personDouble;
 	private Float personFloat;
@@ -34,7 +34,7 @@ public class PersonOrcVo extends BaseOrcVo{
 			.setGender( (String)objs.get(3) )
 			.setBirthDate( (LocalDate)objs.get(4) ) 
 			.setCreatedAt( (Timestamp)objs.get(5) ) 
-			.setPersonBinary( (ByteBuffer)objs.get(6) ) 
+			.setPersonByte( (ByteBuffer)objs.get(6) ) 
 			.setPersonBoolean( (Boolean)objs.get(7) ) 
 			.setPersonDouble( (Double)objs.get(8) ) 
 			.setPersonFloat( (Float)objs.get(9) ) 
@@ -53,7 +53,7 @@ public class PersonOrcVo extends BaseOrcVo{
 		objs.add(gender);
 		objs.add(birthDate);
 		objs.add(createdAt);
-		objs.add(personBinary);
+		objs.add(personByte);
 		objs.add(personBoolean);
 		objs.add(personDouble);
 		objs.add(personFloat);
@@ -69,7 +69,7 @@ public class PersonOrcVo extends BaseOrcVo{
 		this.gender = (String)objs.get(3);
 		this.birthDate = (LocalDate)objs.get(4);
 		this.createdAt = (Timestamp)objs.get(5);
-		this.personBinary = (ByteBuffer)objs.get(5);
+		this.personByte = (ByteBuffer)objs.get(5);
 		this.personBoolean = (Boolean)objs.get(5);
 		this.personDouble = (Double)objs.get(5);
 		this.personFloat = (Float)objs.get(5);
@@ -119,7 +119,7 @@ public class PersonOrcVo extends BaseOrcVo{
 		final SimpleDateFormat fmtr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZ");
 		try {
 			return "PersonOrcVo [personId=" + personId + ", lastName=" + lastName + ", firstName=" + firstName + ", gender=" + gender + ", birthDate=" + birthDate
-					+ ", createdAt=" + fmtr.format(createdAt) + ", personBinary=" + roByteBufferToString(personBinary) + ", personBoolean=" + personBoolean + ", personDouble=" + personDouble
+					+ ", createdAt=" + fmtr.format(createdAt) + ", personBinary=" + roByteBufferToString(personByte) + ", personBoolean=" + personBoolean + ", personDouble=" + personDouble
 					+ ", personFloat=" + personFloat + ", personDecimal=" + personDecimal + "]";
 		} catch (Exception e) {
 			return "?";
@@ -138,8 +138,8 @@ public class PersonOrcVo extends BaseOrcVo{
 	}
 
 
-	public ByteBuffer getPersonBinary() {
-		return personBinary;
+	public ByteBuffer getPersonByte() {
+		return personByte;
 	}
 
 
@@ -163,8 +163,8 @@ public class PersonOrcVo extends BaseOrcVo{
 	}
 
 
-	public PersonOrcVo setPersonBinary(ByteBuffer personByte) {
-		this.personBinary = personByte;
+	public PersonOrcVo setPersonByte(ByteBuffer personByte) {
+		this.personByte = personByte;
 		return this;
 	}
 

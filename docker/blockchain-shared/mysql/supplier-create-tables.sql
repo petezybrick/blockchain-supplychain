@@ -5,8 +5,10 @@ CALL PROC_DROP_FOREIGN_KEY('supplier_transaction', 'fk_supplier_transaction_supp
 CALL PROC_DROP_FOREIGN_KEY('supplier_block_transaction', 'fk_supplier_block');
 CALL PROC_DROP_FOREIGN_KEY('supplier_block', 'fk_supplier_blockchain');
 CALL PROC_DROP_FOREIGN_KEY('customer', 'fk_customer_loyalty');
+CALL PROC_DROP_FOREIGN_KEY('customer_supplier_complaint', 'customer_supplier_complaint_supplier');
 
 
+DROP TABLE IF EXISTS customer_supplier_complaint;
 DROP TABLE IF EXISTS map_lot_canine_supplier_blockchain;
 DROP TABLE IF EXISTS lot_canine;
 DROP TABLE IF EXISTS supplier_blockchain;
@@ -123,6 +125,18 @@ CREATE TABLE map_lot_canine_supplier_blockchain (
 	insert_ts timestamp(3) DEFAULT CURRENT_TIMESTAMP(3),
 	update_ts TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE customer_supplier_complaint (
+	customer_supplier_complaint_uuid CHAR(36) NOT NULL PRIMARY KEY,
+	supplier_uuid CHAR(36) NOT NULL,
+	supplier_name VARCHAR(255) not null,
+	num_complaint INTEGER not null,
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+ALTER TABLE customer_supplier_complaint ADD CONSTRAINT customer_supplier_complaint_supplier 
+	FOREIGN KEY (supplier_uuid) REFERENCES supplier(supplier_uuid)
+	ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 ALTER TABLE supplier_transaction ADD CONSTRAINT fk_supplier_block_transaction 
 	FOREIGN KEY (supplier_block_transaction_uuid) REFERENCES supplier_block_transaction(supplier_block_transaction_uuid)
