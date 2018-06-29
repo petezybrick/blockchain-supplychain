@@ -127,8 +127,7 @@ CREATE TABLE map_lot_canine_supplier_blockchain (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE customer_supplier_complaint (
-	customer_supplier_complaint_uuid CHAR(36) NOT NULL PRIMARY KEY,
-	supplier_uuid CHAR(36) NOT NULL,
+	supplier_uuid CHAR(36) NOT NULL PRIMARY KEY,
 	supplier_name VARCHAR(255) not null,
 	num_complaint INTEGER not null,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

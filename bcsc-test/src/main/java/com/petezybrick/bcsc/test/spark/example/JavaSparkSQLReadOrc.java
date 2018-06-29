@@ -32,6 +32,7 @@ public class JavaSparkSQLReadOrc {
 //		spark.sql("SHOW DATABASES").show();
 //		spark.sql("SHOW TABLES").show();
 		spark.sql("USE db_bcsc");
+		// TODO: write a Hive UDF to create a temporal UUID, for now just use the supplier_uuid as the PK, since it can only occur once anyway
 		String query = "select s.supplier_uuid, s.supplier_name, count(*) as num_complaint from lot_canine lc " + 
 			"inner join customer_loyalty cl on cl.manufacturer_lot_number=lc.manufacturer_lot_number and cl.desc_type='C' " + 
 			"inner join map_lot_canine_supplier_blockchain mlcsb on mlcsb.lot_canine_uuid=lc.lot_canine_uuid " + 
