@@ -124,6 +124,8 @@ cd /home/pete/development/server
 show tables
 	verify results
 
+
+
 	
 
  

@@ -99,6 +99,8 @@ public class SupplyBlockchainConfig implements Serializable {
 	
 	private String hdfsUri;
 	private String hadoopUserName;
+	private String hiveMetastoreUri;
+	private String targetPathBcscData;
 
 
 	/**
@@ -276,7 +278,7 @@ public class SupplyBlockchainConfig implements Serializable {
 				+ ", jdbcDriverClassNamePresto=" + jdbcDriverClassNamePresto + ", jdbcLoginPresto=" + jdbcLoginPresto + ", jdbcPasswordPresto="
 				+ jdbcPasswordPresto + ", jdbcUrlPresto=" + jdbcUrlPresto + ", jdbcDriverClassNameHive=" + jdbcDriverClassNameHive + ", jdbcLoginHive="
 				+ jdbcLoginHive + ", jdbcPasswordHive=" + jdbcPasswordHive + ", jdbcUrlHive=" + jdbcUrlHive + ", hdfsUri=" + hdfsUri + ", hadoopUserName="
-				+ hadoopUserName + "]";
+				+ hadoopUserName + ", hiveMetastoreUri=" + hiveMetastoreUri + "]";
 	}
 
 
@@ -386,6 +388,28 @@ public class SupplyBlockchainConfig implements Serializable {
 
 	public SupplyBlockchainConfig setJdbcUrlHive(String jdbcUrlHive) {
 		this.jdbcUrlHive = jdbcUrlHive;
+		return this;
+	}
+
+
+	public String getHiveMetastoreUri() {
+		return hiveMetastoreUri;
+	}
+
+
+	public SupplyBlockchainConfig setHiveMetastoreUri(String hiveMetastoreUri) {
+		this.hiveMetastoreUri = hiveMetastoreUri;
+		return this;
+	}
+
+
+	public String getTargetPathBcscData() {
+		return targetPathBcscData;
+	}
+
+
+	public SupplyBlockchainConfig setTargetPathBcscData(String targetPathBcscData) {
+		this.targetPathBcscData = targetPathBcscData;
 		return this;
 	}
 	

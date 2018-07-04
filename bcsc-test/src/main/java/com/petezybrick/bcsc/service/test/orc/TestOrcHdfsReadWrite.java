@@ -1,6 +1,5 @@
 package com.petezybrick.bcsc.service.test.orc;
 
-import java.io.File;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.security.Security;
@@ -22,6 +21,7 @@ import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 import com.petezybrick.bcsc.service.orc.BaseOrcVo;
 import com.petezybrick.bcsc.service.orc.OrcCommon;
 import com.petezybrick.bcsc.service.orc.OrcSchemaMgr;
+
 
 public class TestOrcHdfsReadWrite {
 	private List<String> persons;

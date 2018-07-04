@@ -59,7 +59,9 @@ public class InitLoadConfig {
 				.setJdbcUrlHive("jdbc:hive2://bcsc-hive-namenode:10000/db_bcsc")
 				.setSupplyBlockchainConfigJsonKey("dev_docker")
 				.setHdfsUri("hdfs://bcsc-hive-namenode:9000")
-				.setHadoopUserName("bcsc");
+				.setHadoopUserName("bcsc")
+				.setHiveMetastoreUri( "thrift://bcsc-hive-namenode:9083" )
+				.setTargetPathBcscData( "hdfs://user/bcsc/bcsc_data/" );
         String rawJson = BlockchainUtils.objectMapper.writeValueAsString(supplyBlockchainConfig);
 		ConfigVo configVo = new ConfigVo("dev_docker", rawJson );
 		return configVo;
@@ -85,7 +87,9 @@ public class InitLoadConfig {
 				.setJdbcUrlHive("jdbc:hive2://localhost:10000/db_bcsc")
 				.setSupplyBlockchainConfigJsonKey("dev_localhost")
 				.setHdfsUri("hdfs://localhost:9000")
-				.setHadoopUserName("bcsc");
+				.setHadoopUserName("bcsc")
+				.setHiveMetastoreUri( "thrift://bcsc-hive-namenode:9083" )
+				.setTargetPathBcscData( "hdfs://user/bcsc/bcsc_data/" );
         String rawJson = BlockchainUtils.objectMapper.writeValueAsString(supplyBlockchainConfig);
 		ConfigVo configVo = new ConfigVo("dev_localhost", rawJson );
 		return configVo;
