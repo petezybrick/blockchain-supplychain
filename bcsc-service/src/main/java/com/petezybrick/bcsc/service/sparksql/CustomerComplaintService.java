@@ -25,8 +25,8 @@ public class CustomerComplaintService {
 	
 	public static void populateCustomerSupplierComplaints( String sparkMaster ) throws Exception {
 		SparkConf conf = new SparkConf().setAppName("Hive ORC Reader")
-				.set("hive.metastore.uris", SupplyBlockchainConfig.getInstance().getHiveMetastoreUri())
-				.set("ConfVars.HIVE_STATS_JDBC_TIMEOUT", "0");
+				.set("hive.metastore.uris", SupplyBlockchainConfig.getInstance().getHiveMetastoreUri());
+				//.set("ConfVars.HIVE_STATS_JDBC_TIMEOUT", "0");
 		if (sparkMaster != null )
 			conf.setMaster(sparkMaster);
 		SparkSession spark = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate();
@@ -36,7 +36,7 @@ public class CustomerComplaintService {
 	
 	
 	public static void populateCustomerSupplierComplaints( SparkConf conf, SparkSession spark ) throws Exception {
-		String schema = "db_bcsc";
+		String schema = SupplyBlockchainConfig.getInstance().getSchemaBcscData();
 		String query = "select s.supplier_uuid, s.supplier_name, count(*) as num_complaint from $SCHEMA$.lot_canine lc " + 
 				"inner join $SCHEMA$.customer_loyalty cl on cl.manufacturer_lot_number=lc.manufacturer_lot_number and cl.desc_type='C' " + 
 				"inner join $SCHEMA$.map_lot_canine_supplier_blockchain mlcsb on mlcsb.lot_canine_uuid=lc.lot_canine_uuid " + 

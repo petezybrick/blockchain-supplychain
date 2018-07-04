@@ -16,19 +16,7 @@ public class TestCustomerComplaintService {
 		String keyspaceName = args[2];
 		SupplyBlockchainConfig.getInstance( env, contactPoint, keyspaceName );
 		String sparkMaster = (args.length>3) ? args[3] : null;
-		TestCustomerComplaintService.populateCustomerSupplierComplaints( sparkMaster );
-	}
-	
-	
-	public static void populateCustomerSupplierComplaints( String sparkMaster ) throws Exception {
-		SparkConf conf = new SparkConf().setAppName("Hive ORC Reader")
-				.set("hive.metastore.uris", SupplyBlockchainConfig.getInstance().getHiveMetastoreUri())
-				.set("ConfVars.HIVE_STATS_JDBC_TIMEOUT", "0");
-		if (sparkMaster != null )
-			conf.setMaster(sparkMaster);
-		SparkSession spark = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate();
-		CustomerComplaintService.populateCustomerSupplierComplaints( conf, spark );
-		spark.stop();
+		CustomerComplaintService.populateCustomerSupplierComplaints( sparkMaster );
 	}
 
 }

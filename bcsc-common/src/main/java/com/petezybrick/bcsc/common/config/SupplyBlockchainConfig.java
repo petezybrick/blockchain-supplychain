@@ -101,6 +101,7 @@ public class SupplyBlockchainConfig implements Serializable {
 	private String hadoopUserName;
 	private String hiveMetastoreUri;
 	private String targetPathBcscData;
+	private String schemaBcscData;
 
 
 	/**
@@ -278,7 +279,8 @@ public class SupplyBlockchainConfig implements Serializable {
 				+ ", jdbcDriverClassNamePresto=" + jdbcDriverClassNamePresto + ", jdbcLoginPresto=" + jdbcLoginPresto + ", jdbcPasswordPresto="
 				+ jdbcPasswordPresto + ", jdbcUrlPresto=" + jdbcUrlPresto + ", jdbcDriverClassNameHive=" + jdbcDriverClassNameHive + ", jdbcLoginHive="
 				+ jdbcLoginHive + ", jdbcPasswordHive=" + jdbcPasswordHive + ", jdbcUrlHive=" + jdbcUrlHive + ", hdfsUri=" + hdfsUri + ", hadoopUserName="
-				+ hadoopUserName + ", hiveMetastoreUri=" + hiveMetastoreUri + "]";
+				+ hadoopUserName + ", hiveMetastoreUri=" + hiveMetastoreUri + ", targetPathBcscData=" + targetPathBcscData + ", schemaBcscData="
+				+ schemaBcscData + "]";
 	}
 
 
@@ -410,6 +412,17 @@ public class SupplyBlockchainConfig implements Serializable {
 
 	public SupplyBlockchainConfig setTargetPathBcscData(String targetPathBcscData) {
 		this.targetPathBcscData = targetPathBcscData;
+		return this;
+	}
+
+
+	public String getSchemaBcscData() {
+		return schemaBcscData;
+	}
+
+
+	public SupplyBlockchainConfig setSchemaBcscData(String schemaBcscData) {
+		this.schemaBcscData = schemaBcscData;
 		return this;
 	}
 	
