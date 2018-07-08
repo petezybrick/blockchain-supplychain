@@ -1,55 +1,47 @@
 package com.petezybrick.bcsc.apiclient.test;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
 import com.petezybrick.bcsc.test.base.TestBase;
-
-import io.swagger.client.ApiClient;
-import io.swagger.client.api.LotApi;
-import io.swagger.client.auth.OAuth;
-import io.swagger.client.model.LotTreeItem;
 
 public class TestApiFindTree extends TestBase {
 	public static final String existsLotNumber = "20180108-1";
 
-	@BeforeClass
-	public static void beforeClass() throws Exception {
-		TestBase.beforeClass();
-	}
-
-	@Before
-	public void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@After
-	public void tearDown() throws Exception {
-		super.tearDown();
-	}
-
-	@Test
-	public void testFound() throws Exception {        
-		ApiClient apiClient = new ApiClient();
-	    apiClient.setBasePath("http://localhost:8092/bcsc-webapi/v2");
-	    
-	    // Configure OAuth2 access token for authorization: petstore_auth
-	    OAuth petnutrition_auth = (OAuth) apiClient.getAuthentication("petnutrition_auth");
-	    petnutrition_auth.setAccessToken("special-key");
+//	@BeforeClass
+//	public static void beforeClass() throws Exception {
+//		TestBase.beforeClass();
+//	}
+//
+//	@Before
+//	public void setUp() throws Exception {
+//		super.setUp();
+//	}
+//
+//	@After
+//	public void tearDown() throws Exception {
+//		super.tearDown();
+//	}
+//
+//	@Test
+//	public void testFound() throws Exception {        
+//		ApiClient apiClient = new ApiClient();
+//	    apiClient.setBasePath("http://localhost:8092/bcsc-webapi/v2");
+//	    
+//	    // Configure OAuth2 access token for authorization: petstore_auth
+//	    OAuth petnutrition_auth = (OAuth) apiClient.getAuthentication("petnutrition_auth");
+//	    petnutrition_auth.setAccessToken("special-key");
+//	
+//	    LotApi apiInstance = new LotApi(apiClient);
+//    	LotTreeItem lotTreeItem = apiInstance.findLotTree(existsLotNumber);
+//    	System.out.println("lotTreeItem: " + lotTreeItem);
+//		Assert.assertNotNull(lotTreeItem);
 	
-	    LotApi apiInstance = new LotApi(apiClient);
-    	LotTreeItem lotTreeItem = apiInstance.findLotTree(existsLotNumber);
-    	System.out.println("lotTreeItem: " + lotTreeItem);
-		Assert.assertNotNull(lotTreeItem);
+	
+	
 //		Assert.assertEquals(3, lotNumbers.size() );
 //		Assert.assertEquals(lotNumbers.get(0), "1111" );
 //		Assert.assertEquals(lotNumbers.get(1), "2222" );
 //		Assert.assertEquals(lotNumbers.get(2), "3333" );
 
-	}
+//	}
 
 //	@Test
 //	public void testNotFound() throws Exception {

@@ -54,7 +54,7 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>			
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -86,9 +86,9 @@
 
 	<dependencies>
 		<dependency>
-		    <groupId>com.fasterxml.jackson.module</groupId>
-		    <artifactId>jackson-module-scala_2.11</artifactId>
-		    <version>${jackson.version}</version>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-scala_2.11</artifactId>
+			<version>${jackson.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.facebook.presto</groupId>
@@ -121,6 +121,22 @@
 			<groupId>org.apache.spark</groupId>
 			<artifactId>spark-core_2.11</artifactId>
 			<version>${spark.version}</version>
+			<!-- 
+			<exclusions>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>jul-to-slf4j</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-jdk14</artifactId>
+				</exclusion>				
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-log4j12</artifactId>
+				</exclusion>
+			</exclusions>
+			 -->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.spark/spark-sql -->
@@ -130,10 +146,10 @@
 			<version>${spark.version}</version>
 		</dependency>
 		<dependency>
-            <groupId>org.apache.spark</groupId>
-            <artifactId>spark-hive_${scala.binary.version}</artifactId>
-            <version>${spark.version}</version>
-        </dependency>
+			<groupId>org.apache.spark</groupId>
+			<artifactId>spark-hive_${scala.binary.version}</artifactId>
+			<version>${spark.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.petezybrick</groupId>
@@ -145,17 +161,10 @@
 			<artifactId>bcsc-service</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.petezybrick</groupId>
-			<artifactId>bcsc-api</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.petezybrick</groupId>
-			<artifactId>bcsc-apiclient</artifactId>
-			<version>${project.parent.version}</version>
-		</dependency>
-
+		<!-- <dependency> <groupId>com.petezybrick</groupId> <artifactId>bcsc-api</artifactId> 
+			<version>${project.parent.version}</version> </dependency> <dependency> <groupId>com.petezybrick</groupId> 
+			<artifactId>bcsc-apiclient</artifactId> <version>${project.parent.version}</version> 
+			</dependency> -->
 
 	</dependencies>
 
