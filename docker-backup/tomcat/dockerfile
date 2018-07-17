@@ -1,0 +1,26 @@
+FROM ubuntu-java-python-nano:14.04.5
+MAINTAINER Pete Zybrick <pzybrick@gmail.com>
+
+RUN apt-get update \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*    
+
+#
+ENV TOMCAT_VERSION	9.0.6
+ENV TOMCAT_HOME		/usr/local/tomcat
+ENV HADOOP_OPTS		-Djava.library.path=/usr/local/hadoop/lib/native
+ENV PATH		$PATH:$TOMCAT_HOME/bin
+add apache-tomcat-${TOMCAT_VERSION}.tar.gz /usr/local
+RUN ln -s /usr/local/apache-tomcat-${TOMCAT_VERSION} $TOMCAT_HOME 
+
+RUN groupadd tomcat
+RUN useradd tomcat -g tomcat -d /usr/local/tomcat
+
+RUN chgrp -R tomcat /usr/local/tomcat
+RUN chmod -R g+r /usr/local/tomcat/conf
+RUN chmod g+x /usr/local/tomcat/conf
+RUN chown -R tomcat /usr/local/tomcat/webapps/ /usr/local/tomcat/work/ /usr/local/tomcat/temp
+
+EXPOSE 8080
+
+CMD ["catalina.sh","run"]

@@ -1,0 +1,17 @@
+FROM ubuntu-java-python-nano:14.04.5
+MAINTAINER Pete Zybrick <pzybrick@gmail.com>
+
+RUN apt-get update \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
+
+# copy or download presto here 
+ENV PRESTO_VERSION=0.194
+ENV PRESTO_HOME=/usr/local/presto
+add presto-server-${PRESTO_VERSION}.tar.gz /usr/local
+RUN ln -s /usr/local/presto-server-${PRESTO_VERSION} $PRESTO_HOME
+
+# Create data dir
+RUN mkdir -p $PRESTO_HOME/data
+VOLUME ["$PRESTO_HOME/etc", "$PRESTO_HOME/data"]
