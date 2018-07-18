@@ -2,6 +2,8 @@ package com.petezybrick.bcsc.service.sparksql;
 
 import java.security.Security;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
@@ -11,7 +13,10 @@ import com.petezybrick.bcsc.common.config.SupplyBlockchainConfig;
 import com.petezybrick.bcsc.service.utils.BcscServiceUtils;
 
 public class CustomerComplaintService {
+	private static final Logger logger = LogManager.getLogger(CustomerComplaintService.class);
+
 	public static void main(String[] args) throws Exception {
+		logger.info("+++++ Job Starting +++++" );
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 		String env = args[0];
 		String contactPoint = args[1];
@@ -26,7 +31,6 @@ public class CustomerComplaintService {
 	public static void populateCustomerSupplierComplaints( String sparkMaster ) throws Exception {
 		SparkConf conf = new SparkConf().setAppName("Hive ORC Reader")
 				.set("hive.metastore.uris", SupplyBlockchainConfig.getInstance().getHiveMetastoreUri());
-				//.set("ConfVars.HIVE_STATS_JDBC_TIMEOUT", "0");
 		if (sparkMaster != null )
 			conf.setMaster(sparkMaster);
 		SparkSession spark = SparkSession.builder().config(conf).enableHiveSupport().getOrCreate();
@@ -44,12 +48,15 @@ public class CustomerComplaintService {
 				"inner join $SCHEMA$.supplier_block sb on sb.supplier_blockchain_uuid=sbc.supplier_blockchain_uuid " + 
 				"inner join $SCHEMA$.supplier s on s.supplier_uuid=sb.supplier_uuid " + 
 				"group by s.supplier_uuid, s.supplier_name " + 
-				"order by num_complaint ";
-		Dataset<Row> rs = spark.sql(query.replace("$SCHEMA$", schema));
+				"order by num_complaint ".replace("$SCHEMA$", schema);
+		logger.info("+++++ Running Query: {} +++++", query);
+		Dataset<Row> rs = spark.sql(query);
 		// todo: write to temp folder then flip when done
 		String targetPath =  SupplyBlockchainConfig.getInstance().getTargetPathBcscData() + "customer_supplier_complaint";
 		String newFolderPath = BcscServiceUtils.deleteTargetFolder(targetPath);
+		logger.info("+++++ Writing ORC files to folder: {}", newFolderPath );
 		rs.write().format("ORC").save(newFolderPath);
+		logger.info("+++++ Job Complete +++++" );
 	}
 
 }

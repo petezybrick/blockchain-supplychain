@@ -16,6 +16,8 @@ Exec into the container
 bring up mysql command line
 	mysql -p
 		Note: password is Password*8
+	GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY 'Password*8';
+	FLUSH PRIVILEGES;
 	source /tmp/bcsc-shared/mysql-init/init.sql
 	source /tmp/bcsc-shared/mysql-init/supplier-create-tables.sql
 exit MySQL
@@ -80,15 +82,17 @@ Create a Notebook:
 Presto
 Note: Presto must be up and running, see 
 Copy the Presto JDBC driver into /usr/share/zeppelin-0.7.0/interpreter/jdbc.  Here are the steps
-1. copy presto-jdbc-0.194.jar into docker/blockchain-shared
+1. copy presto-jdbc-0.179.jar into docker/bcsc-shared
 2. exec into Zeppelin: docker exec -it bcsc-zeppelin /bin/bash
-3. cp /tmp/blockchain-shared/presto-hive/presto-jdbc-0.194.jar /usr/share/zeppelin-0.7.0/interpreter/jdbc/
+3. cp /tmp/bcsc-shared/presto-hive/presto-jdbc-0.179.jar /usr/share/zeppelin-0.7.0/interpreter/jdbc/
 4. exit from bcsc-zeppelin
 5. stop/start the bcsc-zeppelin container
+docker-compose -f docker-compose-zeppelin.yml stop
+docker-compose -f docker-compose-zeppelin.yml start
 6. configure Zeppelin JDBC connection for Presto
 Add Presto interpreter
 	In the top right corner, click on the down arrow next to "anonymous" and select Interpreter
-	Entries:
+	Entry: bcsc-presto-mysql:
 		Interpreter Name: bcsc-presto
 		Interpreter Group: jdbc
 		default.driver: com.facebook.presto.jdbc.PrestoDriver
@@ -96,7 +100,27 @@ Add Presto interpreter
 		default.user: test
 		default.password: 
 	Press Save
-
+	Entry: bcsc-presto-hive:
+		Interpreter Name: bcsc-hive
+		Interpreter Group: jdbc
+		default.driver: com.facebook.presto.jdbc.PrestoDriver
+		defaul.url: jdbc:presto://bcsc-presto-coordinator:8080/cat_bcsc_hive/db_bcsc
+		default.user: test
+		default.password: 
+	Press Save
 Note: Had to downgrade Presto JDBC on Zeppelin from 0.194 to 0.179 due to properties issue that started at 0.180
 	https://issues.apache.org/jira/browse/ZEPPELIN-2891 
 	
+	
+Populating the complaints to find the culprit
+cd ~/development/server/spark-2.3.0-bin-hadoop2.7
+
+./bin/spark-submit \
+  --class com.petezybrick.bcsc.service.sparksql.CustomerComplaintService \
+  --deploy-mode cluster \
+  --master spark://localhost:6066 \
+  --executor-memory 2G \
+  --executor-cores 1 \
+  --total-executor-cores 4 \
+  /tmp/bcsc-shared/jars/bcsc-service-1.0.0.jar \
+  "dev_docker" "bcsc-cassandra1" "bcsc"
