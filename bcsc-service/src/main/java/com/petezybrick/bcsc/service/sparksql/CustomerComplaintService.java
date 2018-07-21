@@ -24,7 +24,6 @@ public class CustomerComplaintService {
 		SupplyBlockchainConfig.getInstance( env, contactPoint, keyspaceName );
 		String sparkMaster = (args.length>3) ? args[3] : null;
 		CustomerComplaintService.populateCustomerSupplierComplaints( sparkMaster );
-		//HiveUtils xx =null;
 	}
 	
 	
