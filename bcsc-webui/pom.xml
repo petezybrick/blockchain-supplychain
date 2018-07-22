@@ -10,6 +10,10 @@
 	<artifactId>bcsc-webui</artifactId>
 	<packaging>war</packaging>
 
+	<properties>
+		<servlet-api-version>2.5</servlet-api-version>
+	</properties>
+
 	<build>
 		<sourceDirectory>src/main/java</sourceDirectory>
 		<plugins>
@@ -51,13 +55,50 @@
 		</dependency>
 		<dependency>
 			<groupId>com.petezybrick</groupId>
-			<artifactId>bcsc-api</artifactId>
+			<artifactId>bcsc-service</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.petezybrick</groupId>
+			<artifactId>bcsc-api</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.petezybrick</groupId>
 			<artifactId>bcsc-apiclient</artifactId>
 			<version>${project.parent.version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.mortbay.jasper/apache-jsp -->
+		<dependency>
+			<groupId>org.mortbay.jasper</groupId>
+			<artifactId>apache-jsp</artifactId>
+			<version>8.5.24.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.4.9.v20180320</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-runner -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-runner</artifactId>
+			<version>9.4.9.v20180320</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.mortbay.jasper</groupId>
+					<artifactId>apache-jsp</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>${servlet-api-version}</version>
 		</dependency>
 
 

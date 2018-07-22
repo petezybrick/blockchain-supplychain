@@ -7,6 +7,7 @@
   <title>Canine Nutrition Lineage</title>
 </head>
 <body>
+  <div style="font-family:Arial">
   <h3>Canine Nutrition Lineage</h3>
   <form method="post">
     Manufacturer Lot Number: <input type="text" name="manLotNumber" value="<%=manLotNumber%>">
@@ -31,6 +32,6 @@
   <% if( manLotNumber != null && manLotNumber.length() > 0 ) { %>
   <%=LotTreeToDetailTree.createDetailTreeHtml5(lotTreeItem) %>
   <% } %>
-  
+  </div>
 </body>
 </html>

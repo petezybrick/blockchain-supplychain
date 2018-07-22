@@ -13,7 +13,7 @@
 	<properties>
 		<swagger-core-version>1.5.18</swagger-core-version>
 		<jetty-version>9.2.9.v20150224</jetty-version>
-		<jersey2-version>2.22.2</jersey2-version>
+		<jersey2-version>2.22.2</jersey2-version> <!-- 2.22.2 -->
 		<jackson-version>2.8.9</jackson-version>
 		<logback-version>1.1.7</logback-version>
 		<servlet-api-version>2.5</servlet-api-version>
@@ -53,6 +53,18 @@
 			<groupId>com.petezybrick</groupId>
 			<artifactId>bcsc-service</artifactId>
 			<version>${project.parent.version}</version>
+<!-- 
+			<exclusions>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jersey</groupId>
+					<artifactId>jersey-server</artifactId>
+				</exclusion>
+			</exclusions>
+			 -->
 		</dependency>
 		<dependency>
 			<groupId>io.swagger</groupId>
@@ -80,16 +92,39 @@
 			<artifactId>servlet-api</artifactId>
 			<version>${servlet-api-version}</version>
 		</dependency>
+				<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-server -->
 		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-server</artifactId>
+			<version>9.4.9.v20180320</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jetty/jetty-runner -->
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-runner</artifactId>
+			<version>9.4.9.v20180320</version>
+			<scope>provided</scope> 
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.glassfish.jersey.core/jersey-common -->
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>${jersey2-version}</version>
+			<scope>provided</scope>
+		</dependency>		<dependency>
 			<groupId>org.glassfish.jersey.containers</groupId>
 			<artifactId>jersey-container-servlet-core</artifactId>
 			<version>${jersey2-version}</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-multipart</artifactId>
 			<version>${jersey2-version}</version>
+			<scope>provided</scope>
 		</dependency>
+		 
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
