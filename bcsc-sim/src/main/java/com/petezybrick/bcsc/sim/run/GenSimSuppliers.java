@@ -75,8 +75,8 @@ public class GenSimSuppliers {
 	public static final int NUM_SIM_SUPPLIERS = triples.length / 3;
 	public static final int NUM_SIM_CHAINS_PER_SOURCE = 10;
 	public static final int NUM_SIM_LOTS_PER_CHAIN_PER_SOURCE = 5;
-	public static final int NUM_SIM_LOTS = 10;
 	public static final int NUM_SIM_PROD_WEEKS = 8;
+	public static final int NUM_SIM_LOTS_PER_PROD_WEEK = 10;
 	public static final int ADVERSE_EFFECT_MAX_PCT = 60;
 	public static final int ADVERSE_EFFECT_OFFSET = 7;
 	public static final String ADVERSE_EFFECT_SUPPLIER_TYPE = "brewers_rice";
@@ -94,7 +94,7 @@ public class GenSimSuppliers {
 	private PrivateKey privateKeyFrom;
 	private PublicKey publicKeyFrom;
 	private ZonedDateTime simDate;
-	private int simdDateMinutesOffset;
+	private int simDateMinutesOffset;
 	private String pathSimBlockchainSequenceItemsJson;
 	private SupplyBlockchainConfig config;
 	private String adverseEffectSupplierUuid;
@@ -106,7 +106,7 @@ public class GenSimSuppliers {
 		privateKeyFrom = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(BlockchainUtils.toByteArray(encodedPrivateKey)));
 		publicKeyFrom = keyFactory.generatePublic(new X509EncodedKeySpec(BlockchainUtils.toByteArray(encodedPublicKey)));
 		simDate = ZonedDateTime.now().minusYears(1);
-		simdDateMinutesOffset = 0;
+		simDateMinutesOffset = 0;
 	}
 
 	public static void main(String[] args) {
@@ -173,7 +173,7 @@ public class GenSimSuppliers {
 			for( int i=0 ; i<NUM_SIM_PROD_WEEKS ; i++) {
 				String lotNumberRoot = simProdWeek.format(fmt) + "-";
 				int lotNumberSeq = 1;
-				for( int j=0 ; j<NUM_SIM_LOTS ; j++ ) {
+				for( int j=0 ; j<NUM_SIM_LOTS_PER_PROD_WEEK ; j++ ) {
 					String manufacturerLotNumber = lotNumberRoot +  lotNumberSeq;
 					List<MapLotCanineSupplierBlockchainVo> mapLotCanineSupplierBlockchainVos = new ArrayList<MapLotCanineSupplierBlockchainVo>();
 					String lotCanineUuid = BlockchainUtils.generateSortableUuid();
@@ -334,8 +334,8 @@ public class GenSimSuppliers {
 							.setSupplierUuid(supplierVoRnd.getSupplierUuid())
 							.setSupplierLotNumber(supplierLot).setItemNumber(itemNumber)
 							.setDescription(descCatSubcatItem.getDesc()).setQty(100).setUnits("kg")
-							.setShippedDateIso8601( Timestamp.from( simDate.plusMinutes(simdDateMinutesOffset++).toInstant()) )
-							.setRcvdDateIso8601( Timestamp.from( simDate.plusMinutes(simdDateMinutesOffset++).toInstant()) );
+							.setShippedDateIso8601( Timestamp.from( simDate.plusMinutes(simDateMinutesOffset++).toInstant()) )
+							.setRcvdDateIso8601( Timestamp.from( simDate.plusMinutes(simDateMinutesOffset++).toInstant()) );
 					PublicKey publicKeyTo = keyFactory.generatePublic(new X509EncodedKeySpec(BlockchainUtils.toByteArray(supplierVoRnd.getEncodedPublicKey())));
 					String supplierBlockUuid = BlockchainUtils.generateSortableUuid();
 					SupplierBlockTransactionVo supplierBlockTransactionVo = new SupplierBlockTransactionVo()
@@ -348,7 +348,7 @@ public class GenSimSuppliers {
 							.setPreviousHash(previousHash).setSupplierBlockTransactionVo(supplierBlockTransactionVo)
 							.setBlockSequence(blockSequence).setSupplierBlockUuid(supplierBlockUuid)
 							.setSupplierBlockchainUuid(supplierBlockChainUuid)
-							.setBlockTimestamp(Timestamp.from( simDate.plusMinutes(simdDateMinutesOffset++).toInstant()) )
+							.setBlockTimestamp(Timestamp.from( simDate.plusMinutes(simDateMinutesOffset++).toInstant()) )
 							.setSupplierUuid(supplierVoRnd.getSupplierUuid())
 							.updateHash();
 					supplierBlocks.add(supplierBlockVo);

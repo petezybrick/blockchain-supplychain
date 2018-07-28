@@ -28,7 +28,7 @@ public class CustomerComplaintService {
 	
 	
 	public static void populateCustomerSupplierComplaints( String sparkMaster ) throws Exception {
-		SparkConf conf = new SparkConf().setAppName("Hive ORC Reader")
+		SparkConf conf = new SparkConf().setAppName("PopulateCustomerSupplierComplaints")
 				.set("hive.metastore.uris", SupplyBlockchainConfig.getInstance().getHiveMetastoreUri());
 		if (sparkMaster != null )
 			conf.setMaster(sparkMaster);
@@ -47,7 +47,8 @@ public class CustomerComplaintService {
 				"inner join $SCHEMA$.supplier_block sb on sb.supplier_blockchain_uuid=sbc.supplier_blockchain_uuid " + 
 				"inner join $SCHEMA$.supplier s on s.supplier_uuid=sb.supplier_uuid " + 
 				"group by s.supplier_uuid, s.supplier_name " + 
-				"order by num_complaint ".replace("$SCHEMA$", schema);
+				"order by num_complaint ";
+		query = query.replace("$SCHEMA$", schema);
 		logger.info("+++++ Running Query: {} +++++", query);
 		Dataset<Row> rs = spark.sql(query);
 		// todo: write to temp folder then flip when done

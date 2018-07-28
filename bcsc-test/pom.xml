@@ -76,7 +76,7 @@
 							<version>1.0.0</version>
 							<type>jar</type>
 							<overWrite>true</overWrite>
-							<outputDirectory>${basedir}/../../blockchain-supplychain/docker/blockchain-shared/jars</outputDirectory>
+							<outputDirectory>${basedir}/../../blockchain-supplychain/docker/bcsc-shared/jars</outputDirectory>
 						</artifactItem>
 					</artifactItems>
 				</configuration>

@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.petezybrick.bcsc.common.utils.BlockchainUtils;
 
 
+// TODO: Auto-generated Javadoc
 /**
  * The Class SupplyBlockchainConfig.
  */
@@ -97,10 +98,19 @@ public class SupplyBlockchainConfig implements Serializable {
 	/** The jdbc url. */
 	private String jdbcUrlHive;	
 	
+	/** The hdfs uri. */
 	private String hdfsUri;
+	
+	/** The hadoop user name. */
 	private String hadoopUserName;
+	
+	/** The hive metastore uri. */
 	private String hiveMetastoreUri;
+	
+	/** The target path bcsc data. */
 	private String targetPathBcscData;
+	
+	/** The schema bcsc data. */
 	private String schemaBcscData;
 
 
@@ -114,6 +124,9 @@ public class SupplyBlockchainConfig implements Serializable {
 
 	/**
 	 * Instantiates a new master config.
+	 *
+	 * @return single instance of SupplyBlockchainConfig
+	 * @throws Exception the exception
 	 */
 //	private SupplyBlockchainConfig() {
 //		
@@ -173,104 +186,205 @@ public class SupplyBlockchainConfig implements Serializable {
 	}
 
 
+	/**
+	 * Gets the serialversionuid.
+	 *
+	 * @return the serialversionuid
+	 */
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
 
 
+	/**
+	 * Gets the logger.
+	 *
+	 * @return the logger
+	 */
 	public static Logger getLogger() {
 		return logger;
 	}
 
 
+	/**
+	 * Gets the supply blockchain config json key.
+	 *
+	 * @return the supply blockchain config json key
+	 */
 	public String getSupplyBlockchainConfigJsonKey() {
 		return supplyBlockchainConfigJsonKey;
 	}
 
 
+	/**
+	 * Gets the contact point.
+	 *
+	 * @return the contact point
+	 */
 	public String getContactPoint() {
 		return contactPoint;
 	}
 
 
+	/**
+	 * Gets the keyspace name.
+	 *
+	 * @return the keyspace name
+	 */
 	public String getKeyspaceName() {
 		return keyspaceName;
 	}
 
 	
+	/**
+	 * Gets the jdbc driver class name supplier.
+	 *
+	 * @return the jdbc driver class name supplier
+	 */
 	public String getJdbcDriverClassNameSupplier() {
 		return jdbcDriverClassNameSupplier;
 	}
 
 
+	/**
+	 * Gets the jdbc insert block size supplier.
+	 *
+	 * @return the jdbc insert block size supplier
+	 */
 	public Integer getJdbcInsertBlockSizeSupplier() {
 		return jdbcInsertBlockSizeSupplier;
 	}
 
 
+	/**
+	 * Gets the jdbc login supplier.
+	 *
+	 * @return the jdbc login supplier
+	 */
 	public String getJdbcLoginSupplier() {
 		return jdbcLoginSupplier;
 	}
 
 
+	/**
+	 * Gets the jdbc password supplier.
+	 *
+	 * @return the jdbc password supplier
+	 */
 	public String getJdbcPasswordSupplier() {
 		return jdbcPasswordSupplier;
 	}
 
 
+	/**
+	 * Gets the jdbc url supplier.
+	 *
+	 * @return the jdbc url supplier
+	 */
 	public String getJdbcUrlSupplier() {
 		return jdbcUrlSupplier;
 	}
 
 
+	/**
+	 * Sets the supply blockchain config json key.
+	 *
+	 * @param supplyBlockchainConfigJsonKey the supply blockchain config json key
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setSupplyBlockchainConfigJsonKey(String supplyBlockchainConfigJsonKey) {
 		this.supplyBlockchainConfigJsonKey = supplyBlockchainConfigJsonKey;
 		return this;
 	}
 
 
+	/**
+	 * Sets the contact point.
+	 *
+	 * @param contactPoint the contact point
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setContactPoint(String contactPoint) {
 		this.contactPoint = contactPoint;
 		return this;
 	}
 
 
+	/**
+	 * Sets the keyspace name.
+	 *
+	 * @param keyspaceName the keyspace name
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setKeyspaceName(String keyspaceName) {
 		this.keyspaceName = keyspaceName;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc driver class name supplier.
+	 *
+	 * @param jdbcDriverClassNameSupplier the jdbc driver class name supplier
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcDriverClassNameSupplier(String jdbcDriverClassNameSupplier) {
 		this.jdbcDriverClassNameSupplier = jdbcDriverClassNameSupplier;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc insert block size supplier.
+	 *
+	 * @param jdbcInsertBlockSizeSupplier the jdbc insert block size supplier
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcInsertBlockSizeSupplier(Integer jdbcInsertBlockSizeSupplier) {
 		this.jdbcInsertBlockSizeSupplier = jdbcInsertBlockSizeSupplier;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc login supplier.
+	 *
+	 * @param jdbcLoginSupplier the jdbc login supplier
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcLoginSupplier(String jdbcLoginSupplier) {
 		this.jdbcLoginSupplier = jdbcLoginSupplier;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc password supplier.
+	 *
+	 * @param jdbcPasswordSupplier the jdbc password supplier
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcPasswordSupplier(String jdbcPasswordSupplier) {
 		this.jdbcPasswordSupplier = jdbcPasswordSupplier;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc url supplier.
+	 *
+	 * @param jdbcUrlSupplier the jdbc url supplier
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcUrlSupplier(String jdbcUrlSupplier) {
 		this.jdbcUrlSupplier = jdbcUrlSupplier;
 		return this;
 	}
 
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
 	@Override
 	public String toString() {
 		return "SupplyBlockchainConfig [supplyBlockchainConfigJsonKey=" + supplyBlockchainConfigJsonKey + ", contactPoint=" + contactPoint + ", keyspaceName="
@@ -284,143 +398,286 @@ public class SupplyBlockchainConfig implements Serializable {
 	}
 
 
+	/**
+	 * Gets the hdfs uri.
+	 *
+	 * @return the hdfs uri
+	 */
 	public String getHdfsUri() {
 		return hdfsUri;
 	}
 
 
+	/**
+	 * Sets the hdfs uri.
+	 *
+	 * @param hdfsUri the hdfs uri
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setHdfsUri(String hdfsUri) {
 		this.hdfsUri = hdfsUri;
 		return this;
 	}
 
 
+	/**
+	 * Gets the hadoop user name.
+	 *
+	 * @return the hadoop user name
+	 */
 	public String getHadoopUserName() {
 		return hadoopUserName;
 	}
 
 
+	/**
+	 * Sets the hadoop user name.
+	 *
+	 * @param hadoopUserName the hadoop user name
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setHadoopUserName(String hadoopUserName) {
 		this.hadoopUserName = hadoopUserName;
 		return this;
 	}
 
 
+	/**
+	 * Gets the jdbc driver class name presto.
+	 *
+	 * @return the jdbc driver class name presto
+	 */
 	public String getJdbcDriverClassNamePresto() {
 		return jdbcDriverClassNamePresto;
 	}
 
 
+	/**
+	 * Gets the jdbc login presto.
+	 *
+	 * @return the jdbc login presto
+	 */
 	public String getJdbcLoginPresto() {
 		return jdbcLoginPresto;
 	}
 
 
+	/**
+	 * Gets the jdbc password presto.
+	 *
+	 * @return the jdbc password presto
+	 */
 	public String getJdbcPasswordPresto() {
 		return jdbcPasswordPresto;
 	}
 
 
+	/**
+	 * Gets the jdbc url presto.
+	 *
+	 * @return the jdbc url presto
+	 */
 	public String getJdbcUrlPresto() {
 		return jdbcUrlPresto;
 	}
 
 
+	/**
+	 * Sets the jdbc driver class name presto.
+	 *
+	 * @param jdbcDriverClassNamePresto the jdbc driver class name presto
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcDriverClassNamePresto(String jdbcDriverClassNamePresto) {
 		this.jdbcDriverClassNamePresto = jdbcDriverClassNamePresto;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc login presto.
+	 *
+	 * @param jdbcLoginPresto the jdbc login presto
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcLoginPresto(String jdbcLoginPresto) {
 		this.jdbcLoginPresto = jdbcLoginPresto;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc password presto.
+	 *
+	 * @param jdbcPasswordPresto the jdbc password presto
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcPasswordPresto(String jdbcPasswordPresto) {
 		this.jdbcPasswordPresto = jdbcPasswordPresto;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc url presto.
+	 *
+	 * @param jdbcUrlPresto the jdbc url presto
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcUrlPresto(String jdbcUrlPresto) {
 		this.jdbcUrlPresto = jdbcUrlPresto;
 		return this;
 	}
 
 
+	/**
+	 * Gets the jdbc driver class name hive.
+	 *
+	 * @return the jdbc driver class name hive
+	 */
 	public String getJdbcDriverClassNameHive() {
 		return jdbcDriverClassNameHive;
 	}
 
 
+	/**
+	 * Gets the jdbc login hive.
+	 *
+	 * @return the jdbc login hive
+	 */
 	public String getJdbcLoginHive() {
 		return jdbcLoginHive;
 	}
 
 
+	/**
+	 * Gets the jdbc password hive.
+	 *
+	 * @return the jdbc password hive
+	 */
 	public String getJdbcPasswordHive() {
 		return jdbcPasswordHive;
 	}
 
 
+	/**
+	 * Gets the jdbc url hive.
+	 *
+	 * @return the jdbc url hive
+	 */
 	public String getJdbcUrlHive() {
 		return jdbcUrlHive;
 	}
 
 
+	/**
+	 * Sets the jdbc driver class name hive.
+	 *
+	 * @param jdbcDriverClassNameHive the jdbc driver class name hive
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcDriverClassNameHive(String jdbcDriverClassNameHive) {
 		this.jdbcDriverClassNameHive = jdbcDriverClassNameHive;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc login hive.
+	 *
+	 * @param jdbcLoginHive the jdbc login hive
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcLoginHive(String jdbcLoginHive) {
 		this.jdbcLoginHive = jdbcLoginHive;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc password hive.
+	 *
+	 * @param jdbcPasswordHive the jdbc password hive
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcPasswordHive(String jdbcPasswordHive) {
 		this.jdbcPasswordHive = jdbcPasswordHive;
 		return this;
 	}
 
 
+	/**
+	 * Sets the jdbc url hive.
+	 *
+	 * @param jdbcUrlHive the jdbc url hive
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setJdbcUrlHive(String jdbcUrlHive) {
 		this.jdbcUrlHive = jdbcUrlHive;
 		return this;
 	}
 
 
+	/**
+	 * Gets the hive metastore uri.
+	 *
+	 * @return the hive metastore uri
+	 */
 	public String getHiveMetastoreUri() {
 		return hiveMetastoreUri;
 	}
 
 
+	/**
+	 * Sets the hive metastore uri.
+	 *
+	 * @param hiveMetastoreUri the hive metastore uri
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setHiveMetastoreUri(String hiveMetastoreUri) {
 		this.hiveMetastoreUri = hiveMetastoreUri;
 		return this;
 	}
 
 
+	/**
+	 * Gets the target path bcsc data.
+	 *
+	 * @return the target path bcsc data
+	 */
 	public String getTargetPathBcscData() {
 		return targetPathBcscData;
 	}
 
 
+	/**
+	 * Sets the target path bcsc data.
+	 *
+	 * @param targetPathBcscData the target path bcsc data
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setTargetPathBcscData(String targetPathBcscData) {
 		this.targetPathBcscData = targetPathBcscData;
 		return this;
 	}
 
 
+	/**
+	 * Gets the schema bcsc data.
+	 *
+	 * @return the schema bcsc data
+	 */
 	public String getSchemaBcscData() {
 		return schemaBcscData;
 	}
 
 
+	/**
+	 * Sets the schema bcsc data.
+	 *
+	 * @param schemaBcscData the schema bcsc data
+	 * @return the supply blockchain config
+	 */
 	public SupplyBlockchainConfig setSchemaBcscData(String schemaBcscData) {
 		this.schemaBcscData = schemaBcscData;
 		return this;
