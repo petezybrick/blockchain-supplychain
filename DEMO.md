@@ -58,5 +58,7 @@ where lc.manufacturer_lot_number='20180108-1'
 
 
 Only the ingredients for a given lot
+>>> TODO - get from Squirrel
 
+CSQL Query for Config - show the JSON
 
