@@ -56,9 +56,13 @@ inner join supplier_transaction st on st.supplier_block_transaction_uuid=sbt.sup
 inner join supplier s on s.supplier_uuid=st.supplier_uuid
 where lc.manufacturer_lot_number='20180108-1'
 
+Presto Join 
+select supplier.supplier_uuid, supplier.supplier_name, csc.num_complaint, supplier.state_province, supplier.country
+from cat_bcsc_mysql.db_supplier.supplier supplier
+inner join cat_bcsc_hive.db_bcsc.customer_supplier_complaint csc on csc.supplier_uuid=supplier.supplier_uuid
+order by csc.num_complaint desc
+limit 25;
 
-Only the ingredients for a given lot
->>> TODO - get from Squirrel
 
 CSQL Query for Config - show the JSON
 
