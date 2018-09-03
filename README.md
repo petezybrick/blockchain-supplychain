@@ -2,8 +2,6 @@
 ## Demonstration implementation of Blockchain and Big Data for Supply Chain
 
 ### [Slides](https://github.com/petezybrick/blockchain-supplychain/blob/develop/src/site/markdown/bcsc.pptx)
-### Screenshots linked at bottom of this file
-
 
 ## Overall Objectives
 - Demonstrate Real World Use Cases for Blockchain in Supply Chain via Pet Nutrition
