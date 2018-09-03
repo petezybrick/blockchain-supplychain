@@ -29,20 +29,20 @@
 
 ## Screenshots
 ### Canine Nutrition Example - Note the Ingredients
-<img src="./src/site/markdown/images/ingredients.png" border=2/>
+<img src="./src/site/markdown/images/ingredients.png" border=2 style="margin-left:50px"/>
 
 ### Home Page - Lot Number entered
-<img src="./src/site/markdown/images/enter_lot_number.png" border=2/>
+<img src="./src/site/markdown/images/enter_lot_number.png" border=2 style="margin-left:50px"/>
 
 ### All Ingredients - Supply Chain
-<img src="./src/site/markdown/images/all_ingredients.png" border=2/>
+<img src="./src/site/markdown/images/all_ingredients.png" border=2 style="margin-left:50px"/>
 
 ### Single Ingredient - End to End SupplyChain with Blockchain
-<img src="./src/site/markdown/images/single_ingredient_e2e.png" border=2/>
+<img src="./src/site/markdown/images/single_ingredient_e2e.png" border=2 style="margin-left:50px"/>
 
 ### Zeppelin - Culprit Query and Graph
-<img src="./src/site/markdown/images/zeppelin_culprit.png" border=2/>
+<img src="./src/site/markdown/images/zeppelin_culprit.png" border=2 style="margin-left:50px"/>
 
 ### Data Model
-<img src="./src/site/markdown/images/data_model.png" border=2/>
+<img src="./src/site/markdown/images/data_model.png" border=2 style="margin-left:50px"/>
 
